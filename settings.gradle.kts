@@ -14,6 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "rest"
+rootProject.name = "Plex Auto Delete"
 include(":app")
 include(":server")

@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.alonalbert.rest.app"
+    namespace = "com.alonalbert.pad.app"
     compileSdk = 33
 
     defaultConfig {
-        applicationId = "com.alonalbert.rest.app"
+        applicationId = "com.alonalbert.pad.app"
         minSdk = 33
         targetSdk = 33
         versionCode = 1
