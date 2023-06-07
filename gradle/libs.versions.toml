@@ -10,6 +10,7 @@ kotlin = "1.8.10"
 lifecycle-runtime-ktx = "2.6.1"
 spring-boot = "3.1.0"
 spring-dependency-management = "1.1.0"
+sqlite = "3.42.0.0"
 
 [libraries]
 activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
@@ -27,10 +28,14 @@ ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
-spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web"}
+spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa"}
+sqlite = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqlite"}
+sqlite-dialect = { group = "org.hibernate.orm", name = "hibernate-community-dialects"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
+kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotlin" }
 kotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
