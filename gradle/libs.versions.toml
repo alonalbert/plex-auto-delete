@@ -5,6 +5,7 @@ androidx-test-ext-junit = "1.1.5"
 compose-bom = "2023.05.01"
 core-ktx = "1.10.1"
 espresso-core = "3.5.1"
+jakarta.validation = "3.0.2"
 junit = "4.13.2"
 kotlin = "1.8.10"
 lifecycle-runtime-ktx = "2.6.1"
@@ -18,20 +19,21 @@ androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version
 compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
 core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+jakarta-validation = { group = "jakarta.validation", name = "jakarta.validation-api" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
 lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
+spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
+spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
+sqlite = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqlite" }
+sqlite-dialect = { group = "org.hibernate.orm", name = "hibernate-community-dialects" }
 ui = { group = "androidx.compose.ui", name = "ui" }
 ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
-kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
-spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web"}
-spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa"}
-sqlite = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqlite"}
-sqlite-dialect = { group = "org.hibernate.orm", name = "hibernate-community-dialects"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

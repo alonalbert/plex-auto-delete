@@ -7,11 +7,12 @@ plugins {
 }
 
 dependencies {
+    implementation(libs.jakarta.validation)
     implementation(libs.kotlin.reflect)
-    implementation(libs.sqlite)
-    implementation(libs.sqlite.dialect)
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.starter.web)
+    implementation(libs.sqlite)
+    implementation(libs.sqlite.dialect)
 }
 
 java {

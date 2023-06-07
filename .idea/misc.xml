@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="EntryPointsManager">
-    <list size="4">
-      <item index="0" class="java.lang.String" itemvalue="org.springframework.context.annotation.Bean" />
-      <item index="1" class="java.lang.String" itemvalue="org.springframework.context.annotation.Configuration" />
-      <item index="2" class="java.lang.String" itemvalue="org.springframework.web.bind.annotation.GetMapping" />
-      <item index="3" class="java.lang.String" itemvalue="org.springframework.web.bind.annotation.RestController" />
+    <list>
+      <item class="java.lang.String" itemvalue="jakarta.persistence.Entity" />
+      <item class="java.lang.String" itemvalue="org.springframework.context.annotation.Bean" />
+      <item class="java.lang.String" itemvalue="org.springframework.context.annotation.Configuration" />
+      <item class="java.lang.String" itemvalue="org.springframework.stereotype.Repository" />
+      <item class="java.lang.String" itemvalue="org.springframework.web.bind.annotation.GetMapping" />
+      <item class="java.lang.String" itemvalue="org.springframework.web.bind.annotation.PutMapping" />
+      <item class="java.lang.String" itemvalue="org.springframework.web.bind.annotation.PostMapping" />
+      <item class="java.lang.String" itemvalue="org.springframework.web.bind.annotation.DeleteMapping" />
+      <item class="java.lang.String" itemvalue="org.springframework.web.bind.annotation.RestController" />
     </list>
   </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
