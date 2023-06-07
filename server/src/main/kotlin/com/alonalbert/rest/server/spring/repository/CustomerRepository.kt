@@ -1,4 +1,4 @@
-package com.alonalbert.rest.server.repository
+package com.alonalbert.rest.server.spring.repository
 
 import com.alonalbert.rest.server.model.Customer
 import org.springframework.data.repository.CrudRepository

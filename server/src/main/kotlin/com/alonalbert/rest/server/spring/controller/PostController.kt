@@ -1,7 +1,7 @@
-package com.alonalbert.rest.server.controller
+package com.alonalbert.rest.server.spring.controller
 
 import com.alonalbert.rest.server.model.Post
-import com.alonalbert.rest.server.repository.PostRepository
+import com.alonalbert.rest.server.spring.repository.PostRepository
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity

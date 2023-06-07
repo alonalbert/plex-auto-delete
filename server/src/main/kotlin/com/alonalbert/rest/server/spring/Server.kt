@@ -1,4 +1,4 @@
-package com.alonalbert.rest.server
+package com.alonalbert.rest.server.spring
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

@@ -1,4 +1,4 @@
-package com.alonalbert.rest.server
+package com.alonalbert.rest.server.spring.config
 
 import org.springframework.boot.jdbc.DataSourceBuilder
 import org.springframework.context.annotation.Bean
