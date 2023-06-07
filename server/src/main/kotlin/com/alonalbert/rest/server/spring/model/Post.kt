@@ -1,4 +1,4 @@
-package com.alonalbert.rest.server.model
+package com.alonalbert.rest.server.spring.model
 
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

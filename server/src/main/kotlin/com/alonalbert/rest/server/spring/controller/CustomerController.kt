@@ -1,6 +1,6 @@
 package com.alonalbert.rest.server.spring.controller
 
-import com.alonalbert.rest.server.model.Customer
+import com.alonalbert.rest.server.spring.model.Customer
 import com.alonalbert.rest.server.spring.repository.CustomerRepository
 import jakarta.validation.Valid
 import org.springframework.web.bind.annotation.DeleteMapping
