@@ -14,27 +14,27 @@ spring-dependency-management = "1.1.0"
 sqlite = "3.42.0.0"
 
 [libraries]
-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "activity-compose" }
-androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "compose-bom" }
-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "core-ktx" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
+androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-ext-junit" }
+compose-bom = { module = "androidx.compose:compose-bom", version.ref = "compose-bom" }
+core-ktx = { module = "androidx.core:core-ktx", version.ref = "core-ktx" }
+espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso-core" }
 jakarta-persistence = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakarta-persistence" }
-jakarta-validation = { group = "jakarta.validation", name = "jakarta.validation-api" }
-junit = { group = "junit", name = "junit", version.ref = "junit" }
-kotlin-reflect = { group = "org.jetbrains.kotlin", name = "kotlin-reflect" }
-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
-material3 = { group = "androidx.compose.material3", name = "material3" }
-spring-boot-starter-data-jpa = { group = "org.springframework.boot", name = "spring-boot-starter-data-jpa" }
-spring-boot-starter-web = { group = "org.springframework.boot", name = "spring-boot-starter-web" }
-sqlite = { group = "org.xerial", name = "sqlite-jdbc", version.ref = "sqlite" }
-sqlite-dialect = { group = "org.hibernate.orm", name = "hibernate-community-dialects" }
-ui = { group = "androidx.compose.ui", name = "ui" }
-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+jakarta-validation = { module = "jakarta.validation:jakarta.validation-api" }
+junit = { module = "junit:junit", version.ref = "junit" }
+kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version.ref = "lifecycle-runtime-ktx" }
+material3 = { module = "androidx.compose.material3:material3" }
+spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
+sqlite = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }
+sqlite-dialect = { module = "org.hibernate.orm:hibernate-community-dialects" }
+ui = { module = "androidx.compose.ui:ui" }
+ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
+ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
+ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
+ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
+ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
