@@ -1,6 +1,6 @@
 package com.alonalbert.pad.server.controller
 
-import com.alonalbert.pad.server.model.User
+import com.alonalbert.pad.model.User
 import com.alonalbert.pad.server.repository.UserRepository
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory

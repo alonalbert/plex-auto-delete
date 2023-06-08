@@ -1,4 +1,4 @@
-package com.alonalbert.pad.server.model
+package com.alonalbert.pad.model
 
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue

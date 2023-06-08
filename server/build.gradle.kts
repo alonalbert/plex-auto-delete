@@ -7,6 +7,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":shared"))
     implementation(libs.jakarta.validation)
     implementation(libs.kotlin.reflect)
     implementation(libs.spring.boot.starter.data.jpa)
