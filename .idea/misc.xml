@@ -4,6 +4,7 @@
       <item class="java.lang.String" itemvalue="jakarta.persistence.Entity" />
       <item class="java.lang.String" itemvalue="org.springframework.context.annotation.Bean" />
       <item class="java.lang.String" itemvalue="org.springframework.context.annotation.Configuration" />
+      <item class="java.lang.String" itemvalue="org.springframework.stereotype.Component" />
       <item class="java.lang.String" itemvalue="org.springframework.stereotype.Repository" />
       <item class="java.lang.String" itemvalue="org.springframework.web.bind.annotation.GetMapping" />
       <item class="java.lang.String" itemvalue="org.springframework.web.bind.annotation.PutMapping" />

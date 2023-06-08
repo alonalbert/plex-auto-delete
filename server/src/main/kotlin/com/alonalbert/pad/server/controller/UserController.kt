@@ -4,7 +4,6 @@ import com.alonalbert.pad.server.model.User
 import com.alonalbert.pad.server.repository.UserRepository
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -20,7 +19,7 @@ import java.sql.DriverManager
 @RequestMapping("/api")
 class UserController(
     private val userRepository: UserRepository,
-    @Value("\${plex.database.path}") private val plexDatabasePath: String,
+    private val plexDatabasePath: String,
 ) {
     private val logger = LoggerFactory.getLogger(UserController::class.java)
 

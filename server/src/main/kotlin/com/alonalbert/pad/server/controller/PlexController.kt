@@ -1,6 +1,5 @@
 package com.alonalbert.pad.server.controller
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -25,7 +24,7 @@ private val STATEMENTS = listOf(STATEMENT1, STATEMENT2)
 
 @RestController
 @RequestMapping("/plex")
-class PlexController(@Value("\${plex.database.path}") private val plexDatabasePath: String) {
+class PlexController(private val plexDatabasePath: String) {
     @GetMapping("/shows")
     fun getShowsNames(): List<String> {
         return buildSet {
