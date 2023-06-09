@@ -2,6 +2,7 @@ package com.alonalbert.pad.app.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -32,12 +33,18 @@ import timber.log.Timber
 fun PadApp() {
     val viewModel = hiltViewModel<PadViewModel>()
     val users by viewModel.getUsers().observeAsState(emptyList())
-    UserList(users)
+    UserList(users) {
+        Timber.i("User ${it.name} clicked")
+        viewModel.updateUser(it.copy(type = it.type.toggle()))
+    }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun UserList(users: List<User>) {
+private fun UserList(
+    users: List<User>,
+    onUserUpdated: (User) -> Unit,
+) {
     LazyColumn {
         stickyHeader {
             Text(
@@ -52,14 +59,14 @@ private fun UserList(users: List<User>) {
         Timber.i("Updating ${users.size} users")
         users.forEach {
             item {
-                UserCard(user = it)
+                UserCard(user = it, onUserUpdated)
             }
         }
     }
 }
 
 @Composable
-private fun UserCard(user: User) {
+private fun UserCard(user: User, onUserUpdated: (User) -> Unit) {
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
@@ -68,6 +75,7 @@ private fun UserCard(user: User) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp)
+            .clickable { onUserUpdated(user) }
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -86,11 +94,6 @@ private fun UserCard(user: User) {
     }
 }
 
-private fun User.displayType() = when (type) {
-    EXCLUDE -> "Excludes 0 shows"
-    INCLUDE -> "Includes 0 shows"
-}
-
 @Preview(showBackground = true)
 @Composable
 fun UserListPreview() {
@@ -101,6 +104,16 @@ fun UserListPreview() {
                 User(name = "Matan"),
                 User(name = "Dean"),
             )
-        )
+        ) {}
     }
+}
+
+private fun User.displayType() = when (type) {
+    EXCLUDE -> "Excludes 0 shows"
+    INCLUDE -> "Includes 0 shows"
+}
+
+private fun User.UserType.toggle() = when (this) {
+    EXCLUDE -> INCLUDE
+    INCLUDE -> EXCLUDE
 }

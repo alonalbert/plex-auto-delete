@@ -5,39 +5,41 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.alonalbert.pad.app.database.PadDatabase
 import com.alonalbert.pad.app.database.User
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import com.alonalbert.pad.app.service.PadService
+import com.alonalbert.pad.app.service.UpdateUserResult
+import com.alonalbert.pad.app.service.UsersResult
 import dagger.hilt.android.lifecycle.HiltViewModel
-import io.ktor.client.HttpClient
-import io.ktor.client.engine.android.Android
-import io.ktor.client.request.get
-import io.ktor.client.statement.bodyAsText
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 
 @HiltViewModel
-class PadViewModel @Inject constructor(private val database: PadDatabase) : ViewModel() {
+class PadViewModel @Inject constructor(
+    private val database: PadDatabase,
+    private val service: PadService,
+) : ViewModel() {
+    private val scope = CoroutineScope(viewModelScope.coroutineContext + Dispatchers.IO)
+
     fun getUsers(): LiveData<List<User>> {
         val userDao = database.userDao()
-        viewModelScope.launch(Dispatchers.IO) {
-            HttpClient(Android).use { client ->
-                try {
-                    val json = client.get("http://10.0.0.74:8080/api/users").bodyAsText()
-                    val users = Gson().fromJson(json, object : TypeToken<List<User>>() {})
-                    userDao.insertAll(users)
-                } catch (e: IOException) {
-                    Timber.e(e, "Error loading users")
-                }
+        scope.launch(Dispatchers.IO) {
+            when (val result = service.loadUsers()) {
+                is UsersResult.Success -> database.userDao().insertAll(result.users)
+                is UsersResult.Error -> Timber.e(result.throwable, "Failed to load users")
             }
         }
 
         return userDao.getAll()
     }
 
-    fun deleteUser(user: User) {
-        database.userDao().delete(user)
+    fun updateUser(user: User) {
+        scope.launch {
+            when (val result = service.updateUser(user)) {
+                is UpdateUserResult.Success -> database.userDao().update(result.user)
+                is UpdateUserResult.Error -> Timber.e(result.throwable, "Failed to update user ${user.id}")
+            }
+        }
     }
 }
