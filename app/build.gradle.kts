@@ -1,7 +1,9 @@
 plugins {
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.hilt)
     alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.ksp)
+    id("kotlin-kapt")
 }
 
 android {
@@ -58,13 +60,15 @@ dependencies {
     debugImplementation(libs.ui.tooling)
 
     implementation(libs.activity.compose)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.core.ktx)
     implementation(libs.gson)
+    implementation(libs.hilt.android)
     implementation(libs.ktor.client.android)
     implementation(libs.ktor.client.core)
     implementation(libs.lifecycle.runtime.ktx)
@@ -74,6 +78,10 @@ dependencies {
     implementation(libs.ui.tooling.preview)
     implementation(platform(libs.compose.bom))
     implementation(project(":shared"))
+    implementation(libs.androidx.hilt.navigation.compose)
+
+    kapt(libs.androidx.hilt.compiler)
+    kapt(libs.hilt.android.compiler)
 
     ksp(libs.androidx.room.compiler)
 

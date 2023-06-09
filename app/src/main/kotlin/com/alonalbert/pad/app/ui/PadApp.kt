@@ -5,11 +5,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
 fun PadApp() {
-    val viewModel = viewModel<PadViewModel>()
+    val viewModel = hiltViewModel<PadViewModel>()
     val users by viewModel.getUsers().observeAsState(emptyList())
     LazyColumn {
         users.forEach {
