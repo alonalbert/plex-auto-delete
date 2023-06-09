@@ -1,6 +1,5 @@
 package com.alonalbert.pad.app.ui
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,6 +14,7 @@ import io.ktor.client.request.get
 import io.ktor.client.statement.bodyAsText
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
@@ -29,7 +29,7 @@ class PadViewModel @Inject constructor(private val database: PadDatabase) : View
                     val users = Gson().fromJson(json, object : TypeToken<List<User>>() {})
                     userDao.insertAll(users)
                 } catch (e: IOException) {
-                    Log.e("PAD", "Error loading users", e)
+                    Timber.e(e, "Error loading users")
                 }
             }
         }

@@ -19,6 +19,7 @@ runtime-livedata = "1.4.3"
 spring-boot = "3.1.0"
 spring-dependency-management = "1.1.0"
 sqlite = "3.42.0.0"
+timber = "5.0.1"
 
 [libraries]
 activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activity-compose" }
@@ -50,6 +51,7 @@ spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
 sqlite = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }
 sqlite-dialect = { module = "org.hibernate.orm:hibernate-community-dialects" }
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 ui = { module = "androidx.compose.ui:ui" }
 ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
 ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
