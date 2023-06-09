@@ -36,4 +36,8 @@ class PadViewModel @Inject constructor(private val database: PadDatabase) : View
 
         return userDao.getAll()
     }
+
+    fun deleteUser(user: User) {
+        database.userDao().delete(user)
+    }
 }
