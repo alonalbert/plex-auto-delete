@@ -78,7 +78,6 @@ dependencies {
     implementation(libs.ui.graphics)
     implementation(libs.ui.tooling.preview)
     implementation(platform(libs.compose.bom))
-    implementation(project(":shared"))
     implementation(libs.androidx.hilt.navigation.compose)
 
     kapt(libs.androidx.hilt.compiler)
