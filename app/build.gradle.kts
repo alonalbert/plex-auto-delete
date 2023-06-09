@@ -11,6 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.alonalbert.pad.app"
         minSdk = 33
+        //noinspection OldTargetApi
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
