@@ -6,15 +6,8 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 
 @Entity
-data class User(
+class Show(
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long = 0,
     val name: String = "",
-    val plexToken: String? = null,
-    val type: UserType = UserType.INCLUDE,
-) {
-    enum class UserType {
-         EXCLUDE,
-        INCLUDE,
-    }
-}
+)
