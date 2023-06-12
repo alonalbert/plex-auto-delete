@@ -34,8 +34,6 @@ import com.alonalbert.pad.app.data.User.UserType.INCLUDE
 import com.alonalbert.pad.app.ui.theme.MyApplicationTheme
 import com.alonalbert.pad.app.util.LoadingContent
 import com.alonalbert.pad.app.util.ShowSnackbar
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import timber.log.Timber
 
 @Composable
@@ -47,7 +45,7 @@ fun UserListScreen(
 ) {
     val message by viewModel.messageState.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoadingState.collectAsStateWithLifecycle()
-    val userFlows by viewModel.userListState.collectAsStateWithLifecycle()
+    val users by viewModel.userListState.collectAsStateWithLifecycle()
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -59,7 +57,7 @@ fun UserListScreen(
             modifier = modifier.padding(padding)
         ) {
             UserListScreen(
-                items = userFlows,
+                items = users,
                 onUserClick = onUserClick,
             )
         }
@@ -73,7 +71,7 @@ fun UserListScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun UserListScreen(
-    items: List<StateFlow<User>>,
+    items: List<User>,
     onUserClick: (user: User) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -89,8 +87,7 @@ internal fun UserListScreen(
         }
         items.forEach {
             item {
-                val user by it.collectAsStateWithLifecycle()
-                UserCard(user, onUserClick)
+                UserCard(it, onUserClick)
             }
         }
     }
@@ -139,7 +136,7 @@ private fun DefaultPreview() {
     MyApplicationTheme {
         val users = listOf(User(name = "Mark"), User(name = "Ted"), User(name = "Bob"))
         UserListScreen(
-            users.map { MutableStateFlow(it) },
+            users,
             onUserClick = {})
     }
 }
