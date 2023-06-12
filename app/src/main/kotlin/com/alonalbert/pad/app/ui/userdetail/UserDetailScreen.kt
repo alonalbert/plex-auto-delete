@@ -1,5 +1,6 @@
 package com.alonalbert.pad.app.ui.userdetail
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.FloatingActionButton
@@ -43,12 +44,16 @@ fun UserDetailScreen(
         }
     ) { padding ->
 
-        UserDetailContent(
-            isLoading = isLoading,
-            user = user,
+        LoadingContent(
+            isLoading = isLoading || user == null,
             onRefresh = viewModel::refresh,
-            modifier = Modifier.padding(padding)
-        )
+            modifier = modifier
+        ) {
+            UserDetailContent(
+                user = user,
+                modifier = Modifier.padding(padding)
+            )
+        }
 
         message?.let {
             ShowSnackbar(snackbarHostState, it, viewModel)
@@ -58,16 +63,10 @@ fun UserDetailScreen(
 
 @Composable
 fun UserDetailContent(
-    isLoading: Boolean,
     user: User?,
     modifier: Modifier = Modifier,
-    onRefresh: () -> Unit = {},
 ) {
-    LoadingContent(
-        isLoading = isLoading || user == null,
-        onRefresh = onRefresh,
-        modifier = modifier
-    ) {
+    Box(modifier = modifier) {
         if (user != null) {
             Text(text = user.name)
         }
@@ -82,5 +81,5 @@ private fun User.UserType.toggle() = when (this) {
 @Preview
 @Composable
 fun UserDetailContentPreview() {
-    UserDetailContent(isLoading = false, user = User(name = "Bob"))
+    UserDetailContent(user = User(name = "Bob"))
 }
