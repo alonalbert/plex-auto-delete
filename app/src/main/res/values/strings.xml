@@ -20,4 +20,6 @@
     <string name="user_updated">User updated</string>
     <string name="network_error">Network error</string>
     <string name="add_show">Add show</string>
+    <string name="user_type_including">Subscribed to shows</string>
+    <string name="user_type_excluding">Ignoring shows</string>
 </resources>

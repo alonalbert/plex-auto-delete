@@ -1,7 +1,8 @@
 [versions]
 agp = "8.2.0-alpha07"
 androidx-activity-compose = "1.7.2"
-androidx-compose-bom = "2023.05.01"
+androidx-compose-bom = "2023.06.00"
+androidx-appcompat = "1.6.1"
 androidx-core-ktx = "1.10.1"
 androidx-hilt = "1.0.0"
 androidx-lifecycle = "2.6.1"
@@ -25,6 +26,7 @@ timber = "5.0.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "androidx-hilt" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidx-hilt" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
