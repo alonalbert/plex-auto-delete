@@ -55,7 +55,7 @@ class DefaultRepository @Inject constructor(
         }
     }
 
-    override fun getUserFlow(id: Long): Flow<User> {
+    override fun getUserFlow(id: Long): Flow<UserWithShows> {
         return userDao.observe(id).map {
             it.toExternal()
         }

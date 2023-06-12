@@ -9,7 +9,7 @@ interface Repository {
 
     fun getUsersFlow(): Flow<List<User>>
 
-    fun getUserFlow(id: Long): Flow<User>
+    fun getUserFlow(id: Long): Flow<UserWithShows>
 
     suspend fun refreshUsers(): List<User>
 

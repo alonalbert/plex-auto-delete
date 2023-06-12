@@ -20,6 +20,7 @@ package com.alonalbert.pad.app.data
 
 import com.alonalbert.pad.app.data.source.local.database.LocalShow
 import com.alonalbert.pad.app.data.source.local.database.LocalUser
+import com.alonalbert.pad.app.data.source.local.database.LocalUserWithShows
 import com.alonalbert.pad.app.data.source.network.NetworkShow
 import com.alonalbert.pad.app.data.source.network.NetworkUser
 
@@ -63,12 +64,17 @@ fun LocalUser.UserType.toExternal() = when (this) {
     LocalUser.UserType.INCLUDE -> User.UserType.INCLUDE
 }
 
+fun LocalShow.toExternal() = Show(id = id, name = name)
+fun LocalUserWithShows.toExternal() = UserWithShows(user = user.toExternal(), shows = shows.toExternal())
+
 @JvmName("localToExternalUser")
 fun List<LocalUser>.toExternal() = map(LocalUser::toExternal)
-fun LocalShow.toExternal() = Show(id = id, name = name)
 
 @JvmName("localToExternalShow")
 fun List<LocalShow>.toExternal() = map(LocalShow::toExternal)
+
+@JvmName("localToExternalUserWithShows")
+fun List<LocalUserWithShows>.toExternal() = map(LocalUserWithShows::toExternal)
 
 // Network to Local
 fun NetworkUser.toLocal() = LocalUser(id = id, name = name, plexToken = plexToken, type = type.toLocal())

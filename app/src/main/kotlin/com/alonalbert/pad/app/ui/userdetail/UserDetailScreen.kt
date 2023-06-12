@@ -1,7 +1,6 @@
 package com.alonalbert.pad.app.ui.userdetail
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -51,6 +50,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
+import com.alonalbert.pad.app.data.UserWithShows
 import com.alonalbert.pad.app.ui.components.baselineHeight
 import com.alonalbert.pad.app.util.LoadingContent
 import com.alonalbert.pad.app.util.ShowSnackbar
@@ -65,7 +65,7 @@ fun UserDetailScreen(
     val toggleUser = { user: User -> viewModel.updateUser(user.copy(type = user.type.toggle())) }
     val deleteShow = { user: User, show: Show -> Timber.d("Delete show ${show.name} from user ${user.name}") }
 
-    val user by viewModel.userState.collectAsStateWithLifecycle()
+    val userWithShows by viewModel.userState.collectAsStateWithLifecycle()
     val message by viewModel.messageState.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoadingState.collectAsStateWithLifecycle()
 
@@ -80,13 +80,13 @@ fun UserDetailScreen(
     ) { padding ->
 
         LoadingContent(
-            isLoading = isLoading || user == null,
+            isLoading = isLoading || userWithShows == null,
             onRefresh = viewModel::refresh,
             modifier = modifier.padding(padding)
         ) {
-            user?.let {
+            userWithShows?.let {
                 UserDetailContent(
-                    user = it,
+                    userWithShows = it,
                     onUserTypeClick = toggleUser,
                     onDeleteShowClick = deleteShow,
                 )
@@ -101,7 +101,7 @@ fun UserDetailScreen(
 
 @Composable
 fun UserDetailContent(
-    user: User,
+    userWithShows: UserWithShows,
     onUserTypeClick: (user: User) -> Unit,
     onDeleteShowClick: (User, Show) -> Unit,
 ) {
@@ -120,7 +120,7 @@ fun UserDetailContent(
                     this@BoxWithConstraints.maxHeight
                 )
                 UserInfoFields(
-                    user = user,
+                    userWithShows = userWithShows,
                     onUserTypeClick = onUserTypeClick,
                     onDeleteShowClick = onDeleteShowClick,
                     containerHeight = this@BoxWithConstraints.maxHeight
@@ -148,7 +148,7 @@ private fun ProfileHeader(
 
 @Composable
 private fun UserInfoFields(
-    user: User,
+    userWithShows: UserWithShows,
     onUserTypeClick: (user: User) -> Unit,
     containerHeight: Dp,
     onDeleteShowClick: (User, Show) -> Unit,
@@ -156,11 +156,11 @@ private fun UserInfoFields(
     Column {
         Spacer(modifier = Modifier.height(8.dp))
 
-        Name(user)
+        Name(userWithShows.user)
 
-        UserType(user, onUserTypeClick)
+        UserType(userWithShows.user, onUserTypeClick)
 
-        ShowsList(user, onDeleteShowClick = onDeleteShowClick)
+        ShowsList(userWithShows, onDeleteShowClick = onDeleteShowClick)
 
         // Add a spacer that always shows part (320.dp) of the fields list regardless of the device,
         // in order to always leave some content at the top.
@@ -208,9 +208,8 @@ fun UserType(user: User, onUserTypeClick: (User) -> Unit) {
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ShowsList(user: User, onDeleteShowClick: (User, Show) -> Unit) {
+fun ShowsList(userWithShows: UserWithShows, onDeleteShowClick: (User, Show) -> Unit) {
     Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
         Divider()
 
@@ -223,10 +222,10 @@ fun ShowsList(user: User, onDeleteShowClick: (User, Show) -> Unit) {
         )
 
         LazyColumn {
-            List(20) { Show(name = "Foo $it") }.forEach {
+            userWithShows.shows.forEach {
                 item {
                     ShowCard(
-                        user,
+                        userWithShows.user,
                         show = it,
                         onDeleteShowClick = onDeleteShowClick,
                     )
@@ -276,5 +275,15 @@ private fun User.UserType.displayText() = when (this) {
 @Preview
 @Composable
 fun UserDetailContentPreview() {
-    UserDetailContent(user = User(name = "Bob", type = User.UserType.EXCLUDE), { }, { _, _ -> })
+    UserDetailContent(
+        userWithShows = UserWithShows(
+            User(name = "Bob", type = User.UserType.EXCLUDE),
+            listOf(
+                Show(name = "Dexter"),
+                Show(name = "Breaking Bad")
+            )
+        ),
+        onUserTypeClick = { },
+        onDeleteShowClick = { _, _ -> }
+    )
 }

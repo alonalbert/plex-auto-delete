@@ -12,12 +12,11 @@ interface UserDao {
     fun observeAll(): Flow<List<LocalUser>>
 
     @Query("SELECT * FROM user WHERE id = :id")
-    fun observe(id: Long): Flow<LocalUser>
+    fun observe(id: Long): Flow<LocalUserWithShows>
 
     @Update
     suspend fun update(user: LocalUser)
 
     @Upsert
     suspend fun upsertAll(users: List<LocalUser>)
-
 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.Repository
 import com.alonalbert.pad.app.data.User
+import com.alonalbert.pad.app.data.UserWithShows
 import com.alonalbert.pad.app.ui.DestinationsArgs.USER_ID_ARG
 import com.alonalbert.pad.app.ui.PadViewModel
 import com.alonalbert.pad.app.util.stateIn
@@ -24,7 +25,7 @@ class UserDetailViewModel @Inject constructor(
     private val isLoadingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val userId: Long = savedStateHandle[USER_ID_ARG]!!
 
-    val userState: StateFlow<User?> = repository.getUserFlow(userId).stateIn(viewModelScope, null)
+    val userState: StateFlow<UserWithShows?> = repository.getUserFlow(userId).stateIn(viewModelScope, null)
 
     val messageState: StateFlow<Int?> = messageFlow.stateIn(viewModelScope, null)
     val isLoadingState: StateFlow<Boolean> = isLoadingFlow.stateIn(viewModelScope, false)
