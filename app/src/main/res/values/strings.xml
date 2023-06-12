@@ -22,4 +22,7 @@
     <string name="add_show">Add show</string>
     <string name="user_type_including">Subscribed to shows</string>
     <string name="user_type_excluding">Ignoring shows</string>
+    <string name="shows_title">Shows</string>
+    <string name="shows">Shows</string>
+    <string name="users">Users</string>
 </resources>

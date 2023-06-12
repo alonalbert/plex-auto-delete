@@ -22,12 +22,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.User.UserType.EXCLUDE
 import com.alonalbert.pad.app.data.User.UserType.INCLUDE
@@ -78,8 +78,8 @@ internal fun UserListScreen(
     LazyColumn(modifier) {
         stickyHeader {
             Text(
-                text = "Users",
-                fontSize = 24.sp,
+                text = stringResource(R.string.users),
+                style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier
                     .wrapContentSize(Alignment.Center)
                     .padding(bottom = 10.dp)
@@ -99,7 +99,7 @@ private fun UserCard(user: User, onUserClick: (User) -> Unit) {
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-        border = BorderStroke(1.dp, Color.Blue),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp)
@@ -112,8 +112,7 @@ private fun UserCard(user: User, onUserClick: (User) -> Unit) {
             Timber.d("Composing card for $user")
             Text(
                 text = user.name,
-                fontSize = 30.sp,
-                style = MaterialTheme.typography.labelLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.weight(1f)
             )
             Text(
