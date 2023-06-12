@@ -1,6 +1,7 @@
 <project version="4">
   <component name="EntryPointsManager">
     <list>
+      <item class="java.lang.String" itemvalue="dagger.Binds" />
       <item class="java.lang.String" itemvalue="dagger.Module" />
       <item class="java.lang.String" itemvalue="dagger.Provides" />
       <item class="java.lang.String" itemvalue="jakarta.persistence.Entity" />
