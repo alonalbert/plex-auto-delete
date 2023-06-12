@@ -27,15 +27,11 @@ class UserListViewModel @Inject constructor(private val repository: Repository) 
         repository.refreshUsers()
     }
 
-    override fun clearMessage() {
-        messageFlow.value = null
-    }
-
     override fun setIsLoading(isLoading: Boolean) {
         isLoadingFlow.value = isLoading
     }
 
-    override fun setMessage(id: Int) {
+    override fun setMessage(id: Int?) {
         messageFlow.value = id
     }
 }

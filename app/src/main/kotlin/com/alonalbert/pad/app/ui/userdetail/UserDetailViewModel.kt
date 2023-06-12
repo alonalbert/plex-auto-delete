@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.Repository
+import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.UserWithShows
 import com.alonalbert.pad.app.ui.DestinationsArgs.USER_ID_ARG
@@ -34,12 +35,8 @@ class UserDetailViewModel @Inject constructor(
         refresh()
     }
 
-    override fun setMessage(id: Int) {
+    override fun setMessage(id: Int?) {
         messageFlow.value = id
-    }
-
-    override fun clearMessage() {
-        messageFlow.value = null
     }
 
     override fun setIsLoading(isLoading: Boolean) {
@@ -51,17 +48,34 @@ class UserDetailViewModel @Inject constructor(
     }
 
     fun updateUser(user: User) {
+        Timber.d("updateUser ${user.name}")
+        repository.updateRepository(R.string.user_updated) {
+            updateUser(user)
+        }
+    }
+
+    fun deleteShow(user: User, show: Show) {
+        Timber.d("Delete show ${show.name} from user ${user.name}")
+        repository.updateRepository(R.string.show_deleted) {
+            // TODO:
+        }
+    }
+
+    private fun Repository.updateRepository(
+        okMessage: Int?,
+        errorMessage: Int? = R.string.network_error,
+        block: suspend Repository.() -> Unit,
+    ) {
         viewModelScope.launch {
             isLoadingFlow.value = true
             runCatching {
-                repository.updateUser(user)
-                setMessage(R.string.user_updated)
+                block()
+                setMessage(okMessage)
             }.onFailure {
-                Timber.e(it, "Failed to update user")
-                setMessage(R.string.network_error)
+                Timber.e(it, "Failed to update repository")
+                setMessage(errorMessage)
             }
             isLoadingFlow.value = false
         }
     }
-
 }

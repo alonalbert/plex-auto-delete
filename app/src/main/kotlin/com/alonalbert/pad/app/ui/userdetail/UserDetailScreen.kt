@@ -50,7 +50,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
-import com.alonalbert.pad.app.data.UserWithShows
 import com.alonalbert.pad.app.ui.components.baselineHeight
 import com.alonalbert.pad.app.util.LoadingContent
 import com.alonalbert.pad.app.util.ShowSnackbar
@@ -62,12 +61,16 @@ fun UserDetailScreen(
     viewModel: UserDetailViewModel = hiltViewModel(),
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
-    val toggleUser = { user: User -> viewModel.updateUser(user.copy(type = user.type.toggle())) }
-    val deleteShow = { user: User, show: Show -> Timber.d("Delete show ${show.name} from user ${user.name}") }
 
     val userWithShows by viewModel.userState.collectAsStateWithLifecycle()
     val message by viewModel.messageState.collectAsStateWithLifecycle()
     val isLoading by viewModel.isLoadingState.collectAsStateWithLifecycle()
+
+    val user = userWithShows?.user
+    val shows = userWithShows?.shows ?: emptyList()
+
+    val toggleUser = { viewModel.toggleUser(user) }
+    val deleteShow = { show: Show -> viewModel.deleteShow(user, show) }
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -80,13 +83,14 @@ fun UserDetailScreen(
     ) { padding ->
 
         LoadingContent(
-            isLoading = isLoading || userWithShows == null,
+            isLoading = isLoading || user == null,
             onRefresh = viewModel::refresh,
             modifier = modifier.padding(padding)
         ) {
-            userWithShows?.let {
+            user?.let {
                 UserDetailContent(
-                    userWithShows = it,
+                    user = it,
+                    shows = shows,
                     onUserTypeClick = toggleUser,
                     onDeleteShowClick = deleteShow,
                 )
@@ -100,10 +104,11 @@ fun UserDetailScreen(
 }
 
 @Composable
-fun UserDetailContent(
-    userWithShows: UserWithShows,
-    onUserTypeClick: (user: User) -> Unit,
-    onDeleteShowClick: (User, Show) -> Unit,
+private fun UserDetailContent(
+    user: User,
+    shows: List<Show>,
+    onUserTypeClick: () -> Unit,
+    onDeleteShowClick: (Show) -> Unit,
 ) {
 
     BoxWithConstraints(
@@ -120,7 +125,8 @@ fun UserDetailContent(
                     this@BoxWithConstraints.maxHeight
                 )
                 UserInfoFields(
-                    userWithShows = userWithShows,
+                    user = user,
+                    shows = shows,
                     onUserTypeClick = onUserTypeClick,
                     onDeleteShowClick = onDeleteShowClick,
                     containerHeight = this@BoxWithConstraints.maxHeight
@@ -148,19 +154,20 @@ private fun ProfileHeader(
 
 @Composable
 private fun UserInfoFields(
-    userWithShows: UserWithShows,
-    onUserTypeClick: (user: User) -> Unit,
+    user: User,
+    shows: List<Show>,
+    onUserTypeClick: () -> Unit,
     containerHeight: Dp,
-    onDeleteShowClick: (User, Show) -> Unit,
+    onDeleteShowClick: (Show) -> Unit,
 ) {
     Column {
         Spacer(modifier = Modifier.height(8.dp))
 
-        Name(userWithShows.user)
+        Name(user)
 
-        UserType(userWithShows.user, onUserTypeClick)
+        UserType(user, onUserTypeClick)
 
-        ShowsList(userWithShows, onDeleteShowClick = onDeleteShowClick)
+        ShowsList(shows, onDeleteShowClick = onDeleteShowClick)
 
         // Add a spacer that always shows part (320.dp) of the fields list regardless of the device,
         // in order to always leave some content at the top.
@@ -180,7 +187,7 @@ private fun Name(user: User, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun UserType(user: User, onUserTypeClick: (User) -> Unit) {
+fun UserType(user: User, onUserTypeClick: () -> Unit) {
     Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
         Divider()
         Row(
@@ -193,7 +200,7 @@ fun UserType(user: User, onUserTypeClick: (User) -> Unit) {
                 modifier = Modifier.weight(1f)
             )
             FilledIconButton(
-                onClick = { onUserTypeClick(user) },
+                onClick = onUserTypeClick,
                 colors = IconButtonDefaults.filledIconButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
                 modifier = Modifier.clickable { }
             ) {
@@ -209,7 +216,7 @@ fun UserType(user: User, onUserTypeClick: (User) -> Unit) {
 }
 
 @Composable
-fun ShowsList(userWithShows: UserWithShows, onDeleteShowClick: (User, Show) -> Unit) {
+fun ShowsList(shows: List<Show>, onDeleteShowClick: (Show) -> Unit) {
     Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
         Divider()
 
@@ -222,10 +229,9 @@ fun ShowsList(userWithShows: UserWithShows, onDeleteShowClick: (User, Show) -> U
         )
 
         LazyColumn {
-            userWithShows.shows.forEach {
+            shows.forEach {
                 item {
                     ShowCard(
-                        userWithShows.user,
                         show = it,
                         onDeleteShowClick = onDeleteShowClick,
                     )
@@ -236,7 +242,7 @@ fun ShowsList(userWithShows: UserWithShows, onDeleteShowClick: (User, Show) -> U
 }
 
 @Composable
-private fun ShowCard(user: User, show: Show, onDeleteShowClick: (User, Show) -> Unit) {
+private fun ShowCard(show: Show, onDeleteShowClick: (Show) -> Unit) {
     Card(
         shape = RoundedCornerShape(4.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
@@ -253,7 +259,7 @@ private fun ShowCard(user: User, show: Show, onDeleteShowClick: (User, Show) -> 
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.weight(1f)
             )
-            IconButton(onClick = { onDeleteShowClick(user, show) }) {
+            IconButton(onClick = { onDeleteShowClick(show) }) {
                 Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete")
             }
         }
@@ -261,29 +267,39 @@ private fun ShowCard(user: User, show: Show, onDeleteShowClick: (User, Show) -> 
 }
 
 
-private fun User.UserType.toggle() = when (this) {
-    User.UserType.EXCLUDE -> User.UserType.INCLUDE
-    User.UserType.INCLUDE -> User.UserType.EXCLUDE
-}
-
 @Composable
 private fun User.UserType.displayText() = when (this) {
     User.UserType.EXCLUDE -> stringResource(R.string.user_type_excluding)
     User.UserType.INCLUDE -> stringResource(R.string.user_type_including)
 }
 
+private fun User.UserType.toggle() = when (this) {
+    User.UserType.EXCLUDE -> User.UserType.INCLUDE
+    User.UserType.INCLUDE -> User.UserType.EXCLUDE
+}
+
+private fun UserDetailViewModel.toggleUser(user: User?) {
+    if (user != null) {
+        updateUser(user.copy(type = user.type.toggle()))
+    }
+}
+
+private fun UserDetailViewModel.deleteShow(user: User?, show: Show) {
+    if (user != null) {
+        deleteShow(user, show)
+    }
+}
+
 @Preview
 @Composable
 fun UserDetailContentPreview() {
     UserDetailContent(
-        userWithShows = UserWithShows(
-            User(name = "Bob", type = User.UserType.EXCLUDE),
-            listOf(
-                Show(name = "Dexter"),
-                Show(name = "Breaking Bad")
-            )
+        user = User(name = "Bob", type = User.UserType.EXCLUDE),
+        shows = listOf(
+            Show(name = "Dexter"),
+            Show(name = "Breaking Bad")
         ),
         onUserTypeClick = { },
-        onDeleteShowClick = { _, _ -> }
+        onDeleteShowClick = { }
     )
 }

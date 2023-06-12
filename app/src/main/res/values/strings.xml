@@ -18,6 +18,7 @@
     <string name="app_name">PadApplication</string>
 
     <string name="user_updated">User updated</string>
+    <string name="show_deleted">Show deleted</string>
     <string name="network_error">Network error</string>
     <string name="add_show">Add show</string>
     <string name="user_type_including">Subscribed to shows</string>

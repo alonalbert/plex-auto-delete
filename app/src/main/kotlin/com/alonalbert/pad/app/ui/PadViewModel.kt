@@ -23,9 +23,7 @@ abstract class PadViewModel : ViewModel() {
 
     protected abstract suspend fun refreshData()
 
-    abstract fun setMessage(id: Int)
-
-    abstract fun clearMessage()
+    abstract fun setMessage(id: Int?)
 
     abstract fun setIsLoading(isLoading: Boolean)
 }

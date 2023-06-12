@@ -61,6 +61,6 @@ fun ShowSnackbar(
     val snackbarText = stringResource(message)
     LaunchedEffect(snackbarHostState, viewModel, snackbarText) {
         snackbarHostState.showSnackbar(snackbarText)
-        viewModel.clearMessage()
+        viewModel.setMessage(null)
     }
 }
