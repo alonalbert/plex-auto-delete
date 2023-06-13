@@ -2,6 +2,7 @@ package com.alonalbert.pad.app.data.source.local.database
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.ForeignKey.Companion.CASCADE
 
 @Entity(
     tableName = "user_show",
@@ -10,12 +11,14 @@ import androidx.room.ForeignKey
         ForeignKey(
             entity = LocalUser::class,
             childColumns = ["userId"],
-            parentColumns = ["id"]
+            parentColumns = ["id"],
+            onDelete = CASCADE
         ),
         ForeignKey(
             entity = LocalShow::class,
             childColumns = ["showId"],
-            parentColumns = ["id"]
+            parentColumns = ["id"],
+            onDelete = CASCADE,
         )
     ],
 )

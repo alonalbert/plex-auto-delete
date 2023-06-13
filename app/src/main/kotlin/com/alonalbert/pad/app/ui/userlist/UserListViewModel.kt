@@ -7,7 +7,6 @@ import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.ui.PadViewModel
 import com.alonalbert.pad.app.util.stateIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
@@ -16,11 +15,6 @@ class UserListViewModel @Inject constructor(
     private val repository: Repository,
     application: Application,
 ) : PadViewModel(application) {
-    private val messageFlow: MutableStateFlow<String?> = MutableStateFlow(null)
-    private val isLoadingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
-
-    val messageState: StateFlow<String?> = messageFlow.stateIn(viewModelScope, null)
-    val isLoadingState: StateFlow<Boolean> = isLoadingFlow.stateIn(viewModelScope, false)
     val userListState: StateFlow<List<User>> = repository.getUsersFlow().stateIn(viewModelScope, emptyList())
 
     init {
@@ -29,14 +23,6 @@ class UserListViewModel @Inject constructor(
 
     override suspend fun refreshData() {
         repository.refreshUsers()
-    }
-
-    override fun setIsLoading(isLoading: Boolean) {
-        isLoadingFlow.value = isLoading
-    }
-
-    override fun setMessage(message: String?) {
-        messageFlow.value = message
     }
 }
 

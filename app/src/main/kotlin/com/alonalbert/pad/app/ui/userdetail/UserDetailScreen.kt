@@ -28,14 +28,10 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,56 +46,41 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
+import com.alonalbert.pad.app.ui.components.PadScaffold
 import com.alonalbert.pad.app.ui.components.baselineHeight
-import com.alonalbert.pad.app.util.LoadingContent
-import com.alonalbert.pad.app.util.ShowSnackbar
 import timber.log.Timber
 
 @Composable
 fun UserDetailScreen(
+    onEditShowsClick: (User) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: UserDetailViewModel = hiltViewModel(),
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
 
     val userWithShows by viewModel.userState.collectAsStateWithLifecycle()
-    val message by viewModel.messageState.collectAsStateWithLifecycle()
-    val isLoading by viewModel.isLoadingState.collectAsStateWithLifecycle()
 
-    val user = userWithShows?.user
+    // TODO: Implement empty content
+    val user = userWithShows?.user ?: return
     val shows = userWithShows?.shows ?: emptyList()
 
     val toggleUser = { viewModel.toggleUser(user) }
     val deleteShow = { show: Show -> viewModel.deleteShow(user, show) }
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        modifier = modifier.fillMaxSize(),
+    PadScaffold(
+        viewModel = viewModel,
+        modifier = modifier,
         floatingActionButton = {
-            FloatingActionButton(onClick = { /* todo */ }) {
+            FloatingActionButton(onClick = { onEditShowsClick(user) }) {
                 Icon(Icons.Filled.Add, stringResource(id = R.string.add_show))
             }
         }
-    ) { padding ->
-
-        LoadingContent(
-            isLoading = isLoading || user == null,
-            onRefresh = viewModel::refresh,
-            modifier = modifier.padding(padding)
-        ) {
-            user?.let {
-                UserDetailContent(
-                    user = it,
-                    shows = shows,
-                    onUserTypeClick = toggleUser,
-                    onDeleteShowClick = deleteShow,
-                )
-            }
-        }
-
-        message?.let {
-            ShowSnackbar(snackbarHostState, it, viewModel)
-        }
+    ) {
+        UserDetailContent(
+            user = user,
+            shows = shows,
+            onUserTypeClick = toggleUser,
+            onDeleteShowClick = deleteShow,
+        )
     }
 }
 
@@ -281,12 +262,6 @@ private fun User.UserType.toggle() = when (this) {
 private fun UserDetailViewModel.toggleUser(user: User?) {
     if (user != null) {
         updateUser(user.copy(type = user.type.toggle()))
-    }
-}
-
-private fun UserDetailViewModel.deleteShow(user: User?, show: Show) {
-    if (user != null) {
-        deleteShow(user, show)
     }
 }
 

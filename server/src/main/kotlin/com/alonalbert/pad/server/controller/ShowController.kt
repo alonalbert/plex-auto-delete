@@ -47,7 +47,10 @@ class ShowController(
                         STATEMENTS.forEach {
                             statement.executeQuery(it).use { result ->
                                 while (result.next()) {
-                                    add(result.getString("show"))
+                                    val show = result.getString("show")
+                                    if (show.isNotBlank()) {
+                                        add(show)
+                                    }
                                 }
                             }
                         }

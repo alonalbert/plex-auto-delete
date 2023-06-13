@@ -49,17 +49,9 @@ class DefaultRepository @Inject constructor(
     private val userDao = localDataSource.userDao()
     private val showDao = localDataSource.showDao()
 
-    override fun getUsersFlow(): Flow<List<User>> {
-        return userDao.observeAll().map { users ->
-            users.toExternal()
-        }
-    }
+    override fun getUsersFlow(): Flow<List<User>> = userDao.observeAll().map { it.toExternal() }
 
-    override fun getUserFlow(id: Long): Flow<UserWithShows> {
-        return userDao.observe(id).map {
-            it.toExternal()
-        }
-    }
+    override fun getUserFlow(id: Long): Flow<UserWithShows> = userDao.observe(id).map { it.toExternal() }
 
     override suspend fun updateUser(user: User) {
         withContext(dispatcher) {
@@ -71,7 +63,7 @@ class DefaultRepository @Inject constructor(
     override suspend fun refreshUsers(): List<User> {
         return withContext(dispatcher) {
             val users = networkDataSource.loadUsers()
-            userDao.upsertAll(users.toLocal())
+            userDao.refreshAll(users.toLocal())
             users.toExternal()
         }
     }
@@ -79,8 +71,10 @@ class DefaultRepository @Inject constructor(
     override suspend fun refreshShows(): List<Show> {
         return withContext(dispatcher) {
             val shows = networkDataSource.loadShows()
-            showDao.upsertAll(shows.toLocal())
+            showDao.refreshAll(shows.toLocal())
             shows.toExternal()
         }
     }
+
+    override fun getShowsFlow(): Flow<List<Show>> = showDao.observeAll().map { it.toExternal() }
 }

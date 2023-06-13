@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
@@ -13,13 +12,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -31,9 +26,8 @@ import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.User.UserType.EXCLUDE
 import com.alonalbert.pad.app.data.User.UserType.INCLUDE
+import com.alonalbert.pad.app.ui.components.PadScaffold
 import com.alonalbert.pad.app.ui.theme.MyApplicationTheme
-import com.alonalbert.pad.app.util.LoadingContent
-import com.alonalbert.pad.app.util.ShowSnackbar
 import timber.log.Timber
 
 @Composable
@@ -41,30 +35,17 @@ fun UserListScreen(
     onUserClick: (User) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: UserListViewModel = hiltViewModel(),
-    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 ) {
-    val message by viewModel.messageState.collectAsStateWithLifecycle()
-    val isLoading by viewModel.isLoadingState.collectAsStateWithLifecycle()
     val users by viewModel.userListState.collectAsStateWithLifecycle()
 
-    Scaffold(
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        modifier = modifier.fillMaxSize(),
-    ) { padding ->
-        LoadingContent(
-            isLoading = isLoading,
-            onRefresh = viewModel::refresh,
-            modifier = modifier.padding(padding)
-        ) {
-            UserListScreen(
-                items = users,
-                onUserClick = onUserClick,
-            )
-        }
-
-        message?.let {
-            ShowSnackbar(snackbarHostState, it, viewModel)
-        }
+    PadScaffold(
+        viewModel = viewModel,
+        modifier = modifier,
+    ) {
+        UserListScreen(
+            items = users,
+            onUserClick = onUserClick,
+        )
     }
 }
 

@@ -2,6 +2,7 @@ package com.alonalbert.pad.app.data.source.local.database
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
@@ -19,4 +20,14 @@ interface UserDao {
 
     @Upsert
     suspend fun upsertAll(users: List<LocalUser>)
+
+    @Query("DELETE  FROM user")
+    suspend fun deleteAll()
+
+    @Transaction
+    suspend fun refreshAll(users: List<LocalUser>) {
+        deleteAll()
+        upsertAll(users)
+    }
+
 }

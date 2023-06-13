@@ -20,5 +20,7 @@ interface Repository {
      */
 
     suspend fun refreshShows(): List<Show>
+
+    fun getShowsFlow(): Flow<List<Show>>
 }
 

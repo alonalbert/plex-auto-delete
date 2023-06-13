@@ -12,7 +12,6 @@ import com.alonalbert.pad.app.ui.DestinationsArgs.USER_ID_ARG
 import com.alonalbert.pad.app.ui.PadViewModel
 import com.alonalbert.pad.app.util.stateIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -24,25 +23,12 @@ class UserDetailViewModel @Inject constructor(
     private val application: Application,
     savedStateHandle: SavedStateHandle,
 ) : PadViewModel(application) {
-    private val messageFlow: MutableStateFlow<String?> = MutableStateFlow(null)
-    private val isLoadingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
     private val userId: Long = savedStateHandle[USER_ID_ARG]!!
 
     val userState: StateFlow<UserWithShows?> = repository.getUserFlow(userId).stateIn(viewModelScope, null)
 
-    val messageState: StateFlow<String?> = messageFlow.stateIn(viewModelScope, null)
-    val isLoadingState: StateFlow<Boolean> = isLoadingFlow.stateIn(viewModelScope, false)
-
     init {
         refresh()
-    }
-
-    override fun setMessage(message: String?) {
-        messageFlow.value = message
-    }
-
-    override fun setIsLoading(isLoading: Boolean) {
-        isLoadingFlow.value = isLoading
     }
 
     override suspend fun refreshData() {
