@@ -1,10 +1,11 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 dependencies {
     implementation(libs.jakarta.persistence)
-//    implementation(libs.jakarta.persistence)
+    implementation(libs.kotlinx.serialization.core)
 }
 
 java {

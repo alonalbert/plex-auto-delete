@@ -4,7 +4,9 @@ import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Entity
 data class User(
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
@@ -14,7 +16,7 @@ data class User(
     val type: UserType = UserType.INCLUDE,
 ) {
     enum class UserType {
-         EXCLUDE,
+        EXCLUDE,
         INCLUDE,
     }
 }

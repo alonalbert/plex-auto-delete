@@ -1,5 +1,7 @@
 package com.alonalbert.pad.app.data.source.network
 
+import com.alonalbert.pad.model.Show
+import com.alonalbert.pad.model.User
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -15,6 +17,9 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import timber.log.Timber
 import javax.inject.Inject
+
+typealias NetworkUser = User
+typealias NetworkShow = Show
 
 class KtorNetworkDataSource @Inject constructor() : NetworkDataSource {
     private val server = "http://10.0.0.74:8080/api"

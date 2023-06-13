@@ -14,7 +14,7 @@ hilt = "2.46"
 jakarta-persistence = "3.1.0"
 junit = "4.13.2"
 kotlin = "1.8.21"
-kotlinx-serialization-json = "1.5.1"
+kotlinx-serialization = "1.5.1"
 ksp = "1.8.20-1.0.11"
 ktor = "2.3.1"
 room-runtime = "2.5.1"
@@ -49,7 +49,8 @@ jakarta-persistence = { module = "jakarta.persistence:jakarta.persistence-api", 
 jakarta-validation = { module = "jakarta.validation:jakarta.validation-api" }
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
-kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
+kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }

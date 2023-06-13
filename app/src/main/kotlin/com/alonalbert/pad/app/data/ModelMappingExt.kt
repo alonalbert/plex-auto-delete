@@ -21,8 +21,8 @@ package com.alonalbert.pad.app.data
 import com.alonalbert.pad.app.data.source.local.database.LocalShow
 import com.alonalbert.pad.app.data.source.local.database.LocalUser
 import com.alonalbert.pad.app.data.source.local.database.LocalUserWithShows
-import com.alonalbert.pad.app.data.source.network.NetworkShow
-import com.alonalbert.pad.app.data.source.network.NetworkUser
+import com.alonalbert.pad.model.Show as NetworkShow
+import com.alonalbert.pad.model.User as NetworkUser
 
 /**
  * Data model mapping extension functions. There are three model types:
