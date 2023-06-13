@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-@EntityScan("com.alonalbert.pad")
+@EntityScan("com.alonalbert.pad.*")
 class Server
 
 fun main(args: Array<String>) {
