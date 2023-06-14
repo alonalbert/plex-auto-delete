@@ -6,13 +6,12 @@ androidx-appcompat = "1.6.1"
 androidx-core-ktx = "1.10.1"
 androidx-hilt = "1.0.0"
 androidx-lifecycle = "2.6.1"
-androidx-test-ext-junit = "1.1.5"
 androidx-compose-compiler = "1.4.7"
 androidx-navigation = "2.6.0"
 gson = '2.10'
 hilt = "2.46"
+javax-inject = "1"
 jakarta-persistence = "3.1.0"
-junit = "4.13.2"
 kotlin = "1.8.21"
 kotlinx-serialization = "1.5.1"
 ksp = "1.8.20-1.0.11"
@@ -23,6 +22,7 @@ spring-boot = "3.1.0"
 spring-dependency-management = "1.1.0"
 sqlite = "3.42.0.0"
 timber = "5.0.1"
+material = "1.9.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
@@ -38,16 +38,16 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room-runtime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room-runtime" }
 androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtime-livedata" }
-androidx-test-ext-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-test-ext-junit" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "hilt" }
+javax-inject = { module = "javax.inject:javax.inject", version.ref = "javax-inject" }
 jakarta-persistence = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakarta-persistence" }
 jakarta-validation = { module = "jakarta.validation:jakarta.validation-api" }
-junit = { module = "junit:junit", version.ref = "junit" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
@@ -64,12 +64,11 @@ sqlite-dialect = { module = "org.hibernate.orm:hibernate-community-dialects" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 androidx-compose-ui = { module = "androidx.compose.ui:ui" }
 ui-graphics = { module = "androidx.compose.ui:ui-graphics" }
-ui-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4" }
-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest" }
 androidx-compose-ui-tooling = { module = "androidx.compose.ui:ui-tooling" }
 androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling-preview" }
 androidx-compose-material = { group = "androidx.compose.material", name = "material" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -83,6 +82,7 @@ kotlin-spring = { id = "org.jetbrains.kotlin.plugin.spring", version.ref = "kotl
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 spring-boot = { id = "org.springframework.boot", version.ref = "spring-boot" }
 spring-dependency-management = { id = "io.spring.dependency-management", version.ref = "spring-dependency-management" }
+androidLibrary = { id = "com.android.library", version.ref = "agp" }
 
 [bundles]
 

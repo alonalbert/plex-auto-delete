@@ -14,7 +14,7 @@ android {
 
     defaultConfig {
         applicationId = "com.alonalbert.pad.app"
-        minSdk = 21
+        minSdk = 33
         //noinspection OldTargetApi
         targetSdk = 33
         versionCode = 1
@@ -67,6 +67,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":app:app-data"))
+    implementation(project(":app:app-annotations"))
     implementation(project(":shared"))
 
     val composeBom = platform(libs.androidx.compose.bom)

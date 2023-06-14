@@ -16,5 +16,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Plex Auto Delete"
 include(":app")
+include(":app:app-annotations")
+include(":app:app-data")
 include(":server")
 include(":shared")
