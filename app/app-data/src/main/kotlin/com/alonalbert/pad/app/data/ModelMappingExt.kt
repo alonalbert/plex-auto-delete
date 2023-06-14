@@ -42,67 +42,67 @@ import com.alonalbert.pad.model.User as NetworkUser
  * External to local
  */
 
-fun User.toLocal() = LocalUser(id = id, name = name, plexToken = plexToken, type = type.toLocal())
-fun User.UserType.toLocal() = when (this) {
+internal fun User.toLocal() = LocalUser(id = id, name = name, plexToken = plexToken, type = type.toLocal())
+internal fun User.UserType.toLocal() = when (this) {
     User.UserType.EXCLUDE -> LocalUser.UserType.EXCLUDE
     User.UserType.INCLUDE -> LocalUser.UserType.INCLUDE
 }
 
 @JvmName("externalToLocalUser")
-fun List<User>.toLocal() = map(User::toLocal)
+internal fun List<User>.toLocal() = map(User::toLocal)
 
-fun Show.toLocal() = LocalShow(id = id, name = name)
+internal fun Show.toLocal() = LocalShow(id = id, name = name)
 
 @JvmName("externalToLocalShow")
-fun List<Show>.toLocal() = map(Show::toLocal)
+internal fun List<Show>.toLocal() = map(Show::toLocal)
 
 
 // Local to External
-fun LocalUser.toExternal() = User(id = id, name = name, plexToken = plexToken, type = type.toExternal())
-fun LocalUser.UserType.toExternal() = when (this) {
+internal fun LocalUser.toExternal() = User(id = id, name = name, plexToken = plexToken, type = type.toExternal())
+internal fun LocalUser.UserType.toExternal() = when (this) {
     LocalUser.UserType.EXCLUDE -> User.UserType.EXCLUDE
     LocalUser.UserType.INCLUDE -> User.UserType.INCLUDE
 }
 
-fun LocalShow.toExternal() = Show(id = id, name = name)
-fun LocalUserWithShows.toExternal() = UserWithShows(user = user.toExternal(), shows = shows.toExternal())
+internal fun LocalShow.toExternal() = Show(id = id, name = name)
+internal fun LocalUserWithShows.toExternal() = UserWithShows(user = user.toExternal(), shows = shows.toExternal())
 
 @JvmName("localToExternalUser")
-fun List<LocalUser>.toExternal() = map(LocalUser::toExternal)
+internal fun List<LocalUser>.toExternal() = map(LocalUser::toExternal)
 
 @JvmName("localToExternalShow")
-fun List<LocalShow>.toExternal() = map(LocalShow::toExternal)
+internal fun List<LocalShow>.toExternal() = map(LocalShow::toExternal)
 
 @JvmName("localToExternalUserWithShows")
-fun List<LocalUserWithShows>.toExternal() = map(LocalUserWithShows::toExternal)
+internal fun List<LocalUserWithShows>.toExternal() = map(LocalUserWithShows::toExternal)
 
 // Network to Local
-fun NetworkUser.toLocal() = LocalUser(id = id, name = name, plexToken = plexToken, type = type.toLocal())
-fun NetworkUser.UserType.toLocal() = when (this) {
+internal fun NetworkUser.toLocal() = LocalUser(id = id, name = name, plexToken = plexToken, type = type.toLocal())
+internal fun NetworkUser.UserType.toLocal() = when (this) {
     NetworkUser.UserType.EXCLUDE -> LocalUser.UserType.EXCLUDE
     NetworkUser.UserType.INCLUDE -> LocalUser.UserType.INCLUDE
 }
 
 @JvmName("networkToLocalUser")
-fun List<NetworkUser>.toLocal() = map(NetworkUser::toLocal)
-fun NetworkShow.toLocal() = LocalShow(id = id, name = name)
+internal fun List<NetworkUser>.toLocal() = map(NetworkUser::toLocal)
+internal fun NetworkShow.toLocal() = LocalShow(id = id, name = name)
 
 @JvmName("networkToLocalShow")
-fun List<NetworkShow>.toLocal() = map(NetworkShow::toLocal)
+internal fun List<NetworkShow>.toLocal() = map(NetworkShow::toLocal)
 
 // Local to Network
-fun LocalUser.toNetwork() = NetworkUser(id = id, name = name, plexToken = plexToken, type = type.toNetwork())
-fun LocalUser.UserType.toNetwork() = when (this) {
+internal fun LocalUser.toNetwork() = NetworkUser(id = id, name = name, plexToken = plexToken, type = type.toNetwork())
+internal fun LocalUser.UserType.toNetwork() = when (this) {
     LocalUser.UserType.EXCLUDE -> NetworkUser.UserType.EXCLUDE
     LocalUser.UserType.INCLUDE -> NetworkUser.UserType.INCLUDE
 }
 
 @JvmName("localToNetworkUser")
-fun List<LocalUser>.toNetwork() = map(LocalUser::toNetwork)
-fun LocalShow.toNetwork() = NetworkShow(id = id, name = name)
+internal fun List<LocalUser>.toNetwork() = map(LocalUser::toNetwork)
+internal fun LocalShow.toNetwork() = NetworkShow(id = id, name = name)
 
 @JvmName("localToNetworkShow")
-fun List<LocalShow>.toNetwork() = map(LocalShow::toNetwork)
+internal fun List<LocalShow>.toNetwork() = map(LocalShow::toNetwork)
 
 
 // External to Network

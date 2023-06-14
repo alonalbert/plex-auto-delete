@@ -1,10 +1,12 @@
-package com.alonalbert.pad.app.di
+package com.alonalbert.pad.app.data.di
 
 import android.content.Context
 import androidx.room.Room
 import com.alonalbert.pad.app.data.DefaultRepository
 import com.alonalbert.pad.app.data.Repository
 import com.alonalbert.pad.app.data.source.local.database.AppDatabase
+import com.alonalbert.pad.app.data.source.local.database.LocalDataSource
+import com.alonalbert.pad.app.data.source.local.database.RoomLocalDataSource
 import com.alonalbert.pad.app.data.source.local.database.UserDao
 import com.alonalbert.pad.app.data.source.network.KtorNetworkDataSource
 import com.alonalbert.pad.app.data.source.network.NetworkDataSource
@@ -18,7 +20,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
+internal abstract class RepositoryModule {
 
     @Singleton
     @Binds
@@ -27,16 +29,20 @@ abstract class RepositoryModule {
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class DataSourceModule {
+internal abstract class DataSourceModule {
 
     @Singleton
     @Binds
     abstract fun bindNetworkDataSource(dataSource: KtorNetworkDataSource): NetworkDataSource
+
+    @Singleton
+    @Binds
+    abstract fun bindLocalDataSource(dataSource: RoomLocalDataSource): LocalDataSource
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
-object DatabaseModule {
+internal object DatabaseModule {
 
     @Singleton
     @Provides

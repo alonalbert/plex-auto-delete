@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "user")
-data class LocalUser(
+internal data class LocalUser(
     @PrimaryKey val id: Long = 0,
     val name: String = "",
     val plexToken: String? = null,

@@ -1,7 +1,8 @@
 package com.alonalbert.pad.app.data.source.network
 
-import com.alonalbert.pad.model.Show
-import com.alonalbert.pad.model.User
+import com.alonalbert.pad.app.data.User
+import com.alonalbert.pad.app.data.toExternal
+import com.alonalbert.pad.app.data.toNetwork
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -17,18 +18,18 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import timber.log.Timber
 import javax.inject.Inject
+import com.alonalbert.pad.model.Show as NetworkShow
+import com.alonalbert.pad.model.User as NetworkUser
 
-typealias NetworkUser = User
-typealias NetworkShow = Show
 
-class KtorNetworkDataSource @Inject constructor() : NetworkDataSource {
+internal class KtorNetworkDataSource @Inject constructor() : NetworkDataSource {
     private val server = "http://10.0.0.74:8080/api"
 
-    override suspend fun loadUsers() = get<List<NetworkUser>>("${server}/users")
+    override suspend fun loadUsers() = get<List<NetworkUser>>("${server}/users").toExternal()
 
-    override suspend fun updateUser(user: NetworkUser) = put<NetworkUser>("${server}/users/${user.id}", user)
+    override suspend fun updateUser(user: User) = put<NetworkUser>("${server}/users/${user.id}", user.toNetwork()).toExternal()
 
-    override suspend fun loadShows() = get<List<NetworkShow>>("${server}/shows")
+    override suspend fun loadShows() = get<List<NetworkShow>>("${server}/shows").toExternal()
 
     private fun httpClient() = HttpClient(Android) {
         install(Logging) {

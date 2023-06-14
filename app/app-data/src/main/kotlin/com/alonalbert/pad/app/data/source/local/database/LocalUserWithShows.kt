@@ -4,7 +4,7 @@ import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
 
-data class LocalUserWithShows(
+internal data class LocalUserWithShows(
     @Embedded val user: LocalUser,
     @Relation(
         parentColumn = "id",

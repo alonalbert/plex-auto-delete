@@ -16,14 +16,13 @@
 
 package com.alonalbert.pad.app.data
 
-import com.alonalbert.pad.app.data.source.local.database.AppDatabase
+import com.alonalbert.pad.app.data.source.local.database.LocalDataSource
 import com.alonalbert.pad.app.data.source.network.NetworkDataSource
 import com.alonalbert.pad.app.di.ApplicationScope
 import com.alonalbert.pad.app.di.DefaultDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -39,42 +38,39 @@ import javax.inject.Singleton
  * as sending data to the network.
  */
 @Singleton
-class DefaultRepository @Inject constructor(
+internal class DefaultRepository @Inject constructor(
     private val networkDataSource: NetworkDataSource,
-    private val localDataSource: AppDatabase,
+    private val localDataSource: LocalDataSource,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
     @ApplicationScope private val scope: CoroutineScope,
 ) : Repository {
 
-    private val userDao = localDataSource.userDao()
-    private val showDao = localDataSource.showDao()
+    override fun getUsersFlow(): Flow<List<User>> = localDataSource.getUsersFlow()
 
-    override fun getUsersFlow(): Flow<List<User>> = userDao.observeAll().map { it.toExternal() }
-
-    override fun getUserFlow(id: Long): Flow<UserWithShows> = userDao.observe(id).map { it.toExternal() }
+    override fun getUserFlow(id: Long): Flow<UserWithShows> = localDataSource.getUserFlow(id)
 
     override suspend fun updateUser(user: User) {
         withContext(dispatcher) {
-            val updated = networkDataSource.updateUser(user.toNetwork())
-            userDao.update(updated.toLocal())
+            val updated = networkDataSource.updateUser(user)
+            localDataSource.updateUser(updated)
         }
     }
 
     override suspend fun refreshUsers(): List<User> {
         return withContext(dispatcher) {
-            val users = networkDataSource.loadUsers()
-            userDao.refreshAll(users.toLocal())
-            users.toExternal()
+            networkDataSource.loadUsers().also {
+                localDataSource.refreshUsers(it)
+            }
         }
     }
 
     override suspend fun refreshShows(): List<Show> {
         return withContext(dispatcher) {
-            val shows = networkDataSource.loadShows()
-            showDao.refreshAll(shows.toLocal())
-            shows.toExternal()
+            networkDataSource.loadShows().also {
+                localDataSource.refreshShows(it)
+            }
         }
     }
 
-    override fun getShowsFlow(): Flow<List<Show>> = showDao.observeAll().map { it.toExternal() }
+    override fun getShowsFlow(): Flow<List<Show>> = localDataSource.getShowsFlow()
 }

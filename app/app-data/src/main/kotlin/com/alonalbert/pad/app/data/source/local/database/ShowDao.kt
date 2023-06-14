@@ -7,7 +7,7 @@ import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface ShowDao {
+internal interface ShowDao {
     @Query("SELECT * FROM show ORDER BY name")
     fun observeAll(): Flow<List<LocalShow>>
 

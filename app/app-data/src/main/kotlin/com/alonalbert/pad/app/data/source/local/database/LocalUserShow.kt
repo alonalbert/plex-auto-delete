@@ -22,7 +22,7 @@ import androidx.room.ForeignKey.Companion.CASCADE
         )
     ],
 )
-data class LocalUserShow(
+internal data class LocalUserShow(
     val userId: Long = 0,
     val showId: Long = 0,
 )
