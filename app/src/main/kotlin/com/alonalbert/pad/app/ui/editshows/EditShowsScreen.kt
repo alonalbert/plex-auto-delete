@@ -4,19 +4,30 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.FloatingActionButton
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.ui.components.PadScaffold
 import timber.log.Timber
@@ -26,32 +37,67 @@ fun EditShowsScreen(
     modifier: Modifier = Modifier,
     viewModel: EditShowsViewModel = hiltViewModel(),
 ) {
-    val shows by viewModel.showListState.collectAsStateWithLifecycle()
+    val allShows by viewModel.showListState.collectAsStateWithLifecycle()
+    val userWithShows by viewModel.userState.collectAsStateWithLifecycle()
+
+    val user = userWithShows?.user ?: return
+    val userShows = userWithShows?.shows ?: return
+    val itemSelectionStates = allShows.associate { it.id to userShows.contains(it) }.toMutableMap()
+
+    val onSaveClick = {
+        val selectedShowIds = itemSelectionStates.filter { it.value }.map { it.key }
+        val showMap = allShows.associateBy { it.id }
+        Timber.d("Save user ${user.name}")
+        selectedShowIds.map { showMap[it]?.name }.forEach {
+            Timber.d("   $it")
+        }
+    }
 
     PadScaffold(
         viewModel = viewModel,
+        floatingActionButton = {
+            FloatingActionButton(onClick = onSaveClick) {
+                Icon(Icons.Filled.Done, stringResource(id = R.string.save))
+            }
+        },
         modifier = modifier
     ) {
-        ShowPickerContent(shows)
+        ShowPickerContent(allShows, itemSelectionStates)
     }
 }
 
 @Composable
-private fun ShowPickerContent(shows: List<Show>) {
+private fun ShowPickerContent(allShows: List<Show>, itemSelectionStates: MutableMap<Long, Boolean>) {
     LazyColumn {
-        shows.forEach {
-            item {
-                ShowCard(show = it)
+        items(
+            items = allShows,
+            key = { it.id }
+        ) {
+            var isSelected by rememberSaveable { mutableStateOf(itemSelectionStates.getOrDefault(it.id, false)) }
+            val onClick = {
+                isSelected = !isSelected
+                itemSelectionStates[it.id] = isSelected
             }
+            ShowCard(it, isSelected, onClick)
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ShowCard(show: Show) {
+private fun ShowCard(
+    show: Show,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    val color = when (isSelected) {
+        true -> MaterialTheme.colorScheme.primaryContainer
+        false -> Color.White
+    }
     Card(
+        onClick = onClick,
         shape = RoundedCornerShape(4.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+        colors = CardDefaults.cardColors(containerColor = color),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
         border = BorderStroke(1.dp, Color.Blue),
         modifier = Modifier
@@ -70,5 +116,5 @@ private fun ShowCard(show: Show) {
 @Preview
 @Composable
 fun ShowPickerContentPreview() {
-    ShowPickerContent(shows = List(20) { Show(name = "Show $it") })
+    ShowPickerContent(allShows = List(10) { Show(name = "Show $it") }, mutableMapOf())
 }

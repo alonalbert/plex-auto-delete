@@ -20,7 +20,7 @@ import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -71,7 +71,7 @@ fun UserDetailScreen(
         modifier = modifier,
         floatingActionButton = {
             FloatingActionButton(onClick = { onEditShowsClick(user) }) {
-                Icon(Icons.Filled.Add, stringResource(id = R.string.add_show))
+                Icon(Icons.Filled.Edit, stringResource(id = R.string.add_show))
             }
         }
     ) {
