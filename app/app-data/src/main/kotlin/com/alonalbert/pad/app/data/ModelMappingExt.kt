@@ -42,7 +42,7 @@ import com.alonalbert.pad.model.User as NetworkUser
  * External to local
  */
 
-internal fun User.toLocal() = LocalUser(id = id, name = name, plexToken = plexToken, type = type.toLocal())
+internal fun User.toLocal() = LocalUser(id = id, name = name, plexToken = plexToken, type = type.toLocal(), shows.toLocal())
 internal fun User.UserType.toLocal() = when (this) {
     User.UserType.EXCLUDE -> LocalUser.UserType.EXCLUDE
     User.UserType.INCLUDE -> LocalUser.UserType.INCLUDE
@@ -58,7 +58,7 @@ internal fun List<Show>.toLocal() = map(Show::toLocal)
 
 
 // Local to External
-internal fun LocalUser.toExternal() = User(id = id, name = name, plexToken = plexToken, type = type.toExternal())
+internal fun LocalUser.toExternal() = User(id = id, name = name, plexToken = plexToken, type = type.toExternal(), shows.toExternal())
 internal fun LocalUser.UserType.toExternal() = when (this) {
     LocalUser.UserType.EXCLUDE -> User.UserType.EXCLUDE
     LocalUser.UserType.INCLUDE -> User.UserType.INCLUDE
@@ -77,7 +77,7 @@ internal fun List<LocalShow>.toExternal() = map(LocalShow::toExternal)
 internal fun List<LocalUserWithShows>.toExternal() = map(LocalUserWithShows::toExternal)
 
 // Network to Local
-internal fun NetworkUser.toLocal() = LocalUser(id = id, name = name, plexToken = plexToken, type = type.toLocal())
+internal fun NetworkUser.toLocal() = LocalUser(id = id, name = name, plexToken = plexToken, type = type.toLocal(), shows.toLocal())
 internal fun NetworkUser.UserType.toLocal() = when (this) {
     NetworkUser.UserType.EXCLUDE -> LocalUser.UserType.EXCLUDE
     NetworkUser.UserType.INCLUDE -> LocalUser.UserType.INCLUDE
@@ -91,7 +91,7 @@ internal fun NetworkShow.toLocal() = LocalShow(id = id, name = name)
 internal fun List<NetworkShow>.toLocal() = map(NetworkShow::toLocal)
 
 // Local to Network
-internal fun LocalUser.toNetwork() = NetworkUser(id = id, name = name, plexToken = plexToken, type = type.toNetwork())
+internal fun LocalUser.toNetwork() = NetworkUser(id = id, name = name, plexToken = plexToken, type = type.toNetwork(), shows.toNetwork())
 internal fun LocalUser.UserType.toNetwork() = when (this) {
     LocalUser.UserType.EXCLUDE -> NetworkUser.UserType.EXCLUDE
     LocalUser.UserType.INCLUDE -> NetworkUser.UserType.INCLUDE

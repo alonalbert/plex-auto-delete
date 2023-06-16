@@ -26,7 +26,6 @@ internal interface UserDao {
 
     @Transaction
     suspend fun refreshAll(users: List<LocalUser>) {
-        deleteAll()
         upsertAll(users)
     }
 

@@ -38,10 +38,14 @@ dependencies {
     // Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.javax.inject)
+//    testImplementation(libs.androidx.test.core.ktx)
+//    testImplementation(libs.androidx.test.ext)
+//    testImplementation(libs.androidx.test.rules)
 
     // Room
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
+//    testImplementation(libs.androidx.room.testing)
 
     // Ktor
     implementation(libs.ktor.client.android)
@@ -57,4 +61,6 @@ dependencies {
     implementation(libs.hilt.android)
     kapt(libs.hilt.compiler)
 
+    // Junit
+//    testImplementation(libs.junit4)
 }

@@ -8,21 +8,27 @@ androidx-hilt = "1.0.0"
 androidx-lifecycle = "2.6.1"
 androidx-compose-compiler = "1.4.7"
 androidx-navigation = "2.6.0"
+androidx-room = "2.5.1"
+androidx-test-core = "1.5.0"
+androidx-test-rules = "1.5.0"
+androidx-test-ext = "1.1.5"
 gson = '2.10'
 hilt = "2.46"
 javax-inject = "1"
 jakarta-persistence = "3.1.0"
+junit4 = "4.13.2"
 kotlin = "1.8.21"
 kotlinx-serialization = "1.5.1"
 ksp = "1.8.20-1.0.11"
 ktor = "2.3.1"
-room-runtime = "2.5.1"
 runtime-livedata = "1.4.3"
 spring-boot = "3.1.0"
 spring-dependency-management = "1.1.0"
 sqlite = "3.42.0.0"
 timber = "5.0.1"
 material = "1.9.0"
+junit = "1.1.5"
+espresso-core = "3.5.1"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity-compose" }
@@ -34,10 +40,14 @@ androidx-lifecycle-runtime-ktx = { module = "androidx.lifecycle:lifecycle-runtim
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version.ref = "androidx-lifecycle" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
-androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room-runtime" }
-androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "room-runtime" }
-androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room-runtime" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidx-room" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
+androidx-room-testing = { module = "androidx.room:room-testing", version.ref = "androidx-room" }
 androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtime-livedata" }
+androidx-test-core-ktx = { group = "androidx.test", name = "core-ktx", version.ref = "androidx-test-core" }
+androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidx-test-ext" }
+androidx-test-rules = { group = "androidx.test", name = "rules", version.ref = "androidx-test-rules" }
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core-ktx" }
 androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "androidx-compose-bom" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
@@ -48,6 +58,7 @@ hilt-core = { module = "com.google.dagger:hilt-core", version.ref = "hilt" }
 javax-inject = { module = "javax.inject:javax.inject", version.ref = "javax-inject" }
 jakarta-persistence = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakarta-persistence" }
 jakarta-validation = { module = "jakarta.validation:jakarta.validation-api" }
+junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
@@ -69,6 +80,8 @@ androidx-compose-ui-tooling-preview = { module = "androidx.compose.ui:ui-tooling
 androidx-compose-material = { group = "androidx.compose.material", name = "material" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

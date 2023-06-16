@@ -22,7 +22,7 @@ internal interface ShowDao {
 
     @Transaction
     suspend fun refreshAll(shows: List<LocalShow>) {
-        deleteAll()
+        // todo: delete old shows?
         upsertAll(shows)
     }
 }
