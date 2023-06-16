@@ -7,4 +7,5 @@ import androidx.room.RoomDatabase
 internal abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
     abstract fun showDao(): ShowDao
+    abstract fun userShowDao(): UserShowDao
 }

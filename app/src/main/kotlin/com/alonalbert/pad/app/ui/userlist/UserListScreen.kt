@@ -103,9 +103,10 @@ private fun UserCard(user: User, onUserClick: (User) -> Unit) {
     }
 }
 
+@Composable
 private fun User.displayType() = when (type) {
-    EXCLUDE -> "Excludes 0 shows"
-    INCLUDE -> "Includes 0 shows"
+    EXCLUDE -> stringResource(R.string.excludes_shows, shows.size)
+    INCLUDE -> stringResource(R.string.includes_shows, shows.size)
 }
 
 // Previews

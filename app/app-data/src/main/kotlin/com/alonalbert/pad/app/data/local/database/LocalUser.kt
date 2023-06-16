@@ -33,6 +33,7 @@ internal data class LocalUser(
         INCLUDE,
     }
 
+    @Suppress("unused")
     constructor(
         id: Long,
         name: String,
