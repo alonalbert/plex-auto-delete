@@ -1,6 +1,7 @@
 package com.alonalbert.pad.app.ui.editshows
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -70,7 +71,11 @@ fun EditShowsScreen(
 
 @Composable
 private fun ShowPickerContent(allShows: List<Show>, itemSelectionStates: MutableMap<Long, Boolean>) {
-    LazyColumn {
+    LazyColumn(
+        modifier = Modifier
+            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary), RoundedCornerShape(4.dp))
+            .padding(8.dp)
+    ) {
         items(
             items = allShows,
             key = { it.id }
@@ -101,7 +106,7 @@ private fun ShowCard(
         shape = RoundedCornerShape(4.dp),
         colors = CardDefaults.cardColors(containerColor = color),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-        border = BorderStroke(1.dp, Color.Blue),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp)
@@ -118,5 +123,5 @@ private fun ShowCard(
 @Preview
 @Composable
 fun ShowPickerContentPreview() {
-    ShowPickerContent(allShows = List(10) { Show(name = "Show $it") }, mutableMapOf())
+    ShowPickerContent(allShows = List(10) { Show(name = "Show $it", id = it.toLong()) }, mutableMapOf())
 }

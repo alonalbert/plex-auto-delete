@@ -1,6 +1,7 @@
 package com.alonalbert.pad.app.ui.userdetail
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.FloatingActionButton
@@ -35,7 +37,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -208,14 +209,16 @@ fun ShowsList(shows: List<Show>, onDeleteShowClick: (Show) -> Unit) {
                 .padding(vertical = 8.dp)
         )
 
-        LazyColumn {
-            shows.forEach {
-                item {
-                    ShowCard(
-                        show = it,
-                        onDeleteShowClick = onDeleteShowClick,
-                    )
-                }
+        LazyColumn(
+            Modifier
+                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary), RoundedCornerShape(4.dp))
+                .padding(8.dp)
+        ) {
+            items(shows) {
+                ShowCard(
+                    show = it,
+                    onDeleteShowClick = onDeleteShowClick,
+                )
             }
         }
     }
@@ -227,7 +230,7 @@ private fun ShowCard(show: Show, onDeleteShowClick: (Show) -> Unit) {
         shape = RoundedCornerShape(4.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-        border = BorderStroke(1.dp, Color.Blue),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
         modifier = Modifier
             .fillMaxWidth()
             .padding(4.dp)
