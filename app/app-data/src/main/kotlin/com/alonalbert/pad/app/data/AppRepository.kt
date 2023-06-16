@@ -38,7 +38,7 @@ import javax.inject.Singleton
  * as sending data to the network.
  */
 @Singleton
-internal class DefaultRepository @Inject constructor(
+internal class AppRepository @Inject constructor(
     private val networkDataSource: NetworkDataSource,
     private val localDataSource: LocalDataSource,
     @DefaultDispatcher private val dispatcher: CoroutineDispatcher,

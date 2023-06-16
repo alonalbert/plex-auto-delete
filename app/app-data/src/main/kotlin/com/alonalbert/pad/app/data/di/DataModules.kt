@@ -2,7 +2,7 @@ package com.alonalbert.pad.app.data.di
 
 import android.content.Context
 import androidx.room.Room
-import com.alonalbert.pad.app.data.DefaultRepository
+import com.alonalbert.pad.app.data.AppRepository
 import com.alonalbert.pad.app.data.Repository
 import com.alonalbert.pad.app.data.local.database.AppDatabase
 import com.alonalbert.pad.app.data.local.database.LocalDataSource
@@ -24,7 +24,7 @@ internal abstract class RepositoryModule {
 
     @Singleton
     @Binds
-    abstract fun bindRepository(repository: DefaultRepository): Repository
+    abstract fun bindRepository(repository: AppRepository): Repository
 }
 
 @Module
