@@ -16,8 +16,8 @@
 
 package com.alonalbert.pad.app.data
 
-import com.alonalbert.pad.app.data.source.local.database.LocalDataSource
-import com.alonalbert.pad.app.data.source.network.NetworkDataSource
+import com.alonalbert.pad.app.data.local.database.LocalDataSource
+import com.alonalbert.pad.app.data.network.NetworkDataSource
 import com.alonalbert.pad.app.di.ApplicationScope
 import com.alonalbert.pad.app.di.DefaultDispatcher
 import kotlinx.coroutines.CoroutineDispatcher

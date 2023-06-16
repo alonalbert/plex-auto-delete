@@ -1,4 +1,4 @@
-package com.alonalbert.pad.app.data.source.network
+package com.alonalbert.pad.app.data.network
 
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.toExternal

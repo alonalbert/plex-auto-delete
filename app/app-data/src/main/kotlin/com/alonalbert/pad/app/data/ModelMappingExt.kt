@@ -18,9 +18,9 @@
 
 package com.alonalbert.pad.app.data
 
-import com.alonalbert.pad.app.data.source.local.database.LocalShow
-import com.alonalbert.pad.app.data.source.local.database.LocalUser
-import com.alonalbert.pad.app.data.source.local.database.LocalUserWithShows
+import com.alonalbert.pad.app.data.local.database.LocalShow
+import com.alonalbert.pad.app.data.local.database.LocalUser
+import com.alonalbert.pad.app.data.local.database.LocalUserWithShows
 import com.alonalbert.pad.model.Show as NetworkShow
 import com.alonalbert.pad.model.User as NetworkUser
 

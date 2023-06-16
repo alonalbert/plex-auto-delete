@@ -1,4 +1,4 @@
-package com.alonalbert.pad.app.data.source.local.database
+package com.alonalbert.pad.app.data.local.database
 
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
