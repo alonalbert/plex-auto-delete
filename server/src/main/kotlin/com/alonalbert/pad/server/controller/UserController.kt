@@ -37,7 +37,7 @@ class UserController(
         updateUsersFromPlex()
         return userRepository.findById(id).map { existing ->
             val updated = existing
-                .copy(name = value.name, type = value.type, plexToken = value.plexToken)
+                .copy(name = value.name, type = value.type, plexToken = value.plexToken, shows = value.shows)
             ResponseEntity.ok().body(userRepository.save(updated))
         }.orElse(ResponseEntity.notFound().build())
 

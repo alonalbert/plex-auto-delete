@@ -21,10 +21,18 @@ internal class RoomLocalDataSource @Inject constructor(
 
     override fun getUserFlow(id: Long): Flow<User> = userDao.observe(id).map { it.toExternal() }
 
-    override suspend fun updateUser(user: User) = userDao.update(user.toLocal())
+    override suspend fun updateUser(user: User) {
+        database.withTransaction {
+            // todo: Check is cascade works
+            userDao.update(user.toLocal())
+            val userShows = user.shows.map { show -> LocalUserShow(user.id, show.id) }
+            useShowDao.update(userShows)
+        }
+    }
 
     override suspend fun refreshUsers(users: List<User>) {
         database.withTransaction {
+            // todo: Check is cascade works
             userDao.upsertAll(users.toLocal())
             val userShows = users.flatMap { user -> user.shows.map { show -> LocalUserShow(user.id, show.id) } }
             useShowDao.update(userShows)

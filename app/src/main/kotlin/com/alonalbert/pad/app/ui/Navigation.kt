@@ -39,7 +39,7 @@ fun MainNavigation() {
             "editShows/{$USER_ID_ARG}",
             arguments = listOf(navArgument(USER_ID_ARG) { type = NavType.LongType }),
         ) {
-            EditShowsScreen()
+            EditShowsScreen(navController = navController)
         }
     }
 }

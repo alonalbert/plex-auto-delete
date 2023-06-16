@@ -106,8 +106,8 @@ private fun UserCard(user: User, onUserClick: (User) -> Unit) {
 
 @Composable
 private fun User.displayType() = when (type) {
-    EXCLUDE -> pluralStringResource(id = R.plurals.excludes_shows, count = shows.size)
-    INCLUDE -> pluralStringResource(id = R.plurals.includes_shows, count = shows.size)
+    EXCLUDE -> pluralStringResource(id = R.plurals.excludes_shows, count = shows.size, shows.size)
+    INCLUDE -> pluralStringResource(id = R.plurals.includes_shows, count = shows.size, shows.size)
 }
 
 // Previews

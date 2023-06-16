@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.ui.components.PadScaffold
@@ -35,6 +36,7 @@ import timber.log.Timber
 @Composable
 fun EditShowsScreen(
     modifier: Modifier = Modifier,
+    navController: NavHostController,
     viewModel: EditShowsViewModel = hiltViewModel(),
 ) {
     val allShows by viewModel.showListState.collectAsStateWithLifecycle()
@@ -45,13 +47,11 @@ fun EditShowsScreen(
         val userShows = userState?.shows ?: return
         val itemSelectionStates = allShows.associate { it.id to userShows.contains(it) }.toMutableMap()
 
-        val onSaveClick = {
-            val selectedShowIds = itemSelectionStates.filter { it.value }.map { it.key }
+        val onSaveClick: () -> Unit = {
             val showMap = allShows.associateBy { it.id }
-            Timber.d("Save user ${user.name}")
-            selectedShowIds.map { showMap[it]?.name }.forEach {
-                Timber.d("   $it")
-            }
+            val shows = itemSelectionStates.filter { it.value }.mapNotNull { showMap[it.key] }
+            viewModel.updateUser(user.copy(shows = shows))
+            navController.popBackStack()
         }
 
         PadScaffold(

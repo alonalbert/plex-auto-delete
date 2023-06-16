@@ -3,6 +3,7 @@ package com.alonalbert.pad.app.ui.editshows
 import android.app.Application
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
+import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.Repository
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
@@ -16,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditShowsViewModel @Inject constructor(
     private val repository: Repository,
-    application: Application,
+    private val application: Application,
     savedStateHandle: SavedStateHandle,
 ) : PadViewModel(application) {
 
@@ -27,5 +28,11 @@ class EditShowsViewModel @Inject constructor(
 
     override suspend fun refreshData() {
         repository.refreshShows()
+    }
+
+    fun updateUser(user: User) {
+        return repository.doUpdate(okMessage = application.getString(R.string.saved_shows)) {
+            updateUser(user)
+        }
     }
 }
