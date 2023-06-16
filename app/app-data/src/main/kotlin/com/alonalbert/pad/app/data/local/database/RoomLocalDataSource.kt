@@ -4,7 +4,6 @@ import androidx.room.withTransaction
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.UserShow
-import com.alonalbert.pad.app.data.UserWithShows
 import com.alonalbert.pad.app.data.mapping.ExternalToLocal.toLocal
 import com.alonalbert.pad.app.data.mapping.LocalToExternal.toExternal
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +19,7 @@ internal class RoomLocalDataSource @Inject constructor(
 
     override fun getUsersFlow(): Flow<List<User>> = userDao.observeAll().map { it.toExternal() }
 
-    override fun getUserFlow(id: Long): Flow<UserWithShows> = userDao.observe(id).map { it.toExternal() }
+    override fun getUserFlow(id: Long): Flow<User> = userDao.observe(id).map { it.toExternal() }
 
     override suspend fun updateUser(user: User) = userDao.update(user.toLocal())
 

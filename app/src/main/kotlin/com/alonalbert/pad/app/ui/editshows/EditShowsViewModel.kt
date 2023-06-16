@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.alonalbert.pad.app.data.Repository
 import com.alonalbert.pad.app.data.Show
-import com.alonalbert.pad.app.data.UserWithShows
+import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.ui.DestinationsArgs
 import com.alonalbert.pad.app.ui.PadViewModel
 import com.alonalbert.pad.app.util.stateIn
@@ -23,7 +23,7 @@ class EditShowsViewModel @Inject constructor(
     private val userId: Long = savedStateHandle[DestinationsArgs.USER_ID_ARG]!!
 
     val showListState: StateFlow<List<Show>> = repository.getShowsFlow().stateIn(viewModelScope, emptyList())
-    val userState: StateFlow<UserWithShows?> = repository.getUserFlow(userId).stateIn(viewModelScope, null)
+    val userState: StateFlow<User?> = repository.getUserFlow(userId).stateIn(viewModelScope, null)
 
     override suspend fun refreshData() {
         repository.refreshShows()

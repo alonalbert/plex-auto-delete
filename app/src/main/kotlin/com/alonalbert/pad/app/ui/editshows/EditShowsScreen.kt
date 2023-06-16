@@ -38,31 +38,33 @@ fun EditShowsScreen(
     viewModel: EditShowsViewModel = hiltViewModel(),
 ) {
     val allShows by viewModel.showListState.collectAsStateWithLifecycle()
-    val userWithShows by viewModel.userState.collectAsStateWithLifecycle()
+    val userState by viewModel.userState.collectAsStateWithLifecycle()
 
-    val user = userWithShows?.user ?: return
-    val userShows = userWithShows?.shows ?: return
-    val itemSelectionStates = allShows.associate { it.id to userShows.contains(it) }.toMutableMap()
+    // todo: Handle better
+    userState?.let { user ->
+        val userShows = userState?.shows ?: return
+        val itemSelectionStates = allShows.associate { it.id to userShows.contains(it) }.toMutableMap()
 
-    val onSaveClick = {
-        val selectedShowIds = itemSelectionStates.filter { it.value }.map { it.key }
-        val showMap = allShows.associateBy { it.id }
-        Timber.d("Save user ${user.name}")
-        selectedShowIds.map { showMap[it]?.name }.forEach {
-            Timber.d("   $it")
-        }
-    }
-
-    PadScaffold(
-        viewModel = viewModel,
-        floatingActionButton = {
-            FloatingActionButton(onClick = onSaveClick) {
-                Icon(Icons.Filled.Done, stringResource(id = R.string.save))
+        val onSaveClick = {
+            val selectedShowIds = itemSelectionStates.filter { it.value }.map { it.key }
+            val showMap = allShows.associateBy { it.id }
+            Timber.d("Save user ${user.name}")
+            selectedShowIds.map { showMap[it]?.name }.forEach {
+                Timber.d("   $it")
             }
-        },
-        modifier = modifier
-    ) {
-        ShowPickerContent(allShows, itemSelectionStates)
+        }
+
+        PadScaffold(
+            viewModel = viewModel,
+            floatingActionButton = {
+                FloatingActionButton(onClick = onSaveClick) {
+                    Icon(Icons.Filled.Done, stringResource(id = R.string.save))
+                }
+            },
+            modifier = modifier
+        ) {
+            ShowPickerContent(allShows, itemSelectionStates)
+        }
     }
 }
 

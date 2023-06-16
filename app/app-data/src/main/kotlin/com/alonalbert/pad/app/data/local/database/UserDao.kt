@@ -15,7 +15,9 @@ internal interface UserDao {
     fun observeAll(): Flow<List<LocalUser>> = observeAllUsersWithShow().map { list -> list.map { it.toLocalUser() } }
 
     @Query("SELECT * FROM user WHERE id = :id")
-    fun observe(id: Long): Flow<LocalUserWithShows>
+    fun observeUserWithShow(id: Long): Flow<LocalUserWithShows>
+
+    fun observe(id: Long): Flow<LocalUser> = observeUserWithShow(id).map { it.copy(shows = it.shows).toLocalUser() }
 
     @Update
     suspend fun update(user: LocalUser)

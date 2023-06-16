@@ -57,30 +57,29 @@ fun UserDetailScreen(
     viewModel: UserDetailViewModel = hiltViewModel(),
 ) {
 
-    val userWithShows by viewModel.userState.collectAsStateWithLifecycle()
+    val userState by viewModel.userState.collectAsStateWithLifecycle()
 
     // TODO: Implement empty content
-    val user = userWithShows?.user ?: return
-    val shows = userWithShows?.shows ?: emptyList()
+    userState?.let { user ->
+        val toggleUser = { viewModel.toggleUser(userState) }
+        val deleteShow = { show: Show -> viewModel.deleteShow(user, show) }
 
-    val toggleUser = { viewModel.toggleUser(user) }
-    val deleteShow = { show: Show -> viewModel.deleteShow(user, show) }
-
-    PadScaffold(
-        viewModel = viewModel,
-        modifier = modifier,
-        floatingActionButton = {
-            FloatingActionButton(onClick = { onEditShowsClick(user) }) {
-                Icon(Icons.Filled.Edit, stringResource(id = R.string.add_show))
+        PadScaffold(
+            viewModel = viewModel,
+            modifier = modifier,
+            floatingActionButton = {
+                FloatingActionButton(onClick = { onEditShowsClick(user) }) {
+                    Icon(Icons.Filled.Edit, stringResource(id = R.string.add_show))
+                }
             }
+        ) {
+            UserDetailContent(
+                user = user,
+                shows = user.shows,
+                onUserTypeClick = toggleUser,
+                onDeleteShowClick = deleteShow,
+            )
         }
-    ) {
-        UserDetailContent(
-            user = user,
-            shows = shows,
-            onUserTypeClick = toggleUser,
-            onDeleteShowClick = deleteShow,
-        )
     }
 }
 

@@ -3,13 +3,12 @@ package com.alonalbert.pad.app.data.local.database
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.UserShow
-import com.alonalbert.pad.app.data.UserWithShows
 import kotlinx.coroutines.flow.Flow
 
 interface LocalDataSource {
     fun getUsersFlow(): Flow<List<User>>
 
-    fun getUserFlow(id: Long): Flow<UserWithShows>
+    fun getUserFlow(id: Long): Flow<User>
 
     suspend fun updateUser(user: User)
 

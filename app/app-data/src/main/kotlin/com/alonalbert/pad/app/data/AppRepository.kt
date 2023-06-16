@@ -47,7 +47,7 @@ internal class AppRepository @Inject constructor(
 
     override fun getUsersFlow(): Flow<List<User>> = localDataSource.getUsersFlow()
 
-    override fun getUserFlow(id: Long): Flow<UserWithShows> = localDataSource.getUserFlow(id)
+    override fun getUserFlow(id: Long): Flow<User> = localDataSource.getUserFlow(id)
 
     override suspend fun updateUser(user: User) {
         withContext(dispatcher) {
