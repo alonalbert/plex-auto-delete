@@ -28,6 +28,17 @@
     <string name="users">Users</string>
     <string name="save">Save</string>
 
-    <string name="excludes_shows">Excludes %1$d shows</string>
-    <string name="includes_shows">Includes %1$d shows</string>
+    <plurals name="excludes_shows">
+        <item quantity="zero">Excludes no shows</item>
+        <item quantity="one">Excludes one show</item>
+        <item quantity="two">Excludes two shows</item>
+        <item quantity="other">Excludes %1$d shows</item>
+    </plurals>
+
+    <plurals name="includes_shows">
+        <item quantity="zero">Includes no shows</item>
+        <item quantity="one">Includes one show</item>
+        <item quantity="two">Includes two shows</item>
+        <item quantity="other">Includes %1$d shows</item>
+    </plurals>
 </resources>
