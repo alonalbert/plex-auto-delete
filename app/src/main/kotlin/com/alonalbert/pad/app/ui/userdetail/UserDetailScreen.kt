@@ -63,7 +63,7 @@ fun UserDetailScreen(
     // TODO: Implement empty content
     userState?.let { user ->
         val toggleUser = { viewModel.toggleUser(userState) }
-        val deleteShow = { show: Show -> viewModel.deleteShow(user, show) }
+        val deleteShow = { show: Show -> viewModel.updateUser(user.copy(shows = user.shows.dropWhile { it == show })) }
 
         PadScaffold(
             viewModel = viewModel,
