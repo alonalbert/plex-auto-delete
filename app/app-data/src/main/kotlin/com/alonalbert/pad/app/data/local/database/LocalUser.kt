@@ -26,7 +26,7 @@ internal data class LocalUser(
             entityColumn = "showId",
         )
     )
-    val shows: List<LocalShow>,
+    val shows: List<LocalShow> = emptyList(),
 ) {
     enum class UserType {
         EXCLUDE,

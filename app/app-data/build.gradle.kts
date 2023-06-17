@@ -29,6 +29,13 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+
+    @Suppress("UnstableApiUsage")
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -62,5 +69,11 @@ dependencies {
     kapt(libs.hilt.compiler)
 
     // Junit
-//    testImplementation(libs.junit4)
+    testImplementation(libs.junit4)
+
+    // Robolectric
+    testImplementation(libs.robolectric)
+
+    // Truth
+    testImplementation(libs.truth)
 }
