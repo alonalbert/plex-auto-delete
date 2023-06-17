@@ -221,9 +221,7 @@ fun PlexToken(user: User, onPlexTokenChanged: (String) -> Unit) {
     Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
         Divider()
 
-        var plexToken by rememberSaveable {
-            mutableStateOf(user.plexToken ?: "")
-        }
+        var plexToken by rememberSaveable { mutableStateOf(user.plexToken ?: "") }
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
         OutlinedTextField(
             value = plexToken,

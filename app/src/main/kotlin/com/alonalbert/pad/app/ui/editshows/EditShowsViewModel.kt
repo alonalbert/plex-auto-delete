@@ -11,7 +11,6 @@ import com.alonalbert.pad.app.ui.DestinationsArgs
 import com.alonalbert.pad.app.ui.PadViewModel
 import com.alonalbert.pad.app.util.stateIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
@@ -23,15 +22,9 @@ class EditShowsViewModel @Inject constructor(
 ) : PadViewModel(application) {
 
     private val userId: Long = savedStateHandle[DestinationsArgs.USER_ID_ARG]!!
-    private val filterFlow: MutableStateFlow<String> = MutableStateFlow("")
 
     val showListState: StateFlow<List<Show>> = repository.getShowsFlow().stateIn(viewModelScope, emptyList())
     val userState: StateFlow<User?> = repository.getUserFlow(userId).stateIn(viewModelScope, null)
-    val filterState: StateFlow<String> = filterFlow.stateIn(viewModelScope, "")
-
-    fun setFilter(filter: String) {
-        filterFlow.value = filter
-    }
 
     override suspend fun refreshData() {
         repository.refreshShows()
