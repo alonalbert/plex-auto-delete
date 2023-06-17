@@ -13,7 +13,7 @@ import timber.log.Timber
 
 abstract class PadViewModel(private val application: Application) : ViewModel() {
     private val messageFlow: MutableStateFlow<String?> = MutableStateFlow(null)
-    protected val isLoadingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    private val isLoadingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
     val messageState: StateFlow<String?> = messageFlow.stateIn(viewModelScope, null)
     val isLoadingState: StateFlow<Boolean> = isLoadingFlow.stateIn(viewModelScope, false)

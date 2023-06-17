@@ -2,19 +2,21 @@ package com.alonalbert.pad.app.ui.editshows
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -42,6 +44,9 @@ fun EditShowsScreen(
 ) {
     val allShows by viewModel.showListState.collectAsStateWithLifecycle()
     val userState by viewModel.userState.collectAsStateWithLifecycle()
+    val filter by viewModel.filterState.collectAsStateWithLifecycle()
+
+    val onFilterChange: (String) -> Unit = { viewModel.setFilter(it) }
 
     // todo: Handle better
     userState?.let { user ->
@@ -64,28 +69,46 @@ fun EditShowsScreen(
             },
             modifier = modifier
         ) {
-            ShowPickerContent(allShows, itemSelectionStates)
+            ShowPickerContent(allShows, itemSelectionStates, filter, onFilterChange)
         }
     }
 }
 
 @Composable
-private fun ShowPickerContent(allShows: List<Show>, itemSelectionStates: MutableMap<Long, Boolean>) {
-    LazyColumn(
-        modifier = Modifier
-            .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary), RoundedCornerShape(4.dp))
-            .padding(8.dp)
-    ) {
-        items(
-            items = allShows,
-            key = { it.id }
+private fun ShowPickerContent(
+    allShows: List<Show>,
+    itemSelectionStates: MutableMap<Long, Boolean>,
+    filter: String,
+    onFilterChange: (String) -> Unit
+) {
+
+    Column {
+        OutlinedTextField(
+            value = filter,
+            readOnly = false,
+            onValueChange = onFilterChange,
+            label = { Text(text = stringResource(R.string.filter_hint)) },
+            shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        )
+        LazyColumn(
+            modifier = Modifier
+                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary), RoundedCornerShape(4.dp))
+                .padding(8.dp)
         ) {
-            var isSelected by rememberSaveable { mutableStateOf(itemSelectionStates.getOrDefault(it.id, false)) }
-            val onClick = {
-                isSelected = !isSelected
-                itemSelectionStates[it.id] = isSelected
+            items(
+                items = allShows.filter { it.name.contains(filter, ignoreCase = true) },
+                key = { it.id }
+            ) {
+                var isSelected by rememberSaveable { mutableStateOf(itemSelectionStates.getOrDefault(it.id, false)) }
+                val onClick = {
+                    isSelected = !isSelected
+                    itemSelectionStates[it.id] = isSelected
+                }
+                ShowCard(it, isSelected, onClick)
             }
-            ShowCard(it, isSelected, onClick)
         }
     }
 }
@@ -123,5 +146,10 @@ private fun ShowCard(
 @Preview
 @Composable
 fun ShowPickerContentPreview() {
-    ShowPickerContent(allShows = List(10) { Show(name = "Show $it", id = it.toLong()) }, mutableMapOf())
+    ShowPickerContent(
+        allShows = List(10) { Show(name = "Show $it", id = it.toLong()) },
+        itemSelectionStates = mutableMapOf(),
+        filter = "",
+        onFilterChange = {}
+    )
 }

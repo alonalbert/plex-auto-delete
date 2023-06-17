@@ -28,6 +28,7 @@
     <string name="users">Users</string>
     <string name="save">Save</string>
     <string name="saved_shows">Saved shows</string>
+    <string name="filter_hint">Filter</string>
 
     <plurals name="excludes_shows">
         <item quantity="zero">Excludes no shows</item>
