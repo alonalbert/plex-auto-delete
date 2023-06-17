@@ -39,8 +39,6 @@ import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.ui.components.PadScaffold
 import timber.log.Timber
 
-private val WHITESPACE = "\\s".toRegex()
-
 @Composable
 fun EditShowsScreen(
     modifier: Modifier = Modifier,
@@ -83,20 +81,19 @@ private fun ShowPickerContent(
 ) {
 
     Column {
-        var filter by rememberSaveable { mutableStateOf("") }
-        var selectedOnly by rememberSaveable { mutableStateOf(false) }
-        val (icon, description) = when (selectedOnly) {
+        var filter by rememberSaveable { mutableStateOf(ShowFilter(query = "", selectedOnly = false)) }
+        val (icon, description) = when (filter.selectedOnly) {
             true -> Icons.Filled.CheckCircle to "Show selected only"
             false -> Icons.Filled.CheckCircleOutline to "Show all"
         }
         OutlinedTextField(
-            value = filter,
+            value = filter.query,
             readOnly = false,
-            onValueChange = { filter = it },
+            onValueChange = { filter = filter.copy(query = it) },
             label = { Text(text = stringResource(R.string.filter_hint)) },
             shape = RoundedCornerShape(8.dp),
             trailingIcon = {
-                IconButton(onClick = { selectedOnly = !selectedOnly }) {
+                IconButton(onClick = { filter = filter.copy(selectedOnly = !filter.selectedOnly) }) {
                     Icon(imageVector = icon, contentDescription = description)
                 }
 
@@ -106,12 +103,6 @@ private fun ShowPickerContent(
                 .padding(8.dp)
         )
 
-        fun List<Show>.filterState(selectedOnly: Boolean): List<Show> {
-            return when (selectedOnly) {
-                true -> filter { itemSelectionStates[it.id] == true }
-                false -> this
-            }
-        }
         LazyColumn(
             modifier = Modifier
                 .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary), RoundedCornerShape(4.dp))
@@ -119,7 +110,7 @@ private fun ShowPickerContent(
         ) {
 
             items(
-                items = allShows.filterState(selectedOnly).filterByWords(filter),
+                items = filter.filter(allShows, itemSelectionStates.filter { it.value }.keys),
                 key = { it.id }
             ) {
                 var isSelected by rememberSaveable { mutableStateOf(itemSelectionStates.getOrDefault(it.id, false)) }
@@ -131,14 +122,6 @@ private fun ShowPickerContent(
             }
         }
     }
-}
-
-private fun List<Show>.filterByWords(filter: String): List<Show> {
-    val predicates: List<(Show) -> Boolean> = filter
-        .split(WHITESPACE)
-        .map { term -> { show -> show.name.contains(term, ignoreCase = true) } }
-
-    return filter { show -> predicates.all { predicate -> predicate(show) } }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
