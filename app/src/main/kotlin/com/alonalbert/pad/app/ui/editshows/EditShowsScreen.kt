@@ -99,7 +99,7 @@ private fun ShowPickerContent(
                 .padding(8.dp)
         ) {
             items(
-                items = allShows.filter { it.name.contains(filter, ignoreCase = true) },
+                items = allShows.filter(filter),
                 key = { it.id }
             ) {
                 var isSelected by rememberSaveable { mutableStateOf(itemSelectionStates.getOrDefault(it.id, false)) }
@@ -111,6 +111,16 @@ private fun ShowPickerContent(
             }
         }
     }
+}
+
+private val WHITESPACE = "\\s".toRegex()
+
+private fun List<Show>.filter(filter: String): List<Show> {
+    val predicates: List<(Show) -> Boolean> = filter
+        .split(WHITESPACE)
+        .map { term -> { show -> show.name.contains(term, ignoreCase = true) } }
+
+    return filter { show -> predicates.all { predicate -> predicate(show) } }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
