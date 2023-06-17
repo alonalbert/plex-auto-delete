@@ -244,7 +244,10 @@ fun PlexToken(user: User, onPlexTokenChanged: (String) -> Unit) {
                 }
 
                 Row {
-                    IconButton(onClick = { onPlexTokenChanged(plexToken) }) {
+                    IconButton(
+                        onClick = { onPlexTokenChanged(plexToken) },
+                        enabled = plexToken != user.plexToken,
+                    ) {
                         Icon(imageVector = Icons.Filled.Save, contentDescription = stringResource(R.string.save))
                     }
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
