@@ -82,25 +82,10 @@ private fun ShowPickerContent(
 
     Column {
         var filter by rememberSaveable { mutableStateOf(ShowFilter(query = "", selectedOnly = false)) }
-        val (icon, description) = when (filter.selectedOnly) {
-            true -> Icons.Filled.CheckCircle to "Show selected only"
-            false -> Icons.Filled.CheckCircleOutline to "Show all"
-        }
-        OutlinedTextField(
-            value = filter.query,
-            readOnly = false,
-            onValueChange = { filter = filter.copy(query = it) },
-            label = { Text(text = stringResource(R.string.filter_hint)) },
-            shape = RoundedCornerShape(8.dp),
-            trailingIcon = {
-                IconButton(onClick = { filter = filter.copy(selectedOnly = !filter.selectedOnly) }) {
-                    Icon(imageVector = icon, contentDescription = description)
-                }
 
-            },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
+        FilterField(
+            filter = filter,
+            onFilterChange = { filter = it }
         )
 
         LazyColumn(
@@ -122,6 +107,31 @@ private fun ShowPickerContent(
             }
         }
     }
+}
+
+@Composable
+private fun FilterField(filter: ShowFilter, onFilterChange: (ShowFilter) -> Unit) {
+    val (icon, description) = when (filter.selectedOnly) {
+        true -> Icons.Filled.CheckCircle to "Show selected only"
+        false -> Icons.Filled.CheckCircleOutline to "Show all"
+    }
+
+    OutlinedTextField(
+        value = filter.query,
+        readOnly = false,
+        onValueChange = { onFilterChange(filter.copy(query = it)) },
+        label = { Text(text = stringResource(R.string.filter_hint)) },
+        shape = RoundedCornerShape(8.dp),
+        trailingIcon = {
+            IconButton(onClick = { onFilterChange(filter.copy(selectedOnly = !filter.selectedOnly)) }) {
+                Icon(imageVector = icon, contentDescription = description)
+            }
+
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
