@@ -1,9 +1,9 @@
 plugins {
-    alias(libs.plugins.androidLibrary)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp)
-    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.ksp)
 }
 
 android {

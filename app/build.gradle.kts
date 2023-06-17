@@ -1,12 +1,12 @@
 @Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
-    id("kotlin-parcelize")
 }
 
 android {
