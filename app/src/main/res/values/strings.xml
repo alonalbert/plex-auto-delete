@@ -29,6 +29,9 @@
     <string name="save">Save</string>
     <string name="saved_shows">Saved shows</string>
     <string name="filter_hint">Filter</string>
+    <string name="plex_token">Plex Token</string>
+    <string name="hide_token">Hide token</string>
+    <string name="show_token">Show token</string>
 
     <plurals name="excludes_shows">
         <item quantity="zero">Excludes no shows</item>

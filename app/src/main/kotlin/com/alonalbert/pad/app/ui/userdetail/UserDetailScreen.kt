@@ -18,11 +18,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -30,15 +34,22 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType.Companion.Password
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation.Companion.None
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -64,6 +75,9 @@ fun UserDetailScreen(
     userState?.let { user ->
         val toggleUser = { viewModel.toggleUser(userState) }
         val deleteShow = { show: Show -> viewModel.updateUser(user.copy(shows = user.shows.dropWhile { it == show })) }
+        val setPlexToken = { token: String ->
+            viewModel.updateUser(user.copy(plexToken = token))
+        }
 
         PadScaffold(
             viewModel = viewModel,
@@ -78,6 +92,7 @@ fun UserDetailScreen(
                 user = user,
                 shows = user.shows,
                 onUserTypeClick = toggleUser,
+                onPlexTokenChanged = setPlexToken,
                 onDeleteShowClick = deleteShow,
             )
         }
@@ -89,6 +104,7 @@ private fun UserDetailContent(
     user: User,
     shows: List<Show>,
     onUserTypeClick: () -> Unit,
+    onPlexTokenChanged: (String) -> Unit,
     onDeleteShowClick: (Show) -> Unit,
 ) {
 
@@ -109,8 +125,9 @@ private fun UserDetailContent(
                     user = user,
                     shows = shows,
                     onUserTypeClick = onUserTypeClick,
-                    onDeleteShowClick = onDeleteShowClick,
-                    containerHeight = this@BoxWithConstraints.maxHeight
+                    onPlexTokenChanged = onPlexTokenChanged,
+                    containerHeight = this@BoxWithConstraints.maxHeight,
+                    onDeleteShowClick = onDeleteShowClick
                 )
             }
         }
@@ -138,6 +155,7 @@ private fun UserInfoFields(
     user: User,
     shows: List<Show>,
     onUserTypeClick: () -> Unit,
+    onPlexTokenChanged: (String) -> Unit,
     containerHeight: Dp,
     onDeleteShowClick: (Show) -> Unit,
 ) {
@@ -147,6 +165,8 @@ private fun UserInfoFields(
         Name(user)
 
         UserType(user, onUserTypeClick)
+
+        PlexToken(user, onPlexTokenChanged)
 
         ShowsList(shows, onDeleteShowClick = onDeleteShowClick)
 
@@ -193,6 +213,47 @@ fun UserType(user: User, onUserTypeClick: () -> Unit) {
                 )
             }
         }
+    }
+}
+
+@Composable
+fun PlexToken(user: User, onPlexTokenChanged: (String) -> Unit) {
+    Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
+        Divider()
+
+        var plexToken by rememberSaveable {
+            mutableStateOf(user.plexToken ?: "")
+        }
+        var passwordVisible by rememberSaveable { mutableStateOf(false) }
+        OutlinedTextField(
+            value = plexToken,
+            onValueChange = { plexToken = it },
+            label = { Text(stringResource(id = R.string.plex_token)) },
+            singleLine = true,
+            textStyle = MaterialTheme.typography.headlineSmall,
+            visualTransformation = when {
+                passwordVisible -> None
+                else -> PasswordVisualTransformation()
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = Password),
+            trailingIcon = {
+
+                val (visibilityIcon, visibilityDescription) = when (passwordVisible) {
+                    true -> Icons.Filled.Visibility to stringResource(R.string.hide_token)
+                    false -> Icons.Filled.VisibilityOff to stringResource(R.string.show_token)
+                }
+
+                Row {
+                    IconButton(onClick = { onPlexTokenChanged(plexToken) }) {
+                        Icon(imageVector = Icons.Filled.Save, contentDescription = stringResource(R.string.save))
+                    }
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(imageVector = visibilityIcon, contentDescription = visibilityDescription)
+                    }
+                }
+            },
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
@@ -277,6 +338,6 @@ fun UserDetailContentPreview() {
             Show(name = "Breaking Bad")
         ),
         onUserTypeClick = { },
-        onDeleteShowClick = { }
-    )
+        onPlexTokenChanged = {},
+    ) {}
 }
