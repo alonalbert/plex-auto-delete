@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -32,6 +31,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -81,12 +81,12 @@ fun UserDetailScreen(
 
         PadScaffold(
             viewModel = viewModel,
-            modifier = modifier,
             floatingActionButton = {
                 FloatingActionButton(onClick = { onEditShowsClick(user) }) {
                     Icon(Icons.Filled.Edit, stringResource(id = R.string.add_show))
                 }
-            }
+            },
+            modifier = modifier,
         ) {
             UserDetailContent(
                 user = user,
