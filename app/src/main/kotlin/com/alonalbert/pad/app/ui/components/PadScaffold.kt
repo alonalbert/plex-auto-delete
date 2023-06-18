@@ -37,7 +37,7 @@ fun PadScaffold(
         modifier = modifier
             .fillMaxSize()
             .padding(8.dp)
-            .imePadding(),
+            .imePadding()
     ) { padding ->
         val isImeVisible = WindowInsets.isImeVisible
         val contentPadding = remember(isImeVisible) {
