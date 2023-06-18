@@ -11,9 +11,6 @@ internal interface ShowDao {
     @Query("SELECT * FROM show ORDER BY name")
     fun observeAll(): Flow<List<LocalShow>>
 
-    @Query("SELECT * FROM show ORDER BY name")
-    fun getAll(): List<LocalShow>
-
     @Upsert
     suspend fun upsertAll(shows: List<LocalShow>)
 
