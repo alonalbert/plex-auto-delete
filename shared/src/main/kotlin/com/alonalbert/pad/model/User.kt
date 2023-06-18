@@ -1,7 +1,8 @@
 package com.alonalbert.pad.model
 
-import jakarta.persistence.CascadeType
+import jakarta.persistence.CascadeType.ALL
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType.EAGER
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -18,7 +19,7 @@ data class User(
     val name: String = "",
     val plexToken: String = "",
     val type: UserType = UserType.INCLUDE,
-    @ManyToMany(cascade = [CascadeType.ALL])
+    @ManyToMany(cascade = [ALL], fetch = EAGER)
     @JoinTable(
         name = "user_show",
         joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],

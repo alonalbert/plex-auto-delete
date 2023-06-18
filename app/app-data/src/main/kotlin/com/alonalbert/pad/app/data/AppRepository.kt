@@ -58,9 +58,10 @@ internal class AppRepository @Inject constructor(
 
     override suspend fun refreshUsers(): List<User> {
         return withContext(dispatcher) {
-            networkDataSource.loadUsers().also {
-                localDataSource.refreshUsers(it)
-            }
+            localDataSource.refreshShows(networkDataSource.loadShows())
+            val users = networkDataSource.loadUsers()
+            localDataSource.refreshUsers(users)
+            users
         }
     }
 
