@@ -3,6 +3,7 @@ package com.alonalbert.pad.app.ui.editshows
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -94,6 +95,7 @@ private fun ShowPickerContent(
 
         LazyColumn(
             modifier = Modifier
+                .fillMaxSize()
                 .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary), RoundedCornerShape(4.dp))
                 .padding(8.dp)
         ) {

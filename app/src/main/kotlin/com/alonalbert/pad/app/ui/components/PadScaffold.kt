@@ -47,6 +47,7 @@ fun PadScaffold(
             isLoading = isLoading,
             onRefresh = viewModel::refresh,
             modifier = modifier
+                .fillMaxSize()
                 .padding(contentPadding)
         ) {
             content()
