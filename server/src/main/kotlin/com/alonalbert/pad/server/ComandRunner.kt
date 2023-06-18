@@ -16,7 +16,7 @@ class CommandRunner(
     private val importConfigCommand: ImportConfig,
 ) : CommandLineRunner {
     override fun run(vararg args: String) {
-        when (args[0]) {
+        when (args.firstOrNull()) {
             "import-config" -> importConfigCommand.import()
             "auto-watch" -> plexAutoDeleterCommand.runAutoWatcher()
         }
