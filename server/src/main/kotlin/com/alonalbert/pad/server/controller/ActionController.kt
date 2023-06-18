@@ -12,6 +12,6 @@ import org.springframework.web.bind.annotation.RestController
 class ActionController(
     @Autowired private val plexAutoDeleter: PlexAutoDeleter,
 ) {
-    @GetMapping("/mark-watched")
-    fun markWatched(): List<User> = plexAutoDeleter.markWatched()
+    @GetMapping("/auto-watcher")
+    fun markWatched(): List<User> = plexAutoDeleter.runAutoWatcher()
 }
