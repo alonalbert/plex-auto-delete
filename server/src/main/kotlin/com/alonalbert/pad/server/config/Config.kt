@@ -11,12 +11,12 @@ class Config(private val environment: Environment) {
     fun plexConfiguration() = Configuration(
         environment["plex.database.path"] ?: "",
         environment["plex.url"] ?: "",
-        environment["plex.section.list"]?.split(",") ?: emptyList(),
+        environment["plex.section.list"]?.split(",")?.toSet() ?: emptySet(),
     )
 
     data class Configuration(
         val plexDatabasePath: String,
         val plexUrl: String,
-        val plexSections: List<String>,
+        val plexSections: Set<String>,
     )
 }

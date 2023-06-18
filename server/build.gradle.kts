@@ -14,6 +14,8 @@ dependencies {
     implementation(libs.spring.boot.starter.web)
     implementation(libs.sqlite)
     implementation(libs.sqlite.dialect)
+    implementation(libs.jackson.dataformat.xml)
+    implementation(libs.jaxb.api)
 }
 
 java {
