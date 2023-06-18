@@ -4,11 +4,7 @@ import com.alonalbert.pad.model.User
 import com.alonalbert.pad.server.repository.ShowRepository
 import com.alonalbert.pad.server.repository.UserRepository
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.springframework.boot.CommandLineRunner
-import org.springframework.boot.SpringApplication
-import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.autoconfigure.domain.EntityScan
-import org.springframework.context.annotation.ComponentScan
+import org.springframework.stereotype.Component
 import java.io.File
 
 
@@ -17,14 +13,12 @@ private val objectMapper = ObjectMapper()
 @Suppress("SameParameterValue")
 private fun loadFile(configFile: String): ConfigFile = objectMapper.readValue(File(configFile), ConfigFile::class.java)
 
-@SpringBootApplication
-@EntityScan("com.alonalbert.pad.*")
-@ComponentScan("com.alonalbert.pad.*")
+@Component
 class ImportConfig(
     private val userRepository: UserRepository,
     private val showRepository: ShowRepository,
-) : CommandLineRunner {
-    override fun run(vararg args: String?) {
+) {
+    fun import() {
         val configFile = loadFile("/home/aalbert/tmp/pad-config.json")
         val users = userRepository.findAll().associateBy { it.name }
         val shows = showRepository.findAll()
@@ -40,8 +34,4 @@ class ImportConfig(
             userRepository.save(user.copy(type = type, shows = userShows))
         }
     }
-}
-
-fun main() {
-    SpringApplication.run(ImportConfig::class.java).close()
 }

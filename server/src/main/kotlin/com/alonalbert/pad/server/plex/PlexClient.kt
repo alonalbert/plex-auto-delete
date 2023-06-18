@@ -19,7 +19,7 @@ class PlexClient(private val plexUrl: String, private val userToken: String = ""
 
     fun getTvSections() = getItems<Section>("/library/sections").filter { it.type == "show" }
 
-    fun getUnwatchedShows(key: String) = getItems<Show>("/library/sections/$key/unwatched")
+    fun getUnwatchedShows(sectionKey: String) = getItems<Show>("/library/sections/$sectionKey/unwatched")
 
     private inline fun <reified T> getItems(path: String): List<T> {
         val uri = createUriBuilder(plexUrl).pathSegment(*path.split("/").toTypedArray()).build()
