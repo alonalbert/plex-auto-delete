@@ -25,8 +25,8 @@ internal interface UserDao {
     @Upsert
     suspend fun upsertAll(users: List<LocalUser>)
 
-    @Query("DELETE  FROM user")
-    suspend fun deleteAll()
+    @Query("DELETE  FROM user WHERE id NOT IN (:ids)")
+    suspend fun deleteExcept(ids: Collection<Long>)
 }
 
 private fun LocalUserWithShows.toLocalUser() = user.copy(shows = shows)

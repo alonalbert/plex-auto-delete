@@ -32,7 +32,7 @@ internal class RoomLocalDataSource @Inject constructor(
 
     override suspend fun refreshUsers(users: List<User>) {
         database.withTransaction {
-            // todo: Check is cascade works
+            userDao.deleteExcept(users.map { it.id })
             userDao.upsertAll(users.toLocal())
             val userShows = users.flatMap { user -> user.shows.map { show -> LocalUserShow(user.id, show.id) } }
             useShowDao.update(userShows)

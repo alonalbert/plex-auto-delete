@@ -17,12 +17,12 @@ internal interface ShowDao {
     @Upsert
     suspend fun upsertAll(shows: List<LocalShow>)
 
-    @Query("DELETE  FROM show")
-    suspend fun deleteAll()
+    @Query("DELETE FROM show WHERE id NOT IN (:ids)")
+    suspend fun deleteExcept(ids: Collection<Long>)
 
     @Transaction
     suspend fun refreshAll(shows: List<LocalShow>) {
-        // todo: delete old shows?
+        deleteExcept(shows.map { it.id })
         upsertAll(shows)
     }
 }

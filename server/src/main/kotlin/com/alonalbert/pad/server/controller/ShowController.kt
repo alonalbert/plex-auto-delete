@@ -60,10 +60,14 @@ class ShowController(
         }
         val shows = showRepository.findAll().associateBy { it.name }
         val newShows = plexShows - shows.keys
+        val deletedShows = (shows.keys - plexShows).mapNotNull { shows[it]?.id }
 
         if (newShows.isNotEmpty()) {
             logger.info("Adding new shows:\n  ${newShows.joinToString("\n  ") { it }}")
             showRepository.saveAll(newShows.map { Show(name = it) })
+        }
+        if (deletedShows.isNotEmpty()) {
+            showRepository.deleteAllById(deletedShows)
         }
     }
 }
