@@ -16,7 +16,7 @@ data class User(
     @Id @GeneratedValue(strategy = GenerationType.AUTO)
     val id: Long = 0,
     val name: String = "",
-    val plexToken: String? = null,
+    val plexToken: String = "",
     val type: UserType = UserType.INCLUDE,
     @ManyToMany(cascade = [CascadeType.ALL])
     @JoinTable(

@@ -8,5 +8,15 @@ import org.springframework.stereotype.Component
 @Component
 class Config(private val environment: Environment) {
     @Bean
-    fun plexDatabasePath() = environment["plex.database.path"]
+    fun plexConfiguration() = Configuration(
+        environment["plex.database.path"] ?: "",
+        environment["plex.url"] ?: "",
+        environment["plex.section.list"]?.split(",") ?: emptyList(),
+    )
+
+    data class Configuration(
+        val plexDatabasePath: String,
+        val plexUrl: String,
+        val plexSections: List<String>,
+    )
 }

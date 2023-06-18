@@ -1,6 +1,7 @@
 package com.alonalbert.pad.server.controller
 
 import com.alonalbert.pad.model.Show
+import com.alonalbert.pad.server.config.Config.Configuration
 import com.alonalbert.pad.server.repository.ShowRepository
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
@@ -29,7 +30,7 @@ private val STATEMENTS = listOf(STATEMENT1, STATEMENT2)
 @RequestMapping("/api")
 class ShowController(
     private val showRepository: ShowRepository,
-    private val plexDatabasePath: String,
+    private val configuration: Configuration,
 ) {
     private val logger = LoggerFactory.getLogger(ShowController::class.java)
 
@@ -40,6 +41,7 @@ class ShowController(
     }
 
     private fun updateShowsFromPlex() {
+        val plexDatabasePath = configuration.plexDatabasePath
         val plexShows = DriverManager.getConnection("jdbc:sqlite:${plexDatabasePath}").use { connection ->
             buildSet {
                 DriverManager.getConnection("jdbc:sqlite:${plexDatabasePath}").use { connection ->

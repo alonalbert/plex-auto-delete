@@ -1,6 +1,7 @@
 package com.alonalbert.pad.server.controller
 
 import com.alonalbert.pad.model.User
+import com.alonalbert.pad.server.config.Config.Configuration
 import com.alonalbert.pad.server.repository.UserRepository
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
@@ -19,7 +20,7 @@ import java.sql.DriverManager
 @RequestMapping("/api")
 class UserController(
     private val userRepository: UserRepository,
-    private val plexDatabasePath: String,
+    private val configuration: Configuration,
 ) {
     private val logger = LoggerFactory.getLogger(UserController::class.java)
 
@@ -53,6 +54,7 @@ class UserController(
     }
 
     private fun updateUsersFromPlex() {
+        val plexDatabasePath = configuration.plexDatabasePath
         val plexUsers = DriverManager.getConnection("jdbc:sqlite:${plexDatabasePath}").use { connection ->
             buildSet {
                 connection.createStatement().use { statement ->
@@ -75,7 +77,7 @@ class UserController(
         }
         if (deletedUsers.isNotEmpty()) {
             logger.info("Users deleted from Plex: [${deletedUsers.joinToString { it }}]")
-            userRepository.saveAll(deletedUsers.mapNotNull { users[it]?.copy(plexToken = null) })
+            userRepository.deleteAllById(deletedUsers.mapNotNull { users[it]?.id })
         }
     }
 }

@@ -12,7 +12,7 @@ internal data class LocalUser(
 
     val name: String = "",
 
-    val plexToken: String? = null,
+    val plexToken: String = "",
 
     val type: UserType = UserType.INCLUDE,
 
@@ -37,7 +37,7 @@ internal data class LocalUser(
     constructor(
         id: Long,
         name: String,
-        plexToken: String?,
+        plexToken: String,
         type: UserType,
     ) : this(id, name, plexToken, type, emptyList())
 }
