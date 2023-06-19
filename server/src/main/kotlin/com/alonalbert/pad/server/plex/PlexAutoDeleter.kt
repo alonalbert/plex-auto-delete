@@ -28,7 +28,7 @@ class PlexAutoDeleter(
         val allShows = showRepository.findAll().associateBy { it.name }
         return userRepository.findAll().map {
             runAutoWatcher(it, sections, allShows)
-        }
+        }.filter { it.shows.isNotEmpty() }
     }
 
     private fun runAutoWatcher(user: User, sections: List<Section>, allShows: Map<String, Show>): User {
