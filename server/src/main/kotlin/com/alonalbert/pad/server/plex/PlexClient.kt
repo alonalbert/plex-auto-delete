@@ -1,10 +1,12 @@
 package com.alonalbert.pad.server.plex
 
 import com.alonalbert.pad.server.plex.model.PlexData
+import com.alonalbert.pad.server.plex.model.PlexEpisode
 import com.alonalbert.pad.server.plex.model.PlexShow
 import com.alonalbert.pad.server.plex.model.Section
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import org.springframework.web.util.DefaultUriBuilderFactory
 import org.springframework.web.util.UriBuilder
 import java.net.URI
@@ -16,10 +18,15 @@ import java.net.http.HttpResponse.BodyHandlers
 class PlexClient(private val plexUrl: String, private val userToken: String = "") {
     private val client = HttpClient.newHttpClient()
     private val objectMapper = ObjectMapper()
+        .registerModule(JavaTimeModule())
 
     fun getTvSections() = getItems<Section>("/library/sections").filter { it.type == "show" }
 
     fun getUnwatchedShows(sectionKey: String) = getItems<PlexShow>("/library/sections/$sectionKey/unwatched")
+
+    fun getAllShows(sectionKey: String) = getItems<PlexShow>("/library/sections/$sectionKey/all")
+
+    fun getEpisodes(showKey: String): List<PlexEpisode> = getItems<PlexEpisode>("library/metadata/$showKey/allLeaves")
 
     fun markShowWatched(plexShow: PlexShow) {
         val uri = createUriBuilder(plexUrl)

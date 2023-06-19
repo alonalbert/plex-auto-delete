@@ -19,6 +19,7 @@ class CommandRunner(
         when (args.firstOrNull()) {
             "import-config" -> importConfigCommand.import()
             "auto-watch" -> plexAutoDeleterCommand.runAutoWatcher()
+            "auto-delete" -> plexAutoDeleterCommand.runAutoDeleter()
         }
     }
 }

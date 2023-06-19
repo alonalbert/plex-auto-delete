@@ -5,11 +5,17 @@ import com.alonalbert.pad.model.User
 import com.alonalbert.pad.model.User.UserType.EXCLUDE
 import com.alonalbert.pad.model.User.UserType.INCLUDE
 import com.alonalbert.pad.server.config.Config
+import com.alonalbert.pad.server.plex.model.PlexEpisode
+import com.alonalbert.pad.server.plex.model.PlexShow
 import com.alonalbert.pad.server.plex.model.Section
 import com.alonalbert.pad.server.repository.ShowRepository
 import com.alonalbert.pad.server.repository.UserRepository
+import com.alonalbert.pad.util.intersect
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import java.time.Instant
+import kotlin.time.Duration.Companion.days
+import kotlin.time.toJavaDuration
 
 
 @Component
@@ -24,12 +30,14 @@ class PlexAutoDeleter(
         logger.info("Running auto watcher")
         val plexClient = PlexClient(configuration.plexUrl)
 
-        val sections = plexClient.getTvSections().filter { it.title in configuration.plexSections && it.type == "show" }
+        val sections = plexClient.getMonitoredSections()
         val allShows = showRepository.findAll().associateBy { it.name }
         return userRepository.findAll().map {
             runAutoWatcher(it, sections, allShows)
         }.filter { it.shows.isNotEmpty() }
     }
+
+    private fun PlexClient.getMonitoredSections() = getTvSections().filter { it.title in configuration.plexSections && it.type == "show" }
 
     private fun runAutoWatcher(user: User, sections: List<Section>, allShows: Map<String, Show>): User {
         val plexClient = PlexClient(configuration.plexUrl, user.plexToken)
@@ -49,4 +57,38 @@ class PlexAutoDeleter(
         }
         return user.copy(shows = markedShows)
     }
+
+    fun runAutoDeleter(): String {
+        val plexClient = PlexClient(configuration.plexUrl)
+        val shows = plexClient.getMonitoredSections().flatMap { plexClient.getAllShows(it.key) }
+
+        val candidates = userRepository.findAll().map { getDeleteCandidates(it, shows) }
+
+        val deleteKeys = candidates.map { it.mapTo(hashSetOf()) { candidate -> candidate.key } }.intersect()
+        return ""
+    }
+
+    private fun getDeleteCandidates(user: User, shows: List<PlexShow>): List<DeleteCandidate> {
+        val plexClient = PlexClient(configuration.plexUrl, user.plexToken)
+        val userShows = user.shows.mapTo(hashSetOf()) { it.name }
+        val candidates = shows
+            .flatMapTo(hashSetOf()) {
+                plexClient.getEpisodes(it.ratingKey)
+                    .filter { it.isDeleteCandidate(user.type, userShows) }
+            }
+            .map { episode -> DeleteCandidate(episode.key, episode.medias.flatMap { media -> media.parts.map { part -> part.file } }) }
+
+
+        return candidates
+    }
+
+    private fun PlexEpisode.isDeleteCandidate(type: User.UserType, showNames: Set<String>): Boolean {
+        val isIgnored = when (type) {
+            EXCLUDE -> showTitle in showNames
+            INCLUDE -> showTitle !in showNames
+        }
+        return isIgnored || lastViewedAt?.isBefore(Instant.now().minus(configuration.autoDeleteDays.days.toJavaDuration())) == true
+    }
+
+    private data class DeleteCandidate(val key: String, val files: List<String>)
 }

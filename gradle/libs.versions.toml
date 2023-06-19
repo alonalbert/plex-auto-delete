@@ -10,7 +10,7 @@ androidx-lifecycle = "2.6.1"
 androidx-navigation = "2.6.0"
 androidx-room = "2.5.1"
 hilt = "2.46"
-jackson-dataformat-xml = "2.15.2"
+jackson = "2.15.2"
 jakarta-persistence = "3.1.0"
 javax-inject = "1"
 jaxb-api = "2.3.1"
@@ -47,7 +47,7 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "androidx
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
-jackson-dataformat-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson-dataformat-xml" }
+jackson-datatype-jsr310 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jsr310", version.ref = "jackson" }
 jakarta-persistence = { module = "jakarta.persistence:jakarta.persistence-api", version.ref = "jakarta-persistence" }
 jakarta-validation = { module = "jakarta.validation:jakarta.validation-api" }
 javax-inject = { module = "javax.inject:javax.inject", version.ref = "javax-inject" }

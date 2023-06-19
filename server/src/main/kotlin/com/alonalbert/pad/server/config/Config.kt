@@ -12,11 +12,13 @@ class Config(private val environment: Environment) {
         environment["plex.database.path"] ?: "",
         environment["plex.url"] ?: "",
         environment["plex.section.list"]?.split(",")?.toSet() ?: emptySet(),
+        environment["plex.auto.delete.days"]?.toInt() ?: 7,
     )
 
     data class Configuration(
         val plexDatabasePath: String,
         val plexUrl: String,
         val plexSections: Set<String>,
+        val autoDeleteDays: Int,
     )
 }
