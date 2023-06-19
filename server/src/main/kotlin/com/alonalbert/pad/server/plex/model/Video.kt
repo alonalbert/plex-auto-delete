@@ -1,4 +1,4 @@
-package com.aa.plexautodelete.plex
+package com.alonalbert.pad.server.plex.model
 
 import java.time.Instant
 

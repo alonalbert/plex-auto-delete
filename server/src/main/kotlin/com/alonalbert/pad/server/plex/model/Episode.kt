@@ -1,6 +1,5 @@
 package com.alonalbert.pad.server.plex.model
 
-import com.aa.plexautodelete.plex.Video
 import java.time.Instant
 
 data class Episode(
