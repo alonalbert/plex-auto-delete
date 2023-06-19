@@ -32,6 +32,8 @@
     <string name="plex_token">Plex Token</string>
     <string name="hide_token">Hide token</string>
     <string name="show_token">Show token</string>
+    <string name="auto_watch_noop">No shows needed to auto watched</string>
+    <string name="auto_watch_results">Auto Watch Results</string>
 
     <plurals name="excludes_shows">
         <item quantity="zero">Excludes no shows</item>

@@ -38,7 +38,7 @@ abstract class PadViewModel(private val application: Application) : ViewModel() 
         messageFlow.value = message
     }
 
-    private fun setIsLoading(isLoading: Boolean) {
+    fun setIsLoading(isLoading: Boolean) {
         isLoadingFlow.value = isLoading
     }
 
@@ -59,5 +59,4 @@ abstract class PadViewModel(private val application: Application) : ViewModel() 
             isLoadingFlow.value = false
         }
     }
-
 }

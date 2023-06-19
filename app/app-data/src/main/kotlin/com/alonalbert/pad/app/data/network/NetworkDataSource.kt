@@ -12,4 +12,6 @@ interface NetworkDataSource {
     suspend fun updateUser(user: User): User
 
     suspend fun loadShows(): List<Show>
+
+    suspend fun runAutoWatch(): List<User>
 }

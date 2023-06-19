@@ -65,6 +65,8 @@ internal class AppRepository @Inject constructor(
         }
     }
 
+    override suspend fun runAutoWatch(): List<User> = networkDataSource.runAutoWatch()
+
     override suspend fun refreshShows(): List<Show> {
         return withContext(dispatcher) {
             networkDataSource.loadShows().also {

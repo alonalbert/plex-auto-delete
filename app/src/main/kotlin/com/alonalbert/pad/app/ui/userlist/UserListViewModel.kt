@@ -2,20 +2,26 @@ package com.alonalbert.pad.app.ui.userlist
 
 import android.app.Application
 import androidx.lifecycle.viewModelScope
+import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.Repository
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.ui.PadViewModel
 import com.alonalbert.pad.app.util.stateIn
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class UserListViewModel @Inject constructor(
     private val repository: Repository,
-    application: Application,
+    private val application: Application,
 ) : PadViewModel(application) {
+    private val autoWatchResultFlow: MutableStateFlow<List<User>?> = MutableStateFlow(null)
+
     val userListState: StateFlow<List<User>> = repository.getUsersFlow().stateIn(viewModelScope, emptyList())
+    val autoWatchResultState: StateFlow<List<User>?> = autoWatchResultFlow.stateIn(viewModelScope, null)
 
     init {
         refresh()
@@ -24,5 +30,24 @@ class UserListViewModel @Inject constructor(
     override suspend fun refreshData() {
         repository.refreshUsers()
     }
+
+    fun runAutoWatch() {
+        setIsLoading(true)
+        viewModelScope.launch {
+            try {
+                setAutoWatchResult(repository.runAutoWatch())
+            } catch (e: Throwable) {
+                setMessage(application.getString(R.string.network_error))
+            } finally {
+                setIsLoading(false)
+            }
+        }
+    }
+
+    fun setAutoWatchResult(value: List<User>?) {
+        autoWatchResultFlow.value = value
+    }
+
+
 }
 

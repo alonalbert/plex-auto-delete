@@ -18,6 +18,8 @@ import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
 import com.alonalbert.pad.model.Show as NetworkShow
@@ -47,18 +49,24 @@ internal class KtorNetworkDataSource @Inject constructor(
         }
     }
 
+    override suspend fun runAutoWatch(): List<User> = get<List<NetworkUser>>("${serverUrl}/action/auto-watcher").toExternal()
+
     private suspend inline fun <reified T> get(url: String): T {
         return httpClient().use {
-            it.get(url).body()
+            withContext(Dispatchers.IO) {
+                it.get(url).body()
+            }
         }
     }
 
     private suspend inline fun <reified T> put(url: String, value: T): T {
         return httpClient().use {
-            it.put(url) {
-                contentType(ContentType.Application.Json)
-                setBody(value)
-            }.body()
+            withContext(Dispatchers.IO) {
+                it.put(url) {
+                    contentType(ContentType.Application.Json)
+                    setBody(value)
+                }.body()
+            }
         }
     }
 

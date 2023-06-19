@@ -1,19 +1,25 @@
 package com.alonalbert.pad.app.ui.userlist
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -32,6 +38,7 @@ import com.alonalbert.pad.app.ui.components.PadScaffold
 import com.alonalbert.pad.app.ui.theme.MyApplicationTheme
 import timber.log.Timber
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserListScreen(
     onUserClick: (User) -> Unit,
@@ -39,42 +46,109 @@ fun UserListScreen(
     viewModel: UserListViewModel = hiltViewModel(),
 ) {
     val users by viewModel.userListState.collectAsStateWithLifecycle()
+    val autoWatchResult by viewModel.autoWatchResultState.collectAsStateWithLifecycle()
+
+    val onAutoWatchClick = { viewModel.runAutoWatch() }
+    val onAutoDeleteClick = {}
 
     PadScaffold(
         viewModel = viewModel,
         modifier = modifier,
     ) {
+        autoWatchResult?.let {
+            val onDismiss = { viewModel.setAutoWatchResult(null) }
+            AutoWatchResultDialog(autoWatchResult = it, onDismiss = onDismiss)
+        }
+
         UserListScreen(
-            items = users,
+            users = users,
+            onAutoWatchClick = onAutoWatchClick,
+            onAutoDeleteClick = onAutoDeleteClick,
             onUserClick = onUserClick,
             modifier = Modifier.fillMaxSize()
         )
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun AutoWatchResultDialog(
+    autoWatchResult: List<User>,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = stringResource(R.string.auto_watch_results)) },
+        text = {
+            val text = when {
+                autoWatchResult.isEmpty() -> stringResource(R.string.auto_watch_noop)
+                else -> autoWatchResult.joinToString("\n") { "${it.name}: ${it.shows.joinToString { it.name }}" }
+            }
+            Text(text = text)
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(android.R.string.ok))
+            }
+        },
+    )
+}
+
 @Composable
 internal fun UserListScreen(
-    items: List<User>,
+    users: List<User>,
+    onAutoWatchClick: () -> Unit,
+    onAutoDeleteClick: () -> Unit,
     onUserClick: (user: User) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn(modifier) {
-        stickyHeader {
-            Text(
-                text = stringResource(R.string.users),
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier
-                    .wrapContentSize(Alignment.Center)
-                    .padding(bottom = 10.dp)
-            )
+    Column(modifier = modifier.padding(8.dp)) {
+        ActionButtons(onAutoWatchClick, onAutoDeleteClick)
+
+        UsersTitle()
+
+        UsersList(users, onUserClick)
+    }
+}
+
+@Composable
+private fun ActionButtons(
+    onAutoWatchClick: () -> Unit,
+    onAutoDeleteClick: () -> Unit,
+) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Button(onClick = onAutoWatchClick) {
+            Text(text = "Auto Watch")
         }
-        items.forEach {
-            item {
-                UserCard(it, onUserClick)
-            }
+        Button(onClick = onAutoDeleteClick) {
+            Text(text = "Auto Delete")
         }
     }
+}
+
+@Composable
+private fun UsersList(
+    users: List<User>,
+    onUserClick: (user: User) -> Unit
+) {
+    LazyColumn() {
+        items(items = users) {
+            UserCard(it, onUserClick)
+        }
+    }
+}
+
+@Composable
+private fun UsersTitle() {
+    Text(
+        text = stringResource(R.string.users),
+        style = MaterialTheme.typography.headlineMedium,
+        modifier = Modifier
+            .wrapContentSize(Alignment.Center)
+            .padding(bottom = 10.dp)
+    )
 }
 
 @Composable
@@ -121,6 +195,9 @@ private fun DefaultPreview() {
         val users = listOf(User(name = "Mark"), User(name = "Ted"), User(name = "Bob"))
         UserListScreen(
             users,
-            onUserClick = {})
+            onAutoWatchClick = {},
+            onAutoDeleteClick = {},
+            onUserClick = {},
+        )
     }
 }
