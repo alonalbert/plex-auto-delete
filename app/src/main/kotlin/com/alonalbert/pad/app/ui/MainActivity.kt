@@ -14,14 +14,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
-        window.setDecorFitsSystemWindows(false)
-//        val contentView = findViewById<View>(android.R.id.content)
-//        contentView.setOnApplyWindowInsetsListener { v, insets ->
-//            val imeHeight = insets.getInsets(WindowInsets.Type.ime()).bottom
-//            v.setPadding(0, 0, 0, imeHeight)
-//            insets
-//        }
         setContent {
             MyApplicationTheme {
                 Surface(
