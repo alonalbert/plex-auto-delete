@@ -1,8 +1,8 @@
 package com.alonalbert.pad.server.plex
 
 import com.alonalbert.pad.server.plex.model.PlexData
+import com.alonalbert.pad.server.plex.model.PlexShow
 import com.alonalbert.pad.server.plex.model.Section
-import com.alonalbert.pad.server.plex.model.Show
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.web.util.DefaultUriBuilderFactory
@@ -19,7 +19,20 @@ class PlexClient(private val plexUrl: String, private val userToken: String = ""
 
     fun getTvSections() = getItems<Section>("/library/sections").filter { it.type == "show" }
 
-    fun getUnwatchedShows(sectionKey: String) = getItems<Show>("/library/sections/$sectionKey/unwatched")
+    fun getUnwatchedShows(sectionKey: String) = getItems<PlexShow>("/library/sections/$sectionKey/unwatched")
+
+    fun markShowWatched(plexShow: PlexShow) {
+        val uri = createUriBuilder(plexUrl)
+            .pathSegment(":", "scrobble")
+            .queryParam("key", plexShow.ratingKey)
+            .queryParam("identifier", "com.plexapp.plugins.library")
+            .build()
+        val request = HttpRequest.newBuilder().uri(uri)
+            .GET()
+            .header("Accept", "application/json")
+            .build()
+        client.send(request, BodyHandlers.ofString())
+    }
 
     private inline fun <reified T> getItems(path: String): List<T> {
         val uri = createUriBuilder(plexUrl).pathSegment(*path.split("/").toTypedArray()).build()
