@@ -19,7 +19,7 @@ class ImportConfig(
     private val showRepository: ShowRepository,
 ) {
     fun import() {
-        val configFile = loadFile("/home/aalbert/tmp/pad-config.json")
+        val configFile = loadFile("/home/al/tmp/pad-config.json")
         val users = userRepository.findAll().associateBy { it.name }
         val shows = showRepository.findAll()
 

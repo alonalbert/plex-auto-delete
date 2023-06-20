@@ -2,6 +2,7 @@ package com.alonalbert.pad.server
 
 import com.alonalbert.pad.server.importconfig.ImportConfig
 import com.alonalbert.pad.server.plex.PlexAutoDeleter
+import kotlinx.coroutines.runBlocking
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -16,10 +17,13 @@ class CommandRunner(
     private val importConfigCommand: ImportConfig,
 ) : CommandLineRunner {
     override fun run(vararg args: String) {
-        when (args.firstOrNull()) {
-            "import-config" -> importConfigCommand.import()
-            "auto-watch" -> plexAutoDeleterCommand.runAutoWatcher()
-            "auto-delete" -> plexAutoDeleterCommand.runAutoDeleter()
+        runBlocking {
+            when (args.firstOrNull()) {
+                "import-config" -> importConfigCommand.import()
+                "auto-watch" -> plexAutoDeleterCommand.runAutoWatcher()
+                "auto-delete" -> plexAutoDeleterCommand.runAutoDeleter()
+                else -> {}
+            }
         }
     }
 }
