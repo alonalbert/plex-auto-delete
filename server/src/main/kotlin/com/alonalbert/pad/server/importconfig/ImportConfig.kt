@@ -31,7 +31,7 @@ class ImportConfig(
                 Shows.Type.EXCLUDE -> User.UserType.EXCLUDE
             }
             println("Updating user ${user.name} with ${userShows.size} shows")
-            userRepository.save(user.copy(type = type, shows = userShows))
+            userRepository.save(user.copy(type = type, plexToken = configUser.plexToken, shows = userShows))
         }
     }
 }

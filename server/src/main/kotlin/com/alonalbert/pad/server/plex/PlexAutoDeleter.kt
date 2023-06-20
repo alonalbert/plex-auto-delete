@@ -6,8 +6,8 @@ import com.alonalbert.pad.model.User.UserType.EXCLUDE
 import com.alonalbert.pad.model.User.UserType.INCLUDE
 import com.alonalbert.pad.server.config.Config
 import com.alonalbert.pad.server.plex.model.PlexEpisode
+import com.alonalbert.pad.server.plex.model.PlexSection
 import com.alonalbert.pad.server.plex.model.PlexShow
-import com.alonalbert.pad.server.plex.model.Section
 import com.alonalbert.pad.server.repository.ShowRepository
 import com.alonalbert.pad.server.repository.UserRepository
 import com.alonalbert.pad.util.intersect
@@ -19,9 +19,6 @@ import kotlinx.datetime.Clock
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import kotlin.time.Duration.Companion.days
-import kotlin.time.ExperimentalTime
-import kotlin.time.measureTime
-import kotlin.time.measureTimedValue
 
 
 @Component
@@ -48,7 +45,7 @@ class PlexAutoDeleter(
 
     private suspend fun runAutoWatcher(
         user: User,
-        sections: List<Section>,
+        sections: List<PlexSection>,
         allShows: Map<String, Show>
     ): User {
         val plexClient = PlexClient(configuration.plexUrl, user.plexToken)
@@ -69,48 +66,31 @@ class PlexAutoDeleter(
         return user.copy(shows = markedShows)
     }
 
-    @OptIn(ExperimentalTime::class)
     suspend fun runAutoDeleter(): String {
         val plexClient = PlexClient(configuration.plexUrl)
         val shows = plexClient.getMonitoredSections().flatMap { plexClient.getAllShows(it.key) }
 
-        val totalDuration = measureTime {
-            repeat(10) {
-                val duration = measureTime {
-                    withContext(Dispatchers.IO) {
-                        val candidates = userRepository.findAll().map {
-                            async { getDeleteCandidates(it, shows) }
-                        }.awaitAll()
-                        val deleteKeys =
-                            candidates.map { it.mapTo(hashSetOf()) { candidate -> candidate.key } }
-                                .intersect()
-                    }
-                }
-                logger.info("====================== Duration: $duration")
+        withContext(Dispatchers.IO) {
+            val candidates = userRepository.findAll().map {
+                async { getDeleteCandidates(it, shows) }
+            }.awaitAll()
+            val deleteKeys = candidates.map { it.mapTo(hashSetOf()) { candidate -> candidate.key } }.intersect()
+            val deleteFiles = candidates.flatten().filter { it.key in deleteKeys }.flatMap { it.files }
+            deleteFiles.forEach {
+                logger.info("Deleting file $it")
             }
         }
-        logger.info("====================== Total Duration: $totalDuration")
         return ""
     }
 
-    @OptIn(ExperimentalTime::class)
     private suspend fun getDeleteCandidates(user: User, shows: List<PlexShow>): List<DeleteCandidate> {
-        val (candidates, duration) = measureTimedValue {
-            val plexClient = PlexClient(configuration.plexUrl, user.plexToken)
-            val userShows = user.shows.mapTo(hashSetOf()) { it.name }
-            shows
-                .flatMapTo(hashSetOf()) { show ->
-                    plexClient.getEpisodes(show.ratingKey).filter { episode -> episode.isDeleteCandidate(user.type, userShows) }
-                }
-                .map { episode ->
-                    DeleteCandidate(
-                        episode.key,
-                        episode.medias.flatMap { media -> media.parts.map { part -> part.file } })
-                }
+        val plexClient = PlexClient(configuration.plexUrl, user.plexToken)
+        val userShows = user.shows.mapTo(hashSetOf()) { it.name }
+        return shows.flatMapTo(hashSetOf()) { show ->
+            plexClient.getEpisodes(show.ratingKey).filter { episode -> episode.isDeleteCandidate(user.type, userShows) }
+        }.map { episode ->
+            DeleteCandidate(episode.key, episode.medias.flatMap { media -> media.parts.map { part -> part.file } })
         }
-
-        logger.info("====================== getDeleteCandidates: ${user.name}: $duration")
-        return candidates
     }
 
     private fun PlexEpisode.isDeleteCandidate(
@@ -121,8 +101,8 @@ class PlexAutoDeleter(
             EXCLUDE -> showTitle in showNames
             INCLUDE -> showTitle !in showNames
         }
-        return isIgnored || lastViewedAt < Clock.System.now()
-            .minus(configuration.autoDeleteDays.days)
+        val cutoff = Clock.System.now().minus(configuration.autoDeleteDays.days)
+        return isIgnored || (lastViewedAt < cutoff && viewCount > 0)
     }
 
     private data class DeleteCandidate(val key: String, val files: List<String>)

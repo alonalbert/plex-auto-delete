@@ -8,13 +8,13 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PlexEpisode(
-    @SerialName("key")
     val key: String = "",
 
     @SerialName("grandparentTitle")
     val showTitle: String = "",
 
-    @SerialName("lastViewedAt")
+    val viewCount: Int = 0,
+
     @Serializable(with = InstantSerializer::class)
     val lastViewedAt: Instant = DISTANT_FUTURE,
 

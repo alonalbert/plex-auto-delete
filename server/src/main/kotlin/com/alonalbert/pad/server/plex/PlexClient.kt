@@ -2,8 +2,8 @@ package com.alonalbert.pad.server.plex
 
 import com.alonalbert.pad.server.plex.model.PlexData
 import com.alonalbert.pad.server.plex.model.PlexEpisode
+import com.alonalbert.pad.server.plex.model.PlexSection
 import com.alonalbert.pad.server.plex.model.PlexShow
-import com.alonalbert.pad.server.plex.model.Section
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.apache.Apache
@@ -21,7 +21,7 @@ import java.net.URI
 
 class PlexClient(private val plexUrl: String, private val userToken: String = "") {
 
-    suspend fun getTvSections() = getItems<Section>("/library/sections").filter { it.type == "show" }
+    suspend fun getTvSections() = getItems<PlexSection>("/library/sections").filter { it.type == "show" }
 
     suspend fun getUnwatchedShows(sectionKey: String) =
         getItems<PlexShow>("/library/sections/$sectionKey/unwatched")
