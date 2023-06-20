@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Serializable
-data class PlexData<T>(
-    @JsonProperty("MediaContainer")
-    @SerialName("MediaContainer")
-    var mediaContainer: MediaContainer<T> = MediaContainer(),
+data class PlexMedia(
+    @JsonProperty("Part")
+    @SerialName("Part")
+    val parts: List<PlexPart> = emptyList(),
 )

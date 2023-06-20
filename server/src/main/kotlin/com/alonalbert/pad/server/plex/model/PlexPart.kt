@@ -5,8 +5,6 @@ import kotlinx.serialization.Serializable
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Serializable
-data class Section(
-    val key: String = "",
-    val type: String = "",
-    val title: String = "",
+data class PlexPart(
+    val file: String = "",
 )

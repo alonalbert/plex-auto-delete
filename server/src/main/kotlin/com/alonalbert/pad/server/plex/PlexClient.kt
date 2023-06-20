@@ -7,16 +7,33 @@ import com.alonalbert.pad.server.plex.model.Section
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.cio.CIO
+import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.request.get
+import io.ktor.client.request.header
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import org.slf4j.LoggerFactory
 import org.springframework.web.util.DefaultUriBuilderFactory
 import org.springframework.web.util.UriBuilder
 import java.net.URI
-import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
+import io.ktor.client.plugins.logging.Logger as KtorLogger
+import java.net.http.HttpClient as HttpClient1
 
 
 class PlexClient(private val plexUrl: String, private val userToken: String = "") {
-    private val client = HttpClient.newHttpClient()
+    private val logger = LoggerFactory.getLogger(PlexClient::class.java)
+
+    private val client = HttpClient1.newHttpClient()
     private val objectMapper = ObjectMapper()
         .registerModule(JavaTimeModule())
 
@@ -41,7 +58,32 @@ class PlexClient(private val plexUrl: String, private val userToken: String = ""
         client.send(request, BodyHandlers.ofString())
     }
 
+    private fun httpClient() = HttpClient(CIO) {
+        install(ContentNegotiation) {
+            json(Json {
+                ignoreUnknownKeys = true
+            })
+        }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 10_000
+        }
+    }
+
     private inline fun <reified T> getItems(path: String): List<T> {
+        val url = createUriBuilder(plexUrl).pathSegment(*path.split("/").toTypedArray()).build().toURL()
+        return runBlocking {
+            httpClient().use {
+                withContext(Dispatchers.IO) {
+                    val mediaContainer = it.get(url) {
+                        header("Accept", "application/json")
+                    }.body<PlexData<T>>().mediaContainer
+                    mediaContainer.directories ?: mediaContainer.metadataItems ?: emptyList()
+                }
+            }
+        }
+    }
+
+    private inline fun <reified T> getItems1(path: String): List<T> {
         val uri = createUriBuilder(plexUrl).pathSegment(*path.split("/").toTypedArray()).build()
         val request = HttpRequest.newBuilder().uri(uri)
             .GET()
@@ -68,6 +110,12 @@ class PlexClient(private val plexUrl: String, private val userToken: String = ""
             builder.queryParam("X-Plex-Token", userToken)
         }
         return builder
+    }
+
+    private class ClientLogger(private val logger: Logger) : KtorLogger {
+        override fun log(message: String) {
+            logger.log(message)
+        }
     }
 }
 

@@ -11,11 +11,12 @@ import com.alonalbert.pad.server.plex.model.Section
 import com.alonalbert.pad.server.repository.ShowRepository
 import com.alonalbert.pad.server.repository.UserRepository
 import com.alonalbert.pad.util.intersect
+import kotlinx.datetime.Clock
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import java.time.Instant
 import kotlin.time.Duration.Companion.days
-import kotlin.time.toJavaDuration
+import kotlin.time.ExperimentalTime
+import kotlin.time.measureTimedValue
 
 
 @Component
@@ -68,17 +69,20 @@ class PlexAutoDeleter(
         return ""
     }
 
+    @OptIn(ExperimentalTime::class)
     private fun getDeleteCandidates(user: User, shows: List<PlexShow>): List<DeleteCandidate> {
-        val plexClient = PlexClient(configuration.plexUrl, user.plexToken)
-        val userShows = user.shows.mapTo(hashSetOf()) { it.name }
-        val candidates = shows
-            .flatMapTo(hashSetOf()) {
-                plexClient.getEpisodes(it.ratingKey)
-                    .filter { it.isDeleteCandidate(user.type, userShows) }
-            }
-            .map { episode -> DeleteCandidate(episode.key, episode.medias.flatMap { media -> media.parts.map { part -> part.file } }) }
+        val (candidates, duration) = measureTimedValue {
+            val plexClient = PlexClient(configuration.plexUrl, user.plexToken)
+            val userShows = user.shows.mapTo(hashSetOf()) { it.name }
+            shows
+                .flatMapTo(hashSetOf()) {
+                    plexClient.getEpisodes(it.ratingKey)
+                        .filter { it.isDeleteCandidate(user.type, userShows) }
+                }
+                .map { episode -> DeleteCandidate(episode.key, episode.medias.flatMap { media -> media.parts.map { part -> part.file } }) }
+        }
 
-
+        logger.info("getDeleteCandidates: ${user.name}: $duration")
         return candidates
     }
 
@@ -87,7 +91,9 @@ class PlexAutoDeleter(
             EXCLUDE -> showTitle in showNames
             INCLUDE -> showTitle !in showNames
         }
-        return isIgnored || lastViewedAt?.isBefore(Instant.now().minus(configuration.autoDeleteDays.days.toJavaDuration())) == true
+        return isIgnored || lastViewedAt < Clock.System.now().minus(configuration.autoDeleteDays.days)
+
+//        return isIgnored || lastViewedAt?.isBefore(java.time.Instant.now().minus(configuration.autoDeleteDays.days.toJavaDuration())) == true
     }
 
     private data class DeleteCandidate(val key: String, val files: List<String>)

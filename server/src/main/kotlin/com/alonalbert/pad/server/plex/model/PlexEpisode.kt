@@ -1,23 +1,38 @@
 package com.alonalbert.pad.server.plex.model
 
+import com.alonalbert.pad.util.InstantSerializer
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.time.Instant
+import kotlinx.datetime.Instant
+import kotlinx.datetime.Instant.Companion.DISTANT_FUTURE
+import kotlinx.datetime.serializers.InstantComponentSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Serializable
 data class PlexEpisode(
-    @JsonProperty("key") val key: String = "",
-    @JsonProperty("grandparentTitle") val showTitle: String = "",
-    @JsonProperty("lastViewedAt") val lastViewedAt: Instant? = null,
-    @JsonProperty("Media") val medias: List<PlexMedia> = emptyList(),
+    @JsonProperty("key")
+    @SerialName("key")
+    val key: String = "",
+    @JsonProperty("grandparentTitle")
+    @SerialName("grandparentTitle")
+    val showTitle: String = "",
+    @SerialName("lastViewedAt")
+    @JsonProperty("lastViewedAt")
+
+    @Serializable(with = InstantSerializer::class)
+//    val lastViewedAt: Instant? = null,
+    val lastViewedAt: Instant = DISTANT_FUTURE,
+    @SerialName("Media")
+    @JsonProperty("Media")
+    val medias: List<PlexMedia> = emptyList(),
 )
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class PlexMedia(
-    @JsonProperty("Part") val parts: List<PlexPart> = emptyList(),
-)
-
-@JsonIgnoreProperties(ignoreUnknown = true)
-data class PlexPart(
-    val file: String = "",
-)
+fun main() {
+    InstantComponentSerializer
+    val s = "{\"key\": \"foo\", \"lastViewedAt\": 1234567 }"
+    val episode = Json.decodeFromString<PlexEpisode>(s)
+    println(episode)
+}
