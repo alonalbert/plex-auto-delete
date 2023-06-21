@@ -65,7 +65,7 @@ internal class AppRepository @Inject constructor(
         }
     }
 
-    override suspend fun runAutoWatch(): List<User> = networkDataSource.runAutoWatch()
+    override suspend fun runAutoWatch(): AutoWatchResult = networkDataSource.runAutoWatch()
 
     override suspend fun runAutoDelete(): AutoDeleteResult = networkDataSource.runAutoDelete()
 

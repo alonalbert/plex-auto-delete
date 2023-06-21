@@ -1,7 +1,7 @@
 package com.alonalbert.pad.server.controller
 
 import com.alonalbert.pad.model.AutoDeleteResult
-import com.alonalbert.pad.model.User
+import com.alonalbert.pad.model.AutoWatchResult
 import com.alonalbert.pad.server.plex.PlexAutoDeleter
 import kotlinx.coroutines.runBlocking
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,7 +15,7 @@ class ActionController(
     @Autowired private val plexAutoDeleter: PlexAutoDeleter,
 ) {
     @GetMapping("/auto-watch")
-    fun autoWatch(): List<User> = runBlocking { plexAutoDeleter.runAutoWatch() }
+    fun autoWatch(): AutoWatchResult = runBlocking { plexAutoDeleter.runAutoWatch() }
 
     @GetMapping("/auto-delete")
     fun autoDelete(): AutoDeleteResult = runBlocking { plexAutoDeleter.runAutoDelete() }

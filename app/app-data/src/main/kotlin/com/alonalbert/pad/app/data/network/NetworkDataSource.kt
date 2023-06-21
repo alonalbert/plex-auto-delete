@@ -1,6 +1,7 @@
 package com.alonalbert.pad.app.data.network
 
 import com.alonalbert.pad.app.data.AutoDeleteResult
+import com.alonalbert.pad.app.data.AutoWatchResult
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
 
@@ -14,7 +15,7 @@ interface NetworkDataSource {
 
     suspend fun loadShows(): List<Show>
 
-    suspend fun runAutoWatch(): List<User>
+    suspend fun runAutoWatch(): AutoWatchResult
 
     suspend fun runAutoDelete(): AutoDeleteResult
 }

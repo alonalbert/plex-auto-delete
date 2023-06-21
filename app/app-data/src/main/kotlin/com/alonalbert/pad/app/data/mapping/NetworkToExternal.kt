@@ -1,10 +1,12 @@
 package com.alonalbert.pad.app.data.mapping
 
 import com.alonalbert.pad.app.data.AutoDeleteResult
+import com.alonalbert.pad.app.data.AutoWatchResult
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.UserShow
 import com.alonalbert.pad.model.AutoDeleteResult as NetworkAutoDeleteResult
+import com.alonalbert.pad.model.AutoWatchResult as NetworkAutoWatchResult
 import com.alonalbert.pad.model.Show as NetworkShow
 import com.alonalbert.pad.model.User as NetworkUser
 import com.alonalbert.pad.model.UserShow as NetworkUserShow
@@ -30,6 +32,8 @@ internal object NetworkToExternal {
         NetworkUser.UserType.EXCLUDE -> User.UserType.EXCLUDE
         NetworkUser.UserType.INCLUDE -> User.UserType.INCLUDE
     }
+
+    fun NetworkAutoWatchResult.toExternal() = AutoWatchResult(users.toExternal())
 
     fun NetworkAutoDeleteResult.toExternal() = AutoDeleteResult(numFiles, numBytes, shows)
 }

@@ -23,7 +23,7 @@ interface Repository {
 
     fun getShowsFlow(): Flow<List<Show>>
 
-    suspend fun runAutoWatch(): List<User>
+    suspend fun runAutoWatch(): AutoWatchResult
 
     suspend fun runAutoDelete(): AutoDeleteResult
 }

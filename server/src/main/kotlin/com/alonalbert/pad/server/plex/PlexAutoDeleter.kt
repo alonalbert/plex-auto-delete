@@ -1,6 +1,7 @@
 package com.alonalbert.pad.server.plex
 
 import com.alonalbert.pad.model.AutoDeleteResult
+import com.alonalbert.pad.model.AutoWatchResult
 import com.alonalbert.pad.model.Show
 import com.alonalbert.pad.model.User
 import com.alonalbert.pad.model.User.UserType.EXCLUDE
@@ -33,15 +34,16 @@ class PlexAutoDeleter(
 ) {
     private val logger = LoggerFactory.getLogger(PlexAutoDeleter::class.java)
 
-    suspend fun runAutoWatch(): List<User> {
+    suspend fun runAutoWatch(): AutoWatchResult {
         logger.info("Running auto watcher")
         val plexClient = PlexClient(configuration.plexUrl)
 
         val sections = plexClient.getMonitoredSections()
         val allShows = showRepository.findAll().associateBy { it.name }
-        return userRepository.findAll().map {
+        val affectedUsers = userRepository.findAll().map {
             runAutoWatch(it, sections, allShows)
         }.filter { it.shows.isNotEmpty() }
+        return AutoWatchResult(affectedUsers)
     }
 
     private suspend fun PlexClient.getMonitoredSections() =

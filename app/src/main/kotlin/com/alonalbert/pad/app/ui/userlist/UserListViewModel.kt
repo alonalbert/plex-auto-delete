@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.AutoDeleteResult
+import com.alonalbert.pad.app.data.AutoWatchResult
 import com.alonalbert.pad.app.data.Repository
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.ui.padscreen.PadViewModel
@@ -19,11 +20,11 @@ class UserListViewModel @Inject constructor(
     private val repository: Repository,
     private val application: Application,
 ) : PadViewModel(application) {
-    private val autoWatchResultFlow: MutableStateFlow<List<User>?> = MutableStateFlow(null)
+    private val autoWatchResultFlow: MutableStateFlow<AutoWatchResult?> = MutableStateFlow(null)
     private val autoDeleteResultFlow: MutableStateFlow<AutoDeleteResult?> = MutableStateFlow(null)
 
     val userListState: StateFlow<List<User>> = repository.getUsersFlow().stateIn(viewModelScope, emptyList())
-    val autoWatchResultState: StateFlow<List<User>?> = autoWatchResultFlow.stateIn(viewModelScope, null)
+    val autoWatchResultState: StateFlow<AutoWatchResult?> = autoWatchResultFlow.stateIn(viewModelScope, null)
     val autoDeleteResultState: StateFlow<AutoDeleteResult?> = autoDeleteResultFlow.stateIn(viewModelScope, null)
 
     init {
@@ -60,16 +61,16 @@ class UserListViewModel @Inject constructor(
         }
     }
 
-    fun setAutoWatchResult(value: List<User>?) {
-        autoWatchResultFlow.value = value
-        if (value != null) {
+    fun setAutoWatchResult(result: AutoWatchResult?) {
+        autoWatchResultFlow.value = result
+        if (result != null) {
             autoDeleteResultFlow.value = null
         }
     }
 
-    fun setAutoDeleteResult(value: AutoDeleteResult?) {
-        autoDeleteResultFlow.value = value
-        if (value != null) {
+    fun setAutoDeleteResult(result: AutoDeleteResult?) {
+        autoDeleteResultFlow.value = result
+        if (result != null) {
             autoWatchResultFlow.value = null
         }
     }

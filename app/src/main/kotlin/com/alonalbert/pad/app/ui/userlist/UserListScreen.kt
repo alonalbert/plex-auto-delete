@@ -31,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.AutoDeleteResult
+import com.alonalbert.pad.app.data.AutoWatchResult
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.User.UserType.EXCLUDE
 import com.alonalbert.pad.app.data.User.UserType.INCLUDE
@@ -57,7 +58,7 @@ fun UserListScreen(
     ) {
         autoWatchResult?.let {
             val onDismiss = { viewModel.setAutoWatchResult(null) }
-            AutoWatchResultDialog(autoWatchResult = it, onDismiss = onDismiss)
+            AutoWatchResultDialog(result = it, onDismiss = onDismiss)
         }
         autoDeleteResult?.let {
             val onDismiss = { viewModel.setAutoDeleteResult(null) }
@@ -76,7 +77,7 @@ fun UserListScreen(
 
 @Composable
 fun AutoWatchResultDialog(
-    autoWatchResult: List<User>,
+    result: AutoWatchResult,
     onDismiss: () -> Unit,
 ) {
     AlertDialog(
@@ -84,8 +85,8 @@ fun AutoWatchResultDialog(
         title = { Text(text = stringResource(R.string.auto_watch_results)) },
         text = {
             val text = when {
-                autoWatchResult.isEmpty() -> stringResource(R.string.auto_watch_noop)
-                else -> autoWatchResult.joinToString("\n") { "${it.name}: ${it.shows.joinToString { it.name }}" }
+                result.users.isEmpty() -> stringResource(R.string.auto_watch_noop)
+                else -> result.users.joinToString("\n") { "${it.name}: ${it.shows.joinToString { it.name }}" }
             }
             Text(text = text)
         },
