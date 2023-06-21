@@ -55,6 +55,7 @@ class UserController(
 
     private fun updateUsersFromPlex() {
         val plexDatabasePath = configuration.plexDatabasePath
+        logger.info("Database: ${configuration.plexDatabasePath}")
         val plexUsers = DriverManager.getConnection("jdbc:sqlite:${plexDatabasePath}").use { connection ->
             buildSet {
                 connection.createStatement().use { statement ->

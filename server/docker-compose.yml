@@ -7,7 +7,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - ./config:/config
-      - ./run/com.plexapp.plugins.library.db:/config/com.plexapp.plugins.library.db:ro
+      - ./run:/plex
     ports:
       - 8080:8080
     restart: unless-stopped
