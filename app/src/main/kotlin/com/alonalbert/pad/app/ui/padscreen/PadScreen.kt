@@ -1,4 +1,4 @@
-package com.alonalbert.pad.app.ui.components
+package com.alonalbert.pad.app.ui.padscreen
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -11,10 +11,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.alonalbert.pad.app.ui.PadViewModel
+import com.alonalbert.pad.app.ui.components.LoadingContent
+import com.alonalbert.pad.app.ui.components.ShowSnackbar
 
 @Composable
-fun PadScaffold(
+fun PadScreen(
     viewModel: PadViewModel,
     modifier: Modifier = Modifier,
     floatingActionButton: @Composable () -> Unit = {},

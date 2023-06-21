@@ -1,4 +1,4 @@
-package com.alonalbert.pad.app.ui
+package com.alonalbert.pad.app.ui.padscreen
 
 import android.app.Application
 import androidx.lifecycle.ViewModel

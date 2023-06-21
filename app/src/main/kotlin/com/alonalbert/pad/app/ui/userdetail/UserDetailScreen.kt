@@ -58,8 +58,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
-import com.alonalbert.pad.app.ui.components.PadScaffold
 import com.alonalbert.pad.app.ui.components.baselineHeight
+import com.alonalbert.pad.app.ui.padscreen.PadScreen
 import timber.log.Timber
 
 @Composable
@@ -79,7 +79,7 @@ fun UserDetailScreen(
             viewModel.updateUser(user.copy(plexToken = token))
         }
 
-        PadScaffold(
+        PadScreen(
             viewModel = viewModel,
             floatingActionButton = {
                 FloatingActionButton(onClick = { onEditShowsClick(user) }) {
@@ -221,7 +221,7 @@ fun PlexToken(user: User, onPlexTokenChanged: (String) -> Unit) {
     Column(modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) {
         Divider()
 
-        var plexToken by rememberSaveable { mutableStateOf(user.plexToken ?: "") }
+        var plexToken by rememberSaveable { mutableStateOf(user.plexToken) }
         var passwordVisible by rememberSaveable { mutableStateOf(false) }
         OutlinedTextField(
             value = plexToken,

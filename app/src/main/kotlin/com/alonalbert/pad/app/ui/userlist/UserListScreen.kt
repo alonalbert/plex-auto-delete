@@ -34,7 +34,7 @@ import com.alonalbert.pad.app.data.AutoDeleteResult
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.User.UserType.EXCLUDE
 import com.alonalbert.pad.app.data.User.UserType.INCLUDE
-import com.alonalbert.pad.app.ui.components.PadScaffold
+import com.alonalbert.pad.app.ui.padscreen.PadScreen
 import com.alonalbert.pad.app.ui.theme.MyApplicationTheme
 import timber.log.Timber
 
@@ -51,7 +51,7 @@ fun UserListScreen(
     val onAutoWatchClick = { viewModel.runAutoWatch() }
     val onAutoDeleteClick = { viewModel.runAutoDelete() }
 
-    PadScaffold(
+    PadScreen(
         viewModel = viewModel,
         modifier = modifier,
     ) {

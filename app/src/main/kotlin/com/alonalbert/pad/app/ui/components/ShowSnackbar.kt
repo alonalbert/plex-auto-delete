@@ -3,7 +3,7 @@ package com.alonalbert.pad.app.ui.components
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import com.alonalbert.pad.app.ui.PadViewModel
+import com.alonalbert.pad.app.ui.padscreen.PadViewModel
 
 @Composable
 fun ShowSnackbar(

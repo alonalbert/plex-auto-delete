@@ -5,10 +5,9 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.Repository
-import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.ui.DestinationsArgs.USER_ID_ARG
-import com.alonalbert.pad.app.ui.PadViewModel
+import com.alonalbert.pad.app.ui.padscreen.PadViewModel
 import com.alonalbert.pad.app.util.stateIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
@@ -37,13 +36,6 @@ class UserDetailViewModel @Inject constructor(
         Timber.d("updateUser ${user.name}")
         repository.doUpdate(application.getString(R.string.user_updated)) {
             updateUser(user)
-        }
-    }
-
-    fun deleteShow(user: User, show: Show) {
-        Timber.d("Delete show ${show.name} from user ${user.name}")
-        repository.doUpdate(application.getString(R.string.show_deleted)) {
-            // TODO:
         }
     }
 }

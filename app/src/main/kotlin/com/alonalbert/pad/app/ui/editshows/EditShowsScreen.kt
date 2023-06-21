@@ -41,7 +41,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.Show
-import com.alonalbert.pad.app.ui.components.PadScaffold
+import com.alonalbert.pad.app.ui.padscreen.PadScreen
 import timber.log.Timber
 
 @Composable
@@ -65,7 +65,7 @@ fun EditShowsScreen(
             navController.popBackStack()
         }
 
-        PadScaffold(
+        PadScreen(
             viewModel = viewModel,
             floatingActionButton = {
                 FloatingActionButton(onClick = onSaveClick) {

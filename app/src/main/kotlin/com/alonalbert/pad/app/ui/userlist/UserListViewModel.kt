@@ -6,7 +6,7 @@ import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.data.AutoDeleteResult
 import com.alonalbert.pad.app.data.Repository
 import com.alonalbert.pad.app.data.User
-import com.alonalbert.pad.app.ui.PadViewModel
+import com.alonalbert.pad.app.ui.padscreen.PadViewModel
 import com.alonalbert.pad.app.util.stateIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
