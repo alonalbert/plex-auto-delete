@@ -18,6 +18,7 @@ dependencies {
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.spring.boot.starter.data.jpa)
+    implementation(libs.spring.boot.starter.security)
     implementation(libs.spring.boot.starter.web)
     implementation(libs.sqlite)
     implementation(libs.sqlite.dialect)

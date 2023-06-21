@@ -63,6 +63,7 @@ ktor-client-logging = { module = "io.ktor:ktor-client-logging", version.ref = "k
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
 spring-boot-starter-data-jpa = { module = "org.springframework.boot:spring-boot-starter-data-jpa" }
+spring-boot-starter-security = { module = "org.springframework.boot:spring-boot-starter-security" }
 spring-boot-starter-web = { module = "org.springframework.boot:spring-boot-starter-web" }
 sqlite = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite" }
 sqlite-dialect = { module = "org.hibernate.orm:hibernate-community-dialects" }
