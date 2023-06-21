@@ -39,6 +39,7 @@ import com.alonalbert.pad.app.ui.padscreen.PadDialogScreen
 import com.alonalbert.pad.app.ui.theme.MyApplicationTheme
 import com.alonalbert.pad.app.ui.userlist.UserListViewModel.DialogState.AutoDeleteDialog
 import com.alonalbert.pad.app.ui.userlist.UserListViewModel.DialogState.AutoWatchDialog
+import com.alonalbert.pad.app.util.toByteUnitString
 import timber.log.Timber
 
 @Composable
@@ -104,7 +105,7 @@ fun AutoDeleteResultDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = stringResource(R.string.auto_watch_results)) },
         text = {
-            val text1 = stringResource(R.string.auto_delete_text1, result.numBytes, result.numFiles)
+            val text1 = stringResource(R.string.auto_delete_text1, result.numBytes.toByteUnitString(), result.numFiles)
             val text2 = stringResource(R.string.auto_delete_text2, result.shows.joinToString { it })
             Column {
                 Text(text = text1)
