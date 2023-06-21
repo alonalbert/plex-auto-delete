@@ -1,0 +1,15 @@
+version: "3.3"
+services:
+  pad:
+    image: alonalbert/padserver
+    container_name: pad
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+      - ./config:/config
+      - ./run/com.plexapp.plugins.library.db:/config/com.plexapp.plugins.library.db:ro
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+
+
