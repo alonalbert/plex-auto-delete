@@ -20,26 +20,34 @@ abstract class PadViewModel(private val application: Application) : ViewModel() 
 
     fun refresh() {
         viewModelScope.launch {
-            setIsLoading(true)
+            setLoading()
             try {
                 refreshData()
             } catch (e: Throwable) {
                 Timber.e(e, "Failed to refresh users")
                 setMessage(application.getString(R.string.network_error))
             } finally {
-                setIsLoading(false)
+                dismissLoading()
             }
         }
     }
 
     protected abstract suspend fun refreshData()
 
-    fun setMessage(message: String?) {
+    protected fun setMessage(message: String) {
         messageFlow.value = message
     }
 
-    fun setIsLoading(isLoading: Boolean) {
-        isLoadingFlow.value = isLoading
+    fun dismissMessage() {
+        messageFlow.value = null
+    }
+
+    protected fun setLoading() {
+        isLoadingFlow.value = true
+    }
+
+    protected fun dismissLoading() {
+        isLoadingFlow.value = false
     }
 
     protected fun Repository.doUpdate(
@@ -51,10 +59,14 @@ abstract class PadViewModel(private val application: Application) : ViewModel() 
             isLoadingFlow.value = true
             runCatching {
                 block()
-                setMessage(okMessage)
+                if (okMessage != null) {
+                    setMessage(okMessage)
+                }
             }.onFailure {
                 Timber.e(it, "Failed to update repository")
-                setMessage(errorMessage)
+                if (errorMessage != null) {
+                    setMessage(errorMessage)
+                }
             }
             isLoadingFlow.value = false
         }

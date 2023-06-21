@@ -35,27 +35,27 @@ class UserListViewModel @Inject constructor(
     }
 
     fun runAutoWatch() {
-        setIsLoading(true)
+        setLoading()
         viewModelScope.launch {
             try {
                 setAutoWatchResult(repository.runAutoWatch())
             } catch (e: Throwable) {
                 setMessage(application.getString(R.string.network_error))
             } finally {
-                setIsLoading(false)
+                dismissLoading()
             }
         }
     }
 
     fun runAutoDelete() {
-        setIsLoading(true)
+        setLoading()
         viewModelScope.launch {
             try {
                 setAutoDeleteResult(repository.runAutoDelete())
             } catch (e: Throwable) {
                 setMessage(application.getString(R.string.network_error))
             } finally {
-                setIsLoading(false)
+                dismissLoading()
             }
         }
     }
