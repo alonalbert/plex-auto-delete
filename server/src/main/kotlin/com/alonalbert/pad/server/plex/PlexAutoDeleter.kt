@@ -1,5 +1,6 @@
 package com.alonalbert.pad.server.plex
 
+import com.alonalbert.pad.model.AutoDeleteResult
 import com.alonalbert.pad.model.Show
 import com.alonalbert.pad.model.User
 import com.alonalbert.pad.model.User.UserType.EXCLUDE
@@ -18,6 +19,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
+import java.nio.file.Path
+import kotlin.io.path.fileSize
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
 
@@ -66,44 +70,62 @@ class PlexAutoDeleter(
         return user.copy(shows = markedShows)
     }
 
-    suspend fun runAutoDeleter(): String {
+    suspend fun runAutoDeleter(
+        watchedDuration: Duration = configuration.autoDeleteDays.days,
+        testOnly: Boolean = false,
+    ): AutoDeleteResult {
         val plexClient = PlexClient(configuration.plexUrl)
         val shows = plexClient.getMonitoredSections().flatMap { plexClient.getAllShows(it.key) }
 
-        withContext(Dispatchers.IO) {
-            val candidates = userRepository.findAll().map {
-                async { getDeleteCandidates(it, shows) }
+        val candidates = withContext(Dispatchers.IO) {
+            userRepository.findAll().map {
+                async { getDeleteCandidates(it, shows, watchedDuration) }
             }.awaitAll()
-            val deleteKeys = candidates.map { it.mapTo(hashSetOf()) { candidate -> candidate.key } }.intersect()
-            val deleteFiles = candidates.flatten().filter { it.key in deleteKeys }.flatMap { it.files }
-            deleteFiles.forEach {
-                logger.info("Deleting file $it")
+        }
+        val deleteKeys = candidates.map { it.mapTo(hashSetOf()) { candidate -> candidate.key } }.intersect()
+        val approvedCandidates = candidates.flatten().filter { it.key in deleteKeys }
+        val showsWithDeletions = approvedCandidates.mapTo(hashSetOf()) { it.show }
+        val deleteFiles = approvedCandidates.flatMapTo(hashSetOf()) { it.files }
+
+        var size = 0L
+        var count = 0
+        deleteFiles.forEach {
+            logger.info("Deleting file $it")
+            try {
+                size += Path.of(it).fileSize()
+                count++
+            } catch (e: Throwable) {
+                logger.warn("Error deleting $it", e)
             }
         }
-        return ""
+        return AutoDeleteResult(count, size, showsWithDeletions)
     }
 
-    private suspend fun getDeleteCandidates(user: User, shows: List<PlexShow>): List<DeleteCandidate> {
+    private suspend fun getDeleteCandidates(
+        user: User, shows: List<PlexShow>,
+        watchedDuration: Duration,
+    ): List<DeleteCandidate> {
         val plexClient = PlexClient(configuration.plexUrl, user.plexToken)
         val userShows = user.shows.mapTo(hashSetOf()) { it.name }
         return shows.flatMapTo(hashSetOf()) { show ->
-            plexClient.getEpisodes(show.ratingKey).filter { episode -> episode.isDeleteCandidate(user.type, userShows) }
+            plexClient.getEpisodes(show.ratingKey).filter { episode -> episode.isDeleteCandidate(user.type, userShows, watchedDuration) }
         }.map { episode ->
-            DeleteCandidate(episode.key, episode.medias.flatMap { media -> media.parts.map { part -> part.file } })
+            DeleteCandidate(episode.key, episode.showTitle, episode.medias.flatMap { media -> media.parts.map { part -> part.file } })
         }
     }
 
     private fun PlexEpisode.isDeleteCandidate(
         type: User.UserType,
-        showNames: Set<String>
+        showNames: Set<String>,
+        watchedDuration: Duration,
     ): Boolean {
         val isIgnored = when (type) {
             EXCLUDE -> showTitle in showNames
             INCLUDE -> showTitle !in showNames
         }
-        val cutoff = Clock.System.now().minus(configuration.autoDeleteDays.days)
+        val cutoff = Clock.System.now().minus(watchedDuration)
         return isIgnored || (lastViewedAt < cutoff && viewCount > 0)
     }
 
-    private data class DeleteCandidate(val key: String, val files: List<String>)
+    private data class DeleteCandidate(val key: String, val show: String, val files: List<String>)
 }

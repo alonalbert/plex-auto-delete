@@ -1,5 +1,6 @@
 package com.alonalbert.pad.server
 
+import com.alonalbert.pad.model.AutoDeleteResult
 import com.alonalbert.pad.server.importconfig.ImportConfig
 import com.alonalbert.pad.server.plex.PlexAutoDeleter
 import kotlinx.coroutines.runBlocking
@@ -21,10 +22,17 @@ class CommandRunner(
             when (args.firstOrNull()) {
                 "import-config" -> importConfigCommand.import()
                 "auto-watch" -> plexAutoDeleterCommand.runAutoWatcher()
-                "auto-delete" -> plexAutoDeleterCommand.runAutoDeleter()
+                "auto-delete" -> runAutoDelete()
                 else -> {}
             }
         }
+    }
+
+    private suspend fun runAutoDelete(): AutoDeleteResult {
+        val result = plexAutoDeleterCommand.runAutoDeleter()
+        println("============================================")
+        println(result)
+        return result
     }
 }
 
