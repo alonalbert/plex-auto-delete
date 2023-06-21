@@ -14,6 +14,7 @@ jakarta-persistence = "3.1.0"
 javax-inject = "1"
 junit4 = "4.13.2"
 kotlin = "1.8.21"
+kotlinx-cli = "0.3.5"
 kotlinx-datetime = "0.3.2"
 kotlinx-serialization = "1.5.1"
 ksp = "1.8.20-1.0.11"
@@ -51,6 +52,7 @@ jakarta-validation = { module = "jakarta.validation:jakarta.validation-api" }
 javax-inject = { module = "javax.inject:javax.inject", version.ref = "javax-inject" }
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 kotlin-reflect = { module = "org.jetbrains.kotlin:kotlin-reflect" }
+kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli", version.ref = "kotlinx-cli" }
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
 kotlinx-serialization-core = { module = "org.jetbrains.kotlinx:kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }

@@ -1,25 +1,26 @@
 plugins {
     alias(libs.plugins.kotlin.jpa)
     alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.kotlin.spring)
     alias(libs.plugins.spring.boot)
     alias(libs.plugins.spring.dependency.management)
-    alias(libs.plugins.kotlin.serialization)
 }
 
 dependencies {
     implementation(project(":shared"))
     implementation(libs.jakarta.validation)
     implementation(libs.kotlin.reflect)
+    implementation(libs.kotlinx.cli)
+    implementation(libs.kotlinx.datetime)
+    implementation(libs.ktor.client.apache)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.serialization.kotlinx.json)
     implementation(libs.spring.boot.starter.data.jpa)
     implementation(libs.spring.boot.starter.web)
     implementation(libs.sqlite)
     implementation(libs.sqlite.dialect)
-    implementation(libs.ktor.client.apache)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.serialization.kotlinx.json)
-    implementation(libs.kotlinx.datetime)
-    implementation(libs.ktor.client.content.negotiation)
 }
 
 java {
