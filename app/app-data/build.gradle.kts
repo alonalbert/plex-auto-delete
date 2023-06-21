@@ -29,6 +29,15 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
+    flavorDimensions += listOf("plexServer")
+    productFlavors {
+        create("network") {
+            dimension = "plexServer"
+        }
+        create("fake") {
+            dimension = "plexServer"
+        }
+    }
 
     @Suppress("UnstableApiUsage")
     testOptions {

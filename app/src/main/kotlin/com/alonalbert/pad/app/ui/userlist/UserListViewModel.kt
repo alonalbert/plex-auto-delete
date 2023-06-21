@@ -32,15 +32,13 @@ class UserListViewModel @Inject constructor(
 
     fun runAutoWatch() {
         runTaskWithDialogResult {
-            DialogState.AutoWatchDialog(AutoWatchResult(listOf(User(name = "Foo"))))
-//            DialogState.AutoWatchDialog(repository.runAutoWatch())
+            DialogState.AutoWatchDialog(repository.runAutoWatch())
         }
     }
 
     fun runAutoDelete() {
         runTaskWithDialogResult {
-            AutoDeleteDialog(AutoDeleteResult(10, 10000000, setOf("Show")))
-//            AutoDeleteDialog(repository.runAutoDelete())
+            AutoDeleteDialog(repository.runAutoDelete())
         }
     }
 
