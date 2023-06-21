@@ -8,6 +8,7 @@ import com.alonalbert.pad.app.data.AutoWatchResult
 import com.alonalbert.pad.app.data.Repository
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.ui.padscreen.PadViewModel
+import com.alonalbert.pad.app.ui.userlist.UserListViewModel.DialogState.AutoDeleteDialog
 import com.alonalbert.pad.app.util.stateIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,12 +21,10 @@ class UserListViewModel @Inject constructor(
     private val repository: Repository,
     private val application: Application,
 ) : PadViewModel(application) {
-    private val autoWatchResultFlow: MutableStateFlow<AutoWatchResult?> = MutableStateFlow(null)
-    private val autoDeleteResultFlow: MutableStateFlow<AutoDeleteResult?> = MutableStateFlow(null)
+    private val dialogFlow: MutableStateFlow<DialogState?> = MutableStateFlow(null)
 
     val userListState: StateFlow<List<User>> = repository.getUsersFlow().stateIn(viewModelScope, emptyList())
-    val autoWatchResultState: StateFlow<AutoWatchResult?> = autoWatchResultFlow.stateIn(viewModelScope, null)
-    val autoDeleteResultState: StateFlow<AutoDeleteResult?> = autoDeleteResultFlow.stateIn(viewModelScope, null)
+    val dialogState: StateFlow<DialogState?> = dialogFlow.stateIn(viewModelScope, null)
 
     init {
         refresh()
@@ -36,23 +35,24 @@ class UserListViewModel @Inject constructor(
     }
 
     fun runAutoWatch() {
-        setLoading()
-        viewModelScope.launch {
-            try {
-                setAutoWatchResult(repository.runAutoWatch())
-            } catch (e: Throwable) {
-                setMessage(application.getString(R.string.network_error))
-            } finally {
-                dismissLoading()
-            }
+        runTaskWithDialogResult {
+            DialogState.AutoWatchDialog(AutoWatchResult(listOf(User(name = "Foo"))))
+//            DialogState.AutoWatchDialog(repository.runAutoWatch())
         }
     }
 
     fun runAutoDelete() {
+        runTaskWithDialogResult {
+            AutoDeleteDialog(AutoDeleteResult(10, 10000000, setOf("Show")))
+//            AutoDeleteDialog(repository.runAutoDelete())
+        }
+    }
+
+    private fun runTaskWithDialogResult(task: suspend () -> DialogState) {
         setLoading()
         viewModelScope.launch {
             try {
-                setAutoDeleteResult(repository.runAutoDelete())
+                setDialogState(task())
             } catch (e: Throwable) {
                 setMessage(application.getString(R.string.network_error))
             } finally {
@@ -61,18 +61,17 @@ class UserListViewModel @Inject constructor(
         }
     }
 
-    fun setAutoWatchResult(result: AutoWatchResult?) {
-        autoWatchResultFlow.value = result
-        if (result != null) {
-            autoDeleteResultFlow.value = null
-        }
+    private fun setDialogState(value: DialogState) {
+        dialogFlow.value = value
     }
 
-    fun setAutoDeleteResult(result: AutoDeleteResult?) {
-        autoDeleteResultFlow.value = result
-        if (result != null) {
-            autoWatchResultFlow.value = null
-        }
+    fun dismissDialog() {
+        dialogFlow.value = null
+    }
+
+    sealed class DialogState {
+        class AutoDeleteDialog(val result: AutoDeleteResult) : DialogState()
+        class AutoWatchDialog(val result: AutoWatchResult) : DialogState()
     }
 }
 

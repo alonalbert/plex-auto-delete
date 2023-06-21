@@ -37,6 +37,8 @@ import com.alonalbert.pad.app.data.User.UserType.EXCLUDE
 import com.alonalbert.pad.app.data.User.UserType.INCLUDE
 import com.alonalbert.pad.app.ui.padscreen.PadScreen
 import com.alonalbert.pad.app.ui.theme.MyApplicationTheme
+import com.alonalbert.pad.app.ui.userlist.UserListViewModel.DialogState.AutoDeleteDialog
+import com.alonalbert.pad.app.ui.userlist.UserListViewModel.DialogState.AutoWatchDialog
 import timber.log.Timber
 
 @Composable
@@ -46,8 +48,7 @@ fun UserListScreen(
     viewModel: UserListViewModel = hiltViewModel(),
 ) {
     val users by viewModel.userListState.collectAsStateWithLifecycle()
-    val autoWatchResult by viewModel.autoWatchResultState.collectAsStateWithLifecycle()
-    val autoDeleteResult by viewModel.autoDeleteResultState.collectAsStateWithLifecycle()
+    val dialogState by viewModel.dialogState.collectAsStateWithLifecycle()
 
     val onAutoWatchClick = { viewModel.runAutoWatch() }
     val onAutoDeleteClick = { viewModel.runAutoDelete() }
@@ -56,13 +57,13 @@ fun UserListScreen(
         viewModel = viewModel,
         modifier = modifier,
     ) {
-        autoWatchResult?.let {
-            val onDismiss = { viewModel.setAutoWatchResult(null) }
-            AutoWatchResultDialog(result = it, onDismiss = onDismiss)
-        }
-        autoDeleteResult?.let {
-            val onDismiss = { viewModel.setAutoDeleteResult(null) }
-            AutoDeleteResultDialog(result = it, onDismiss = onDismiss)
+        dialogState?.let {
+            val onDismiss = { viewModel.dismissDialog() }
+            when (it) {
+                is AutoWatchDialog -> AutoWatchResultDialog(result = it.result, onDismiss = onDismiss)
+                is AutoDeleteDialog -> AutoDeleteResultDialog(result = it.result, onDismiss = onDismiss)
+            }
+
         }
 
         UserListScreen(
@@ -86,7 +87,7 @@ fun AutoWatchResultDialog(
         text = {
             val text = when {
                 result.users.isEmpty() -> stringResource(R.string.auto_watch_noop)
-                else -> result.users.joinToString("\n") { "${it.name}: ${it.shows.joinToString { it.name }}" }
+                else -> result.users.joinToString("\n") { user -> "${user.name}: ${user.shows.joinToString { it.name }}" }
             }
             Text(text = text)
         },
@@ -162,7 +163,7 @@ private fun UsersList(
     users: List<User>,
     onUserClick: (user: User) -> Unit
 ) {
-    LazyColumn() {
+    LazyColumn {
         items(items = users) {
             UserCard(it, onUserClick)
         }
