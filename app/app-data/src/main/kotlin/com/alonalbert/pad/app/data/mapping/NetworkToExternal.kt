@@ -33,7 +33,7 @@ internal object NetworkToExternal {
         NetworkUser.UserType.INCLUDE -> User.UserType.INCLUDE
     }
 
-    fun NetworkAutoWatchResult.toExternal() = AutoWatchResult(users.toExternal())
+    fun NetworkAutoWatchResult.toExternal() = AutoWatchResult(users)
 
     fun NetworkAutoDeleteResult.toExternal() = AutoDeleteResult(numFiles, numBytes, shows)
 }

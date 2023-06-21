@@ -84,7 +84,7 @@ fun AutoWatchResultDialog(
         text = {
             val text = when {
                 result.users.isEmpty() -> stringResource(R.string.auto_watch_noop)
-                else -> result.users.joinToString("\n") { user -> "${user.name}: ${user.shows.joinToString { it.name }}" }
+                else -> result.users.entries.joinToString("\n") { (user, shows) -> "${user}: ${shows.joinToString { show -> show }}" }
             }
             Text(text = text)
         },

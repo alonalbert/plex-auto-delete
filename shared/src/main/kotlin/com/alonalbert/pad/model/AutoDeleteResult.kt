@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class AutoDeleteResult(
     val numFiles: Int = 0,
     val numBytes: Long = 0,
-    val shows: Set<String> = emptySet(),
+    val shows: List<String> = listOf(),
 )

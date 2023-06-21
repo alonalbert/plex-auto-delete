@@ -40,10 +40,13 @@ class PlexAutoDeleter(
 
         val sections = plexClient.getMonitoredSections()
         val allShows = showRepository.findAll().associateBy { it.name }
-        val affectedUsers = userRepository.findAll().map {
-            runAutoWatch(it, sections, allShows)
-        }.filter { it.shows.isNotEmpty() }
-        return AutoWatchResult(affectedUsers)
+        val result = userRepository.findAll()
+            .map {
+                runAutoWatch(it, sections, allShows)
+            }
+            .filter { it.shows.isNotEmpty() }
+            .associate { user -> user.name to user.shows.map { show -> show.name } }
+        return AutoWatchResult(result)
     }
 
     private suspend fun PlexClient.getMonitoredSections() =
@@ -86,7 +89,7 @@ class PlexAutoDeleter(
         }
         val deleteKeys = candidates.map { it.mapTo(hashSetOf()) { candidate -> candidate.key } }.intersect()
         val approvedCandidates = candidates.flatten().filter { it.key in deleteKeys }
-        val showsWithDeletions = approvedCandidates.mapTo(hashSetOf()) { it.show }
+        val showsWithDeletions = approvedCandidates.mapTo(hashSetOf()) { it.show }.toList()
         val deleteFiles = approvedCandidates.flatMapTo(hashSetOf()) { it.files }
 
         var size = 0L
