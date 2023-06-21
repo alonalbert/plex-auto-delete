@@ -3,11 +3,12 @@ services:
   pad:
     image: alonalbert/padserver
     container_name: pad
+    user: "1000"
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - ./config:/config
-      - ./run:/plex
+      - /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-in Support/Databases/:/plex
     ports:
       - 8080:8080
     restart: unless-stopped
