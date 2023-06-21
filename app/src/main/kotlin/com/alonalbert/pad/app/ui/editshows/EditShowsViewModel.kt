@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditShowsViewModel @Inject constructor(
     private val repository: Repository,
-    private val application: Application,
+    application: Application,
     savedStateHandle: SavedStateHandle,
 ) : PadViewModel(application) {
 

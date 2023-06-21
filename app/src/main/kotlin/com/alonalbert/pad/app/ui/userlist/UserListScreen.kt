@@ -35,7 +35,7 @@ import com.alonalbert.pad.app.data.AutoWatchResult
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.User.UserType.EXCLUDE
 import com.alonalbert.pad.app.data.User.UserType.INCLUDE
-import com.alonalbert.pad.app.ui.padscreen.PadScreen
+import com.alonalbert.pad.app.ui.padscreen.PadDialogScreen
 import com.alonalbert.pad.app.ui.theme.MyApplicationTheme
 import com.alonalbert.pad.app.ui.userlist.UserListViewModel.DialogState.AutoDeleteDialog
 import com.alonalbert.pad.app.ui.userlist.UserListViewModel.DialogState.AutoWatchDialog
@@ -48,24 +48,20 @@ fun UserListScreen(
     viewModel: UserListViewModel = hiltViewModel(),
 ) {
     val users by viewModel.userListState.collectAsStateWithLifecycle()
-    val dialogState by viewModel.dialogState.collectAsStateWithLifecycle()
 
     val onAutoWatchClick = { viewModel.runAutoWatch() }
     val onAutoDeleteClick = { viewModel.runAutoDelete() }
 
-    PadScreen(
+    PadDialogScreen(
         viewModel = viewModel,
+        dialog = { dialogState, onDismiss ->
+            when (dialogState) {
+                is AutoWatchDialog -> AutoWatchResultDialog(result = dialogState.result, onDismiss = onDismiss)
+                is AutoDeleteDialog -> AutoDeleteResultDialog(result = dialogState.result, onDismiss = onDismiss)
+            }
+        },
         modifier = modifier,
     ) {
-        dialogState?.let {
-            val onDismiss = { viewModel.dismissDialog() }
-            when (it) {
-                is AutoWatchDialog -> AutoWatchResultDialog(result = it.result, onDismiss = onDismiss)
-                is AutoDeleteDialog -> AutoDeleteResultDialog(result = it.result, onDismiss = onDismiss)
-            }
-
-        }
-
         UserListScreen(
             users = users,
             onAutoWatchClick = onAutoWatchClick,

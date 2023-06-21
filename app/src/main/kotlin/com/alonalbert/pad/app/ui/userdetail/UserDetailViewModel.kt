@@ -17,7 +17,7 @@ import javax.inject.Inject
 @HiltViewModel
 class UserDetailViewModel @Inject constructor(
     private val repository: Repository,
-    private val application: Application,
+    application: Application,
     savedStateHandle: SavedStateHandle,
 ) : PadViewModel(application) {
     private val userId: Long = savedStateHandle[USER_ID_ARG]!!

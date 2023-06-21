@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-abstract class PadViewModel(private val application: Application) : ViewModel() {
+abstract class PadViewModel(protected val application: Application) : ViewModel() {
     private val messageFlow: MutableStateFlow<String?> = MutableStateFlow(null)
     private val isLoadingFlow: MutableStateFlow<Boolean> = MutableStateFlow(false)
 
