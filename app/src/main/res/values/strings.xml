@@ -34,6 +34,9 @@
     <string name="show_token">Show token</string>
     <string name="auto_watch_noop">No shows needed to auto watched</string>
     <string name="auto_watch_results">Auto Watch Results</string>
+    <string name="auto_delete_results">Auto Delete Results</string>
+    <string name="auto_delete_text1">Deleted %1$s in %2$d files.</string>
+    <string name="auto_delete_text2">  Shows: %1s</string>
 
     <plurals name="excludes_shows">
         <item quantity="zero">Excludes no shows</item>

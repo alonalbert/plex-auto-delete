@@ -24,5 +24,7 @@ interface Repository {
     fun getShowsFlow(): Flow<List<Show>>
 
     suspend fun runAutoWatch(): List<User>
+
+    suspend fun runAutoDelete(): AutoDeleteResult
 }
 

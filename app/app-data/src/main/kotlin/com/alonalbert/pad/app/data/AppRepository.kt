@@ -67,6 +67,8 @@ internal class AppRepository @Inject constructor(
 
     override suspend fun runAutoWatch(): List<User> = networkDataSource.runAutoWatch()
 
+    override suspend fun runAutoDelete(): AutoDeleteResult = networkDataSource.runAutoDelete()
+
     override suspend fun refreshShows(): List<Show> {
         return withContext(dispatcher) {
             networkDataSource.loadShows().also {

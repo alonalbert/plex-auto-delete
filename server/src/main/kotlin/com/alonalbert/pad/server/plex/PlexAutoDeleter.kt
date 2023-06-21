@@ -33,21 +33,21 @@ class PlexAutoDeleter(
 ) {
     private val logger = LoggerFactory.getLogger(PlexAutoDeleter::class.java)
 
-    suspend fun runAutoWatcher(): List<User> {
+    suspend fun runAutoWatch(): List<User> {
         logger.info("Running auto watcher")
         val plexClient = PlexClient(configuration.plexUrl)
 
         val sections = plexClient.getMonitoredSections()
         val allShows = showRepository.findAll().associateBy { it.name }
         return userRepository.findAll().map {
-            runAutoWatcher(it, sections, allShows)
+            runAutoWatch(it, sections, allShows)
         }.filter { it.shows.isNotEmpty() }
     }
 
     private suspend fun PlexClient.getMonitoredSections() =
         getTvSections().filter { it.title in configuration.plexSections && it.type == "show" }
 
-    private suspend fun runAutoWatcher(
+    private suspend fun runAutoWatch(
         user: User,
         sections: List<PlexSection>,
         allShows: Map<String, Show>
@@ -70,7 +70,7 @@ class PlexAutoDeleter(
         return user.copy(shows = markedShows)
     }
 
-    suspend fun runAutoDeleter(
+    suspend fun runAutoDelete(
         watchedDuration: Duration = configuration.autoDeleteDays.days,
         testOnly: Boolean = false,
     ): AutoDeleteResult {

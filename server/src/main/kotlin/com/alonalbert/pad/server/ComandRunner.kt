@@ -26,7 +26,7 @@ class CommandRunner(
         runBlocking {
             when (args.firstOrNull()) {
                 "import-config" -> importConfigCommand.import()
-                "auto-watch" -> plexAutoDeleterCommand.runAutoWatcher()
+                "auto-watch" -> plexAutoDeleterCommand.runAutoWatch()
                 "auto-delete" -> runAutoDelete(argsArray)
                 else -> {}
             }
@@ -39,7 +39,7 @@ class CommandRunner(
         val testOnly by parser.option(ArgType.Boolean, shortName = "t", description = "Test ony").default(true)
         parser.parse(args)
 
-        val result = plexAutoDeleterCommand.runAutoDeleter(days.days, testOnly)
+        val result = plexAutoDeleterCommand.runAutoDelete(days.days, testOnly)
         println("============================================")
         println(result)
         return result

@@ -1,31 +1,35 @@
 package com.alonalbert.pad.app.data.mapping
 
+import com.alonalbert.pad.app.data.AutoDeleteResult
 import com.alonalbert.pad.app.data.Show
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.UserShow
+import com.alonalbert.pad.model.AutoDeleteResult as NetworkAutoDeleteResult
 import com.alonalbert.pad.model.Show as NetworkShow
 import com.alonalbert.pad.model.User as NetworkUser
 import com.alonalbert.pad.model.UserShow as NetworkUserShow
 
 @Suppress("unused")
 internal object NetworkToExternal {
-    internal fun NetworkUser.toExternal() = User(id = id, name = name, plexToken = plexToken, type = type.toExternal(), shows.toExternal())
+    fun NetworkUser.toExternal() = User(id, name, plexToken, type.toExternal(), shows.toExternal())
 
-    internal fun NetworkShow.toExternal() = Show(id = id, name = name)
+    fun NetworkShow.toExternal() = Show(id, name)
 
-    internal fun NetworkUserShow.toExternal() = UserShow(userId = userId, showId = showId)
+    fun NetworkUserShow.toExternal() = UserShow(userId, showId)
 
     @JvmName("localToExternalUser")
-    internal fun List<NetworkUser>.toExternal() = map { it.toExternal() }
+    fun List<NetworkUser>.toExternal() = map { it.toExternal() }
 
     @JvmName("localToExternalShow")
-    internal fun List<NetworkShow>.toExternal() = map { it.toExternal() }
+    fun List<NetworkShow>.toExternal() = map { it.toExternal() }
 
     @JvmName("localToExternalUserShow")
-    internal fun List<NetworkUserShow>.toExternal() = map { it.toExternal() }
+    fun List<NetworkUserShow>.toExternal() = map { it.toExternal() }
 
-    internal fun NetworkUser.UserType.toExternal() = when (this) {
+    fun NetworkUser.UserType.toExternal() = when (this) {
         NetworkUser.UserType.EXCLUDE -> User.UserType.EXCLUDE
         NetworkUser.UserType.INCLUDE -> User.UserType.INCLUDE
     }
+
+    fun NetworkAutoDeleteResult.toExternal() = AutoDeleteResult(numFiles, numBytes, shows)
 }

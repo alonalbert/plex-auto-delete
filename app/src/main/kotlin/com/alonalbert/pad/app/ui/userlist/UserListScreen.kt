@@ -16,7 +16,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -31,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alonalbert.pad.app.R
+import com.alonalbert.pad.app.data.AutoDeleteResult
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.User.UserType.EXCLUDE
 import com.alonalbert.pad.app.data.User.UserType.INCLUDE
@@ -38,7 +38,6 @@ import com.alonalbert.pad.app.ui.components.PadScaffold
 import com.alonalbert.pad.app.ui.theme.MyApplicationTheme
 import timber.log.Timber
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UserListScreen(
     onUserClick: (User) -> Unit,
@@ -47,9 +46,10 @@ fun UserListScreen(
 ) {
     val users by viewModel.userListState.collectAsStateWithLifecycle()
     val autoWatchResult by viewModel.autoWatchResultState.collectAsStateWithLifecycle()
+    val autoDeleteResult by viewModel.autoDeleteResultState.collectAsStateWithLifecycle()
 
     val onAutoWatchClick = { viewModel.runAutoWatch() }
-    val onAutoDeleteClick = {}
+    val onAutoDeleteClick = { viewModel.runAutoDelete() }
 
     PadScaffold(
         viewModel = viewModel,
@@ -58,6 +58,10 @@ fun UserListScreen(
         autoWatchResult?.let {
             val onDismiss = { viewModel.setAutoWatchResult(null) }
             AutoWatchResultDialog(autoWatchResult = it, onDismiss = onDismiss)
+        }
+        autoDeleteResult?.let {
+            val onDismiss = { viewModel.setAutoDeleteResult(null) }
+            AutoDeleteResultDialog(result = it, onDismiss = onDismiss)
         }
 
         UserListScreen(
@@ -84,6 +88,30 @@ fun AutoWatchResultDialog(
                 else -> autoWatchResult.joinToString("\n") { "${it.name}: ${it.shows.joinToString { it.name }}" }
             }
             Text(text = text)
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(android.R.string.ok))
+            }
+        },
+    )
+}
+
+@Composable
+fun AutoDeleteResultDialog(
+    result: AutoDeleteResult,
+    onDismiss: () -> Unit,
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(text = stringResource(R.string.auto_watch_results)) },
+        text = {
+            val text1 = stringResource(R.string.auto_delete_text1, result.numBytes, result.numFiles)
+            val text2 = stringResource(R.string.auto_delete_text2, result.shows.joinToString { it })
+            Column {
+                Text(text = text1)
+                Text(text = text2)
+            }
         },
         confirmButton = {
             TextButton(onClick = onDismiss) {

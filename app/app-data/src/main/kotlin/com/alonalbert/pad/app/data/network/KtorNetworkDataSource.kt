@@ -1,5 +1,6 @@
 package com.alonalbert.pad.app.data.network
 
+import com.alonalbert.pad.app.data.AutoDeleteResult
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.mapping.ExternalToNetwork.toNetwork
 import com.alonalbert.pad.app.data.mapping.NetworkToExternal.toExternal
@@ -22,6 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import javax.inject.Inject
+import com.alonalbert.pad.model.AutoDeleteResult as NetworkAutoDeleteResult
 import com.alonalbert.pad.model.Show as NetworkShow
 import com.alonalbert.pad.model.User as NetworkUser
 
@@ -49,7 +51,9 @@ internal class KtorNetworkDataSource @Inject constructor(
         }
     }
 
-    override suspend fun runAutoWatch(): List<User> = get<List<NetworkUser>>("${serverUrl}/action/auto-watcher").toExternal()
+    override suspend fun runAutoWatch(): List<User> = get<List<NetworkUser>>("${serverUrl}/action/auto-watch").toExternal()
+
+    override suspend fun runAutoDelete(): AutoDeleteResult = get<NetworkAutoDeleteResult>("${serverUrl}/action/auto-delete").toExternal()
 
     private suspend inline fun <reified T> get(url: String): T {
         return httpClient().use {
