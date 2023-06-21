@@ -15,22 +15,11 @@ dependencies {
     implementation(libs.spring.boot.starter.web)
     implementation(libs.sqlite)
     implementation(libs.sqlite.dialect)
-    implementation(libs.jaxb.api)
-    implementation(libs.jackson.datatype.jsr310)
-
-    // Ktor
     implementation(libs.ktor.client.apache)
-    implementation(libs.ktor.client.cio)
     implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.encoding)
-    implementation(libs.ktor.client.logging)
     implementation(libs.ktor.serialization.kotlinx.json)
-
     implementation(libs.kotlinx.datetime)
-
     implementation(libs.ktor.client.content.negotiation)
-
-
 }
 
 java {
