@@ -10,6 +10,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BasicAuthCredentials
+import io.ktor.client.plugins.auth.providers.basic
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.logging.LogLevel.INFO
 import io.ktor.client.plugins.logging.Logger
@@ -51,6 +54,16 @@ internal class KtorNetworkDataSource @Inject constructor(
         install(HttpTimeout) {
             requestTimeoutMillis = 5_000
         }
+        install(Auth) {
+            basic {
+                credentials {
+                    // TODO: Password settings
+                    BasicAuthCredentials("al", "L9:L6d_6dtv~u8=raw)")
+
+                }
+            }
+        }
+
     }
 
     override suspend fun runAutoWatch(): AutoWatchResult = get<NetworkAutoWatchResult>("${serverUrl}/action/auto-watch").toExternal()

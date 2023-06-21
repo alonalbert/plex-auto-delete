@@ -11,5 +11,5 @@ object ConfigModule {
 
     @Provides
     @ServerUrl
-    fun providesServerUrl(): String = "http://10.0.0.191:8080/api"
+    fun providesServerUrl(): String = "http://p.albertim.us/api"
 }
