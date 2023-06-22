@@ -21,12 +21,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LocalContentAlpha
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.Delete
+import androidx.compose.material.icons.outlined.Save
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -84,8 +85,16 @@ fun UserDetailScreen(
             viewModel = viewModel,
             onLogout = onLogout,
             floatingActionButton = {
-                FloatingActionButton(onClick = { onEditShowsClick(user) }) {
-                    Icon(Icons.Filled.Edit, stringResource(id = R.string.add_show))
+                FloatingActionButton(
+                    onClick = { onEditShowsClick(user) },
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    contentColor = MaterialTheme.colorScheme.onSecondary
+
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = stringResource(id = R.string.add_show),
+                    )
                 }
             },
             modifier = modifier,
@@ -248,10 +257,18 @@ fun PlexToken(user: User, onPlexTokenChanged: (String) -> Unit) {
                         onClick = { onPlexTokenChanged(plexToken) },
                         enabled = plexToken != user.plexToken,
                     ) {
-                        Icon(imageVector = Icons.Filled.Save, contentDescription = stringResource(R.string.save))
+                        Icon(
+                            imageVector = Icons.Outlined.Save,
+                            tint = MaterialTheme.colorScheme.onBackground.copy(alpha = LocalContentAlpha.current),
+                            contentDescription = stringResource(R.string.save),
+                        )
                     }
                     IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                        Icon(imageVector = visibilityIcon, contentDescription = visibilityDescription)
+                        Icon(
+                            imageVector = visibilityIcon,
+                            tint = MaterialTheme.colorScheme.onBackground,
+                            contentDescription = visibilityDescription,
+                        )
                     }
                 }
             },
@@ -307,7 +324,11 @@ private fun ShowCard(show: Show, onDeleteShowClick: (Show) -> Unit) {
                 modifier = Modifier.weight(1f)
             )
             IconButton(onClick = { onDeleteShowClick(show) }) {
-                Icon(imageVector = Icons.Outlined.Delete, contentDescription = "Delete")
+                Icon(
+                    imageVector = Icons.Outlined.Delete,
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    contentDescription = "Delete",
+                )
             }
         }
     }
