@@ -5,7 +5,10 @@ import com.alonalbert.pad.app.data.AutoWatchResult
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.mapping.ExternalToNetwork.toNetwork
 import com.alonalbert.pad.app.data.mapping.NetworkToExternal.toExternal
-import com.alonalbert.pad.app.di.ServerUrl
+import com.alonalbert.pad.app.data.settings.Settings.Companion.PASSWORD
+import com.alonalbert.pad.app.data.settings.Settings.Companion.SERVER
+import com.alonalbert.pad.app.data.settings.Settings.Companion.USERNAME
+import com.alonalbert.pad.app.data.settings.SettingsDao
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -34,14 +37,13 @@ import com.alonalbert.pad.model.User as NetworkUser
 
 
 internal class KtorNetworkDataSource @Inject constructor(
-    @ServerUrl private val serverUrl: String,
+    private val settings: SettingsDao,
 ) : NetworkDataSource {
+    override suspend fun loadUsers() = get<List<NetworkUser>>("users").toExternal()
 
-    override suspend fun loadUsers() = get<List<NetworkUser>>("${serverUrl}/users").toExternal()
+    override suspend fun updateUser(user: User) = put<NetworkUser>("users/${user.id}", user.toNetwork()).toExternal()
 
-    override suspend fun updateUser(user: User) = put<NetworkUser>("${serverUrl}/users/${user.id}", user.toNetwork()).toExternal()
-
-    override suspend fun loadShows() = get<List<NetworkShow>>("${serverUrl}/shows").toExternal()
+    override suspend fun loadShows() = get<List<NetworkShow>>("shows").toExternal()
 
     private fun httpClient() = HttpClient(Android) {
         install(Logging) {
@@ -58,22 +60,21 @@ internal class KtorNetworkDataSource @Inject constructor(
             basic {
                 credentials {
                     // TODO: Password settings
-                    BasicAuthCredentials("al", "L9:L6d_6dtv~u8=raw)")
-
+                    BasicAuthCredentials(settings.getString(USERNAME), settings.getString(PASSWORD))
                 }
             }
         }
 
     }
 
-    override suspend fun runAutoWatch(): AutoWatchResult = get<NetworkAutoWatchResult>("${serverUrl}/action/auto-watch").toExternal()
+    override suspend fun runAutoWatch(): AutoWatchResult = get<NetworkAutoWatchResult>("action/auto-watch").toExternal()
 
-    override suspend fun runAutoDelete(): AutoDeleteResult = get<NetworkAutoDeleteResult>("${serverUrl}/action/auto-delete").toExternal()
+    override suspend fun runAutoDelete(): AutoDeleteResult = get<NetworkAutoDeleteResult>("action/auto-delete").toExternal()
 
     private suspend inline fun <reified T> get(url: String): T {
         return httpClient().use {
             withContext(Dispatchers.IO) {
-                it.get(url).body()
+                it.get(getUrl(url)).body()
             }
         }
     }
@@ -81,7 +82,7 @@ internal class KtorNetworkDataSource @Inject constructor(
     private suspend inline fun <reified T> put(url: String, value: T): T {
         return httpClient().use {
             withContext(Dispatchers.IO) {
-                it.put(url) {
+                it.put(getUrl(url)) {
                     contentType(ContentType.Application.Json)
                     setBody(value)
                 }.body()
@@ -94,4 +95,6 @@ internal class KtorNetworkDataSource @Inject constructor(
             Timber.tag("PAD-HTTP").v(message)
         }
     }
+
+    private suspend fun getUrl(segment: String) = "http://${settings.getString(SERVER)}/api/$segment"
 }

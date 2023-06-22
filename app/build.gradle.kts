@@ -65,21 +65,6 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
-    flavorDimensions += listOf("server", "plexServer")
-    productFlavors {
-        create("desktop") {
-            dimension = "server"
-        }
-        create("laptop") {
-            dimension = "server"
-        }
-        create("network") {
-            dimension = "plexServer"
-        }
-        create("fake") {
-            dimension = "plexServer"
-        }
-    }
 }
 
 dependencies {

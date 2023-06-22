@@ -4,7 +4,13 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "settings")
-internal data class Settings(
+data class Settings(
     @PrimaryKey val name: String,
     val value: String = "",
-)
+) {
+    companion object {
+        const val SERVER: String = "server"
+        const val USERNAME: String = "username"
+        const val PASSWORD: String = "password"
+    }
+}

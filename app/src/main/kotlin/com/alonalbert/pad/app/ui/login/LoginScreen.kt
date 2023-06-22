@@ -50,6 +50,22 @@ fun LoginScreen(
         return
     }
 
+    val server = remember { mutableStateOf(TextFieldValue()) }
+    val username = remember { mutableStateOf(TextFieldValue()) }
+    val password = remember { mutableStateOf(TextFieldValue()) }
+
+    LoginScreenContent(server, username, password) {
+        viewModel.setLoginState(server.value.text, username.value.text, password.value.text)
+    }
+}
+
+@Composable
+fun LoginScreenContent(
+    server: MutableState<TextFieldValue>,
+    username: MutableState<TextFieldValue>,
+    password: MutableState<TextFieldValue>,
+    onConnectClick: () -> Unit,
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         ClickableText(
             text = AnnotatedString("Sign up here"),
@@ -69,10 +85,6 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        val server = remember { mutableStateOf(TextFieldValue()) }
-        val username = remember { mutableStateOf(TextFieldValue()) }
-        val password = remember { mutableStateOf(TextFieldValue()) }
 
         Text(text = stringResource(R.string.connect), style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive))
 
@@ -99,7 +111,7 @@ fun LoginScreen(
         Spacer(modifier = Modifier.height(20.dp))
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
-                onClick = { viewModel.setLoginState(server.value.text, username.value.text, password.value.text) },
+                onClick = onConnectClick,
                 enabled = server.isNotEmpty() && username.isNotEmpty() && password.isNotEmpty(),
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
@@ -117,5 +129,9 @@ private fun MutableState<TextFieldValue>.isNotEmpty() = value.text.isNotEmpty()
 @Preview
 @Composable
 fun PreviewLoginScreen() {
-    LoginScreen({})
+    LoginScreenContent(
+        server = remember { mutableStateOf(TextFieldValue()) },
+        username = remember { mutableStateOf(TextFieldValue()) },
+        password = remember { mutableStateOf(TextFieldValue()) },
+    ) {}
 }
