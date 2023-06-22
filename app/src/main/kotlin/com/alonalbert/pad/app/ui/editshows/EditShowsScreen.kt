@@ -32,7 +32,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -156,23 +155,23 @@ private fun ShowCard(
 ) {
     val color = when (isSelected) {
         true -> MaterialTheme.colorScheme.primaryContainer
-        false -> Color.White
+        false -> MaterialTheme.colorScheme.background
     }
     Card(
         onClick = onClick,
         shape = RoundedCornerShape(4.dp),
         colors = CardDefaults.cardColors(containerColor = color),
-        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(4.dp)
+            .padding(0.dp)
     ) {
         Timber.v("Rendering show ${show.name}")
         Text(
             text = show.name,
             style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
         )
     }
 }
