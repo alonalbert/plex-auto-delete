@@ -1,20 +1,14 @@
 package com.alonalbert.pad.app.ui.login
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.ClickableText
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
+import androidx.compose.material.Surface
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -22,19 +16,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alonalbert.pad.app.R
+import com.alonalbert.pad.app.ui.components.ButtonComponent
+import com.alonalbert.pad.app.ui.components.HeadingTextComponent
+import com.alonalbert.pad.app.ui.components.MyTextFieldComponent
+import com.alonalbert.pad.app.ui.components.NormalTextComponent
+import com.alonalbert.pad.app.ui.components.PasswordTextFieldComponent
 import com.alonalbert.pad.app.ui.login.LoginViewModel.LoginInfo
 
 @Composable
@@ -65,60 +58,63 @@ fun LoginScreenContent(
         username = loginInfo.username
         password = loginInfo.password
     }
-    Box(modifier = Modifier.fillMaxSize()) {
-        ClickableText(
-            text = AnnotatedString("Sign up here"),
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(20.dp),
-            onClick = { },
-            style = TextStyle(
-                fontSize = 14.sp,
-                textDecoration = TextDecoration.Underline,
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        )
-    }
-    Column(
-        modifier = Modifier.padding(20.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
     ) {
-
-        Text(text = stringResource(R.string.connect), style = TextStyle(fontSize = 40.sp, fontFamily = FontFamily.Cursive))
-
-        Spacer(modifier = Modifier.height(20.dp))
-        TextField(
-            label = { Text(text = stringResource(R.string.server)) },
-            value = server,
-            onValueChange = { server = it })
-
-        Spacer(modifier = Modifier.height(20.dp))
-        TextField(
-            label = { Text(text = stringResource(R.string.username)) },
-            value = username,
-            onValueChange = { username = it })
-
-        Spacer(modifier = Modifier.height(20.dp))
-        TextField(
-            label = { Text(text = stringResource(R.string.password)) },
-            value = password,
-            visualTransformation = PasswordVisualTransformation(),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            onValueChange = { password = it })
-
-        Spacer(modifier = Modifier.height(20.dp))
-        Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
-            Button(
-                onClick = { onConnectClick(server, username, password) },
-                enabled = server.isNotEmpty() && username.isNotEmpty() && password.isNotEmpty(),
-                shape = RoundedCornerShape(50.dp),
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(28.dp)
+        ) {
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp)
+                    .fillMaxSize()
             ) {
-                Text(text = stringResource(R.string.connect))
+
+                Spacer(modifier = Modifier.height(20.dp))
+
+                NormalTextComponent(value = stringResource(id = R.string.connect))
+                HeadingTextComponent(value = stringResource(id = R.string.welcome))
+                Spacer(modifier = Modifier.height(20.dp))
+
+                MyTextFieldComponent(
+                    text = server,
+                    labelValue = stringResource(id = R.string.server),
+                    painterResource(id = R.drawable.server),
+                    onTextChanged = { server = it },
+                    isError = server.isBlank()
+                )
+
+                MyTextFieldComponent(
+                    text = username,
+                    labelValue = stringResource(id = R.string.username),
+                    painterResource(id = R.drawable.username),
+                    onTextChanged = { username = it },
+                    isError = username.isBlank()
+                )
+
+                PasswordTextFieldComponent(
+                    text = password,
+                    labelValue = stringResource(id = R.string.password),
+                    painterResource(id = R.drawable.lock),
+                    onTextChanged = { password = it },
+                    isError = password.isBlank()
+                )
+
+                Spacer(modifier = Modifier.height(40.dp))
+                ButtonComponent(
+                    value = stringResource(id = R.string.connect),
+                    onButtonClicked = {
+                        onConnectClick(server, username, password)
+                    },
+                    isEnabled = server.isNotEmpty() && username.isNotEmpty() && password.isNotEmpty()
+                )
+
             }
+
         }
     }
 }
@@ -126,6 +122,5 @@ fun LoginScreenContent(
 @Preview
 @Composable
 fun PreviewLoginScreen() {
-//    LoginScreenContent(
-//    ) {}
+    LoginScreenContent(loginInfo = LoginInfo(), onConnectClick = { _, _, _ -> })
 }

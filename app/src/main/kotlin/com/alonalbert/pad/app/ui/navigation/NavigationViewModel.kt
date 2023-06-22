@@ -22,8 +22,7 @@ class NavigationViewModel @Inject constructor(
     val loginState = application.dataStore.data.map {
         when (it[LOGGED_IN]) {
             true -> LoggedIn
-            false -> LoggedOut
-            null -> Loading
+            else -> LoggedOut
         }
     }.stateIn(viewModelScope, Loading)
 
