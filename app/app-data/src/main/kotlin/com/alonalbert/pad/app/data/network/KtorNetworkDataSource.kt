@@ -1,14 +1,15 @@
 package com.alonalbert.pad.app.data.network
 
+import android.app.Application
 import com.alonalbert.pad.app.data.AutoDeleteResult
 import com.alonalbert.pad.app.data.AutoWatchResult
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.mapping.ExternalToNetwork.toNetwork
 import com.alonalbert.pad.app.data.mapping.NetworkToExternal.toExternal
-import com.alonalbert.pad.app.data.settings.Settings.Companion.PASSWORD
-import com.alonalbert.pad.app.data.settings.Settings.Companion.SERVER
-import com.alonalbert.pad.app.data.settings.Settings.Companion.USERNAME
-import com.alonalbert.pad.app.data.settings.SettingsDao
+import com.alonalbert.pad.app.data.settings.PASSWORD
+import com.alonalbert.pad.app.data.settings.SERVER
+import com.alonalbert.pad.app.data.settings.USERNAME
+import com.alonalbert.pad.app.data.settings.getSetting
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.android.Android
@@ -37,7 +38,7 @@ import com.alonalbert.pad.model.User as NetworkUser
 
 
 internal class KtorNetworkDataSource @Inject constructor(
-    private val settings: SettingsDao,
+    private val application: Application,
 ) : NetworkDataSource {
     override suspend fun loadUsers() = get<List<NetworkUser>>("users").toExternal()
 
@@ -60,7 +61,7 @@ internal class KtorNetworkDataSource @Inject constructor(
             basic {
                 credentials {
                     // TODO: Password settings
-                    BasicAuthCredentials(settings.getString(USERNAME), settings.getString(PASSWORD))
+                    BasicAuthCredentials(application.getSetting(USERNAME) ?: "", application.getSetting(PASSWORD) ?: "")
                 }
             }
         }
@@ -96,5 +97,5 @@ internal class KtorNetworkDataSource @Inject constructor(
         }
     }
 
-    private suspend fun getUrl(segment: String) = "http://${settings.getString(SERVER)}/api/$segment"
+    private suspend fun getUrl(segment: String) = "http://${application.getSetting(SERVER)}/api/$segment"
 }

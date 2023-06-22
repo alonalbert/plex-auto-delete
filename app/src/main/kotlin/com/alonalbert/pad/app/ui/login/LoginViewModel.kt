@@ -1,41 +1,44 @@
 package com.alonalbert.pad.app.ui.login
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.alonalbert.pad.app.data.settings.Settings.Companion.PASSWORD
-import com.alonalbert.pad.app.data.settings.Settings.Companion.SERVER
-import com.alonalbert.pad.app.data.settings.Settings.Companion.USERNAME
-import com.alonalbert.pad.app.data.settings.SettingsDao
+import com.alonalbert.pad.app.data.settings.PASSWORD
+import com.alonalbert.pad.app.data.settings.SERVER
+import com.alonalbert.pad.app.data.settings.USERNAME
+import com.alonalbert.pad.app.data.settings.dataStore
 import com.alonalbert.pad.app.util.stateIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val settings: SettingsDao,
+    private val application: Application,
 ) : ViewModel() {
-    private val serverState: StateFlow<String?> = settings.observeString(SERVER).stateIn(viewModelScope, "")
-    private val usernameState: StateFlow<String?> = settings.observeString(USERNAME).stateIn(viewModelScope, "")
-    private val passwordState: StateFlow<String?> = settings.observeString(PASSWORD).stateIn(viewModelScope, "")
 
-    val loginState = combine(serverState, usernameState, passwordState) { server, username, password ->
+    val loginState = application.dataStore.data.map {
+        val server = it[SERVER]
+        val username = it[USERNAME]
+        val password = it[PASSWORD]
         when {
             server.isNullOrBlank() || username.isNullOrBlank() || password.isNullOrBlank() -> null
             else -> LoginState(server, username, password)
         }
-    }
+    }.stateIn(viewModelScope, null)
 
     fun setLoginState(server: String, username: String, password: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            settings.setValue(SERVER, server)
-            settings.setValue(USERNAME, username)
-            settings.setValue(PASSWORD, password)
+        viewModelScope.launch {
+            application.dataStore.updateData {
+                val mutablePreferences = it.toMutablePreferences()
+                mutablePreferences.set(SERVER, server)
+                mutablePreferences.set(USERNAME, username)
+                mutablePreferences.set(PASSWORD, password)
+                mutablePreferences
+            }
         }
     }
 
-    data class LoginState(val server: String, val username: String, val password: String)
+    data class LoginState(val server: String = "", val username: String = "", val password: String = "")
 }

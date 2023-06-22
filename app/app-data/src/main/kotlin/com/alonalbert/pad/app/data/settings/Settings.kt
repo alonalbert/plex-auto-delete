@@ -1,16 +1,16 @@
 package com.alonalbert.pad.app.data.settings
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import kotlinx.coroutines.flow.first
 
-@Entity(tableName = "settings")
-data class Settings(
-    @PrimaryKey val name: String,
-    val value: String = "",
-) {
-    companion object {
-        const val SERVER: String = "server"
-        const val USERNAME: String = "username"
-        const val PASSWORD: String = "password"
-    }
-}
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
+
+suspend fun <T> Context.getSetting(key: Preferences.Key<T>): T? = dataStore.data.first()[key]
+
+val SERVER = stringPreferencesKey("server")
+val USERNAME = stringPreferencesKey("username")
+val PASSWORD = stringPreferencesKey("password")
