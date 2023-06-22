@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import com.alonalbert.pad.app.ui.navigation.MainNavigation
 import com.alonalbert.pad.app.ui.theme.MyApplicationTheme
 import dagger.hilt.android.AndroidEntryPoint
 

@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,15 +44,10 @@ fun LoginScreen(
     val viewModel: LoginViewModel = hiltViewModel()
 
     val loginState by viewModel.loginInfo.collectAsStateWithLifecycle(null)
-    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle(false)
-    if (isLoggedIn) {
-        LaunchedEffect("Connected") { onLoggedIn() }
-        return
-    }
 
     LoginScreenContent(loginState) { server, username, password ->
         viewModel.saveLoginInfo(server, username, password)
-        viewModel.setLoggedIn()
+        onLoggedIn()
     }
 }
 

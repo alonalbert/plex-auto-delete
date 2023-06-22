@@ -41,6 +41,8 @@
     <string name="server">Server</string>
     <string name="username">Username</string>
     <string name="password">Password</string>
+    <string name="logout">Logout</string>
+    <string name="plex_auto_delete">Plex Auto Delete</string>
 
     <plurals name="excludes_shows">
         <item quantity="zero">Excludes no shows</item>

@@ -44,6 +44,7 @@ import timber.log.Timber
 
 @Composable
 fun UserListScreen(
+    onLogout: () -> Unit,
     onUserClick: (User) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: UserListViewModel = hiltViewModel(),
@@ -55,6 +56,7 @@ fun UserListScreen(
 
     PadDialogScreen(
         viewModel = viewModel,
+        onLogout = onLogout,
         dialog = { dialogState, onDismiss ->
             when (dialogState) {
                 is AutoWatchDialog -> AutoWatchResultDialog(result = dialogState.result, onDismiss = onDismiss)

@@ -48,6 +48,7 @@ import timber.log.Timber
 fun EditShowsScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
+    onLogout: () -> Unit,
     viewModel: EditShowsViewModel = hiltViewModel(),
 ) {
     val allShows by viewModel.showListState.collectAsStateWithLifecycle()
@@ -72,6 +73,7 @@ fun EditShowsScreen(
                     Icon(Icons.Filled.Save, stringResource(id = R.string.save))
                 }
             },
+            onLogout = onLogout,
             modifier = modifier
         ) {
             ShowPickerContent(allShows, itemSelectionStates)

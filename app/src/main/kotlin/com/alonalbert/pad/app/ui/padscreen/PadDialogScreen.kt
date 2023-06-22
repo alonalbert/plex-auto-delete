@@ -9,6 +9,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 fun <T> PadDialogScreen(
     viewModel: PadDialogViewModel<T>,
     modifier: Modifier = Modifier,
+    onLogout: () -> Unit,
     floatingActionButton: @Composable () -> Unit = {},
     dialog: @Composable (T, () -> Unit) -> Unit,
     content: @Composable () -> Unit,
@@ -17,6 +18,7 @@ fun <T> PadDialogScreen(
 
     PadScreen(
         viewModel = viewModel,
+        onLogout = onLogout,
         floatingActionButton = floatingActionButton,
         modifier = modifier,
     ) {

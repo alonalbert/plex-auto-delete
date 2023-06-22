@@ -65,6 +65,7 @@ import timber.log.Timber
 @Composable
 fun UserDetailScreen(
     onEditShowsClick: (User) -> Unit,
+    onLogout: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: UserDetailViewModel = hiltViewModel(),
 ) {
@@ -81,6 +82,7 @@ fun UserDetailScreen(
 
         PadScreen(
             viewModel = viewModel,
+            onLogout = onLogout,
             floatingActionButton = {
                 FloatingActionButton(onClick = { onEditShowsClick(user) }) {
                     Icon(Icons.Filled.Edit, stringResource(id = R.string.add_show))
