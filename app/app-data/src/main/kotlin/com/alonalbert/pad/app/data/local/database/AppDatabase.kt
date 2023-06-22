@@ -8,7 +8,9 @@ import androidx.room.RoomDatabase
         LocalUser::class,
         LocalShow::class,
         LocalUserShow::class,
-    ], version = 1
+    ],
+    version = 1,
+    exportSchema = false,
 )
 internal abstract class AppDatabase : RoomDatabase() {
     abstract fun userDao(): UserDao
