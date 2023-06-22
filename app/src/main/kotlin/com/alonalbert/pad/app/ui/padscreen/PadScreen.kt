@@ -69,7 +69,7 @@ private fun PadTopBar(onLogoutClick: () -> Unit) {
         backgroundColor = MaterialTheme.colorScheme.primary,
         title = {
             Text(
-                text = stringResource(R.string.plex_auto_delete),
+                text = stringResource(R.string.app_name),
                 color = MaterialTheme.colorScheme.onPrimary
             )
         },

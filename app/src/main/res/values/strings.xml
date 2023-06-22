@@ -15,7 +15,7 @@
   -->
 
 <resources>
-    <string name="app_name">PadApplication</string>
+    <string name="app_name">Plex Auto Delete</string>
 
     <string name="user_updated">User updated</string>
     <string name="show_deleted">Show deleted</string>
@@ -42,7 +42,6 @@
     <string name="username">Username</string>
     <string name="password">Password</string>
     <string name="logout">Logout</string>
-    <string name="plex_auto_delete">Plex Auto Delete</string>
 
     <plurals name="excludes_shows">
         <item quantity="zero">Excludes no shows</item>
