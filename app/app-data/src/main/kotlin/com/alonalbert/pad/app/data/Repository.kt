@@ -26,9 +26,5 @@ interface Repository {
     suspend fun runAutoWatch(): AutoWatchResult
 
     suspend fun runAutoDelete(): AutoDeleteResult
-
-    fun getSettingIntFlow(name: String): Flow<Int>
-
-    fun getSettingStringFlow(name: String): Flow<String>
 }
 

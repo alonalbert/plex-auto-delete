@@ -37,6 +37,10 @@
     <string name="auto_delete_results">Auto Delete Results</string>
     <string name="auto_delete_text1">Deleted %1$s in %2$d files.</string>
     <string name="auto_delete_text2">  Shows: %1s</string>
+    <string name="connect">Connect</string>
+    <string name="server">Server</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
 
     <plurals name="excludes_shows">
         <item quantity="zero">Excludes no shows</item>

@@ -10,6 +10,7 @@ import androidx.navigation.navArgument
 import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.ui.DestinationsArgs.USER_ID_ARG
 import com.alonalbert.pad.app.ui.editshows.EditShowsScreen
+import com.alonalbert.pad.app.ui.login.LoginScreen
 import com.alonalbert.pad.app.ui.userdetail.UserDetailScreen
 import com.alonalbert.pad.app.ui.userlist.UserListScreen
 
@@ -21,7 +22,10 @@ object DestinationsArgs {
 fun MainNavigation() {
     val navController = rememberNavController()
 
-    NavHost(navController = navController, startDestination = "users") {
+    NavHost(navController = navController, startDestination = "login") {
+        composable("login") {
+            LoginScreen(onConnected = { navController.navigateToMainScreen() })
+        }
         composable("users") {
             UserListScreen(
                 onUserClick = { navController.navigateToUserDetail(it) },
@@ -50,4 +54,8 @@ fun NavHostController.navigateToUserDetail(user: User) {
 
 fun NavHostController.navigateToEditShows(user: User) {
     navigate("editShows/${user.id}")
+}
+
+fun NavHostController.navigateToMainScreen() {
+    navigate("users")
 }

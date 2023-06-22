@@ -1,4 +1,4 @@
-package com.alonalbert.pad.app.data.local.database
+package com.alonalbert.pad.app.data.settings
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

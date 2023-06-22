@@ -16,7 +16,6 @@ internal class RoomLocalDataSource @Inject constructor(
     private val userDao = database.userDao()
     private val showDao = database.showDao()
     private val userShowDao = database.userShowDao()
-    private val settingsDao = database.settingsDao()
 
     override fun getUsersFlow(): Flow<List<User>> = userDao.observeAll().map { it.toExternal() }
 
@@ -45,8 +44,4 @@ internal class RoomLocalDataSource @Inject constructor(
     override fun getShowsFlow(): Flow<List<Show>> = showDao.observeAll().map { it.toExternal() }
 
     override suspend fun updateUserShows(userShows: List<UserShow>) = userShowDao.update(userShows.toLocal())
-
-    override fun getSettingIntFlow(name: String): Flow<Int> = settingsDao.observeInt(name)
-
-    override fun getSettingStringFlow(name: String): Flow<String> = settingsDao.observeString(name)
 }
