@@ -3,6 +3,7 @@ package com.alonalbert.pad.app.data.settings
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.first
@@ -14,3 +15,4 @@ suspend fun <T> Context.getSetting(key: Preferences.Key<T>): T? = dataStore.data
 val SERVER = stringPreferencesKey("server")
 val USERNAME = stringPreferencesKey("username")
 val PASSWORD = stringPreferencesKey("password")
+val LOGGED_IN = booleanPreferencesKey("loggedIn")

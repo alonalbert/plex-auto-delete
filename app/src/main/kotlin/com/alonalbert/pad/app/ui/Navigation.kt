@@ -24,7 +24,7 @@ fun MainNavigation() {
 
     NavHost(navController = navController, startDestination = "login") {
         composable("login") {
-            LoginScreen(onConnected = { navController.navigateToMainScreen() })
+            LoginScreen(onLoggedIn = { navController.navigateToMainScreen() })
         }
         composable("users") {
             UserListScreen(

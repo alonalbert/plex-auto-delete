@@ -17,10 +17,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,7 +29,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -37,35 +36,41 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alonalbert.pad.app.R
+import com.alonalbert.pad.app.ui.login.LoginViewModel.LoginInfo
 
 @Composable
 fun LoginScreen(
-    onConnected: () -> Unit,
+    onLoggedIn: () -> Unit,
 ) {
     val viewModel: LoginViewModel = hiltViewModel()
 
-    val loginState by viewModel.loginState.collectAsStateWithLifecycle(null)
-    if (loginState != null) {
-        LaunchedEffect("Connected") { onConnected() }
+    val loginState by viewModel.loginInfo.collectAsStateWithLifecycle(null)
+    val isLoggedIn by viewModel.isLoggedIn.collectAsStateWithLifecycle(false)
+    if (isLoggedIn) {
+        LaunchedEffect("Connected") { onLoggedIn() }
         return
     }
 
-    val server = remember { mutableStateOf(TextFieldValue()) }
-    val username = remember { mutableStateOf(TextFieldValue()) }
-    val password = remember { mutableStateOf(TextFieldValue()) }
-
-    LoginScreenContent(server, username, password) {
-        viewModel.setLoginState(server.value.text, username.value.text, password.value.text)
+    LoginScreenContent(loginState) { server, username, password ->
+        viewModel.saveLoginInfo(server, username, password)
+        viewModel.setLoggedIn()
     }
 }
 
 @Composable
 fun LoginScreenContent(
-    server: MutableState<TextFieldValue>,
-    username: MutableState<TextFieldValue>,
-    password: MutableState<TextFieldValue>,
-    onConnectClick: () -> Unit,
+    loginInfo: LoginInfo?,
+    onConnectClick: (String, String, String) -> Unit,
 ) {
+    var server by remember { mutableStateOf("") }
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+
+    if (loginInfo != null) {
+        server = loginInfo.server
+        username = loginInfo.username
+        password = loginInfo.password
+    }
     Box(modifier = Modifier.fillMaxSize()) {
         ClickableText(
             text = AnnotatedString("Sign up here"),
@@ -91,27 +96,27 @@ fun LoginScreenContent(
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
             label = { Text(text = stringResource(R.string.server)) },
-            value = server.value,
-            onValueChange = { server.value = it })
+            value = server,
+            onValueChange = { server = it })
 
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
             label = { Text(text = stringResource(R.string.username)) },
-            value = username.value,
-            onValueChange = { username.value = it })
+            value = username,
+            onValueChange = { username = it })
 
         Spacer(modifier = Modifier.height(20.dp))
         TextField(
             label = { Text(text = stringResource(R.string.password)) },
-            value = password.value,
+            value = password,
             visualTransformation = PasswordVisualTransformation(),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            onValueChange = { password.value = it })
+            onValueChange = { password = it })
 
         Spacer(modifier = Modifier.height(20.dp))
         Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
             Button(
-                onClick = onConnectClick,
+                onClick = { onConnectClick(server, username, password) },
                 enabled = server.isNotEmpty() && username.isNotEmpty() && password.isNotEmpty(),
                 shape = RoundedCornerShape(50.dp),
                 modifier = Modifier
@@ -124,14 +129,9 @@ fun LoginScreenContent(
     }
 }
 
-private fun MutableState<TextFieldValue>.isNotEmpty() = value.text.isNotEmpty()
-
 @Preview
 @Composable
 fun PreviewLoginScreen() {
-    LoginScreenContent(
-        server = remember { mutableStateOf(TextFieldValue()) },
-        username = remember { mutableStateOf(TextFieldValue()) },
-        password = remember { mutableStateOf(TextFieldValue()) },
-    ) {}
+//    LoginScreenContent(
+//    ) {}
 }

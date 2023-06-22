@@ -1,8 +1,10 @@
 package com.alonalbert.pad.app.ui.login
 
 import android.app.Application
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.alonalbert.pad.app.data.settings.LOGGED_IN
 import com.alonalbert.pad.app.data.settings.PASSWORD
 import com.alonalbert.pad.app.data.settings.SERVER
 import com.alonalbert.pad.app.data.settings.USERNAME
@@ -18,27 +20,41 @@ class LoginViewModel @Inject constructor(
     private val application: Application,
 ) : ViewModel() {
 
-    val loginState = application.dataStore.data.map {
+    val loginInfo = application.dataStore.data.map {
         val server = it[SERVER]
         val username = it[USERNAME]
         val password = it[PASSWORD]
         when {
             server.isNullOrBlank() || username.isNullOrBlank() || password.isNullOrBlank() -> null
-            else -> LoginState(server, username, password)
+            else -> LoginInfo(server, username, password)
         }
     }.stateIn(viewModelScope, null)
 
-    fun setLoginState(server: String, username: String, password: String) {
+    val isLoggedIn = application.dataStore.data.map { it[LOGGED_IN] ?: false }.stateIn(viewModelScope, false)
+
+    fun saveLoginInfo(server: String, username: String, password: String) {
+        updateSettings {
+            set(SERVER, server)
+            set(USERNAME, username)
+            set(PASSWORD, password)
+        }
+    }
+
+    fun setLoggedIn() {
+        updateSettings {
+            set(LOGGED_IN, true)
+        }
+    }
+
+    private fun updateSettings(block: suspend MutablePreferences.() -> Unit) {
         viewModelScope.launch {
             application.dataStore.updateData {
-                val mutablePreferences = it.toMutablePreferences()
-                mutablePreferences.set(SERVER, server)
-                mutablePreferences.set(USERNAME, username)
-                mutablePreferences.set(PASSWORD, password)
-                mutablePreferences
+                it.toMutablePreferences().apply {
+                    block()
+                }
             }
         }
     }
 
-    data class LoginState(val server: String = "", val username: String = "", val password: String = "")
+    data class LoginInfo(val server: String = "", val username: String = "", val password: String = "")
 }
