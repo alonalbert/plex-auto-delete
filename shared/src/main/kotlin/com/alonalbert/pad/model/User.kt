@@ -1,24 +1,25 @@
 package com.alonalbert.pad.model
 
-import jakarta.persistence.CascadeType.ALL
-import jakarta.persistence.Entity
-import jakarta.persistence.FetchType.EAGER
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.JoinTable
-import jakarta.persistence.ManyToMany
+import com.alonalbert.pad.model.User.UserType.INCLUDE
 import kotlinx.serialization.Serializable
+import javax.persistence.CascadeType.ALL
+import javax.persistence.Entity
+import javax.persistence.FetchType.EAGER
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType.AUTO
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.JoinTable
+import javax.persistence.ManyToMany
 
 @Serializable
 @Entity
 data class User(
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue(strategy = AUTO)
     val id: Long = 0,
     val name: String = "",
     val plexToken: String = "",
-    val type: UserType = UserType.INCLUDE,
+    val type: UserType = INCLUDE,
     @ManyToMany(cascade = [ALL], fetch = EAGER)
     @JoinTable(
         name = "user_show",

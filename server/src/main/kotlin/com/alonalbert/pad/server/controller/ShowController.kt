@@ -44,15 +44,13 @@ class ShowController(
         val plexDatabasePath = configuration.plexDatabasePath
         val plexShows = DriverManager.getConnection("jdbc:sqlite:${plexDatabasePath}").use { connection ->
             buildSet {
-                DriverManager.getConnection("jdbc:sqlite:${plexDatabasePath}").use { connection ->
-                    connection.createStatement().use { statement ->
-                        STATEMENTS.forEach {
-                            statement.executeQuery(it).use { result ->
-                                while (result.next()) {
-                                    val show = result.getString("show")
-                                    if (show.isNotBlank()) {
-                                        add(show)
-                                    }
+                connection.createStatement().use { statement ->
+                    STATEMENTS.forEach {
+                        statement.executeQuery(it).use { result ->
+                            while (result.next()) {
+                                val show = result.getString("show")
+                                if (show.isNotBlank()) {
+                                    add(show)
                                 }
                             }
                         }
