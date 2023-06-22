@@ -15,7 +15,8 @@ internal class RoomLocalDataSource @Inject constructor(
 ) : LocalDataSource {
     private val userDao = database.userDao()
     private val showDao = database.showDao()
-    private val useShowDao = database.userShowDao()
+    private val userShowDao = database.userShowDao()
+    private val settingsDao = database.settingsDao()
 
     override fun getUsersFlow(): Flow<List<User>> = userDao.observeAll().map { it.toExternal() }
 
@@ -26,7 +27,7 @@ internal class RoomLocalDataSource @Inject constructor(
             // todo: Check is cascade works
             userDao.update(user.toLocal())
             val userShows = user.shows.map { show -> LocalUserShow(user.id, show.id) }
-            useShowDao.update(userShows)
+            userShowDao.update(userShows)
         }
     }
 
@@ -35,7 +36,7 @@ internal class RoomLocalDataSource @Inject constructor(
             userDao.deleteExcept(users.map { it.id })
             userDao.upsertAll(users.toLocal())
             val userShows = users.flatMap { user -> user.shows.map { show -> LocalUserShow(user.id, show.id) } }
-            useShowDao.update(userShows)
+            userShowDao.update(userShows)
         }
     }
 
@@ -43,5 +44,9 @@ internal class RoomLocalDataSource @Inject constructor(
 
     override fun getShowsFlow(): Flow<List<Show>> = showDao.observeAll().map { it.toExternal() }
 
-    override suspend fun updateUserShows(userShows: List<UserShow>) = useShowDao.update(userShows.toLocal())
+    override suspend fun updateUserShows(userShows: List<UserShow>) = userShowDao.update(userShows.toLocal())
+
+    override fun getSettingIntFlow(name: String): Flow<Int> = settingsDao.observeInt(name)
+
+    override fun getSettingStringFlow(name: String): Flow<String> = settingsDao.observeString(name)
 }

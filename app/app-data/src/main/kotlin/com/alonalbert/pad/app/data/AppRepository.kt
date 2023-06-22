@@ -67,6 +67,10 @@ internal class AppRepository @Inject constructor(
 
     override suspend fun runAutoWatch(): AutoWatchResult = networkDataSource.runAutoWatch()
 
+    override fun getSettingIntFlow(name: String): Flow<Int> = localDataSource.getSettingIntFlow(name)
+
+    override fun getSettingStringFlow(name: String): Flow<String> = localDataSource.getSettingStringFlow(name)
+
     override suspend fun runAutoDelete(): AutoDeleteResult = networkDataSource.runAutoDelete()
 
     override suspend fun refreshShows(): List<Show> {

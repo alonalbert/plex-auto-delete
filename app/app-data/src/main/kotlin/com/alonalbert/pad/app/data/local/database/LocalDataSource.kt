@@ -19,4 +19,8 @@ interface LocalDataSource {
     fun getShowsFlow(): Flow<List<Show>>
 
     suspend fun updateUserShows(userShows: List<UserShow>)
+
+    fun getSettingIntFlow(name: String): Flow<Int>
+
+    fun getSettingStringFlow(name: String): Flow<String>
 }
