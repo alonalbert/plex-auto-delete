@@ -151,7 +151,7 @@ private fun ProfileHeader(
 ) {
     Icon(
         modifier = Modifier
-            .heightIn(max = containerHeight / 3)
+            .heightIn(max = containerHeight / 5)
             .fillMaxSize()
             .padding(horizontal = 16.dp)
             .clip(CircleShape),
