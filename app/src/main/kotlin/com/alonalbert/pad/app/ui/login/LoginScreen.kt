@@ -1,5 +1,6 @@
 package com.alonalbert.pad.app.ui.login
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,8 +8,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Surface
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -71,6 +72,7 @@ fun LoginScreenContent(
         ) {
             Column(
                 modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize()
             ) {
 
@@ -119,7 +121,7 @@ fun LoginScreenContent(
     }
 }
 
-@Preview
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewLoginScreen() {
     LoginScreenContent(loginInfo = LoginInfo(), onConnectClick = { _, _, _ -> })

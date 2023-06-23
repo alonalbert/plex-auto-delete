@@ -1,5 +1,6 @@
 package com.alonalbert.pad.app.ui.components
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,23 +9,22 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalFocusManager
@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alonalbert.pad.app.R
@@ -53,7 +54,7 @@ fun NormalTextComponent(value: String) {
             fontWeight = FontWeight.Normal,
             fontStyle = FontStyle.Normal
         ),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
         textAlign = TextAlign.Center
     )
 }
@@ -70,7 +71,7 @@ fun HeadingTextComponent(value: String) {
             fontWeight = FontWeight.Bold,
             fontStyle = FontStyle.Normal
         ),
-        color = MaterialTheme.colors.onBackground,
+        color = MaterialTheme.colorScheme.onBackground,
         textAlign = TextAlign.Center
     )
 }
@@ -78,29 +79,30 @@ fun HeadingTextComponent(value: String) {
 @Composable
 fun MyTextFieldComponent(
     text: String,
-    labelValue: String, painterResource: Painter,
+    labelValue: String, painterResource: Painter? = null,
     onTextChanged: (String) -> Unit,
     isError: Boolean = false
 ) {
 
     OutlinedTextField(
         modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.small),
+            .fillMaxWidth(),
         label = { Text(text = labelValue) },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = MaterialTheme.colors.primary,
-            focusedLabelColor = MaterialTheme.colors.primary,
-            cursorColor = MaterialTheme.colors.primary,
-            backgroundColor = MaterialTheme.colors.background
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
+            cursorColor = MaterialTheme.colorScheme.primary,
         ),
         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
         singleLine = true,
         maxLines = 1,
         value = text,
         onValueChange = onTextChanged,
-        leadingIcon = {
-            Icon(painter = painterResource, contentDescription = "")
+        leadingIcon = when (painterResource) {
+            null -> null
+            else -> {
+                { Icon(painter = painterResource, contentDescription = "") }
+            }
         },
         isError = isError
     )
@@ -121,14 +123,12 @@ fun PasswordTextFieldComponent(
 
     OutlinedTextField(
         modifier = Modifier
-            .fillMaxWidth()
-            .clip(MaterialTheme.shapes.small),
+            .fillMaxWidth(),
         label = { Text(text = labelValue) },
-        colors = TextFieldDefaults.outlinedTextFieldColors(
-            focusedBorderColor = MaterialTheme.colors.primary,
-            focusedLabelColor = MaterialTheme.colors.primary,
-            cursorColor = MaterialTheme.colors.primary,
-            backgroundColor = MaterialTheme.colors.background
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
+            cursorColor = MaterialTheme.colorScheme.primary,
         ),
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Password,
@@ -187,7 +187,7 @@ fun ButtonComponent(value: String, onButtonClicked: () -> Unit, isEnabled: Boole
                 .fillMaxWidth()
                 .heightIn(48.dp)
                 .background(
-                    color = MaterialTheme.colors.primary,
+                    color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(50.dp)
                 ),
             contentAlignment = Alignment.Center
@@ -205,6 +205,18 @@ fun ButtonComponent(value: String, onButtonClicked: () -> Unit, isEnabled: Boole
 }
 
 
-
+@Preview(
+    showBackground = true,
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+)
+@Composable
+fun TextFieldComponentPreview() {
+    MyTextFieldComponent(
+        text = "",
+        labelValue = "Label",
+        painterResource = null,
+        onTextChanged = {}
+    )
+}
 
 

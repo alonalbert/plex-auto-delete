@@ -45,6 +45,7 @@
     <string name="hide_password">Hide password</string>
     <string name="show_password">Show password</string>
     <string name="welcome">Welcom Back</string>
+    <string name="loading">Loading…</string>
 
     <plurals name="excludes_shows">
         <item quantity="zero">Excludes no shows</item>
