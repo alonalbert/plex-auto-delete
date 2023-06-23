@@ -9,6 +9,7 @@ plugins {
 
 dependencies {
     implementation(project(":shared"))
+    implementation(libs.jakarta.persistence)
     implementation(libs.jakarta.validation)
     implementation(libs.kotlin.reflect)
     implementation(libs.kotlinx.cli)

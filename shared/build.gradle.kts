@@ -6,8 +6,7 @@ plugins {
 dependencies {
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.datetime)
-    implementation(libs.javax.persistence.api)
-
+    implementation(libs.jakarta.persistence)
 }
 
 java {
