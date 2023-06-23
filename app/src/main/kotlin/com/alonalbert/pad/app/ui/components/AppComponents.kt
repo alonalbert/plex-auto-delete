@@ -77,9 +77,10 @@ fun HeadingTextComponent(value: String) {
 }
 
 @Composable
-fun MyTextFieldComponent(
+fun TextFieldComponent(
     text: String,
-    labelValue: String, painterResource: Painter? = null,
+    labelValue: String,
+    painterResource: Painter? = null,
     onTextChanged: (String) -> Unit,
     isError: Boolean = false
 ) {
@@ -112,7 +113,8 @@ fun MyTextFieldComponent(
 @Composable
 fun PasswordTextFieldComponent(
     text: String,
-    labelValue: String, painterResource: Painter,
+    labelValue: String,
+    painterResource: Painter? = null,
     onTextChanged: (String) -> Unit,
     isError: Boolean = false
 ) {
@@ -141,8 +143,11 @@ fun PasswordTextFieldComponent(
         maxLines = 1,
         value = text,
         onValueChange = onTextChanged,
-        leadingIcon = {
-            Icon(painter = painterResource, contentDescription = "")
+        leadingIcon = when (painterResource) {
+            null -> null
+            else -> {
+                { Icon(painter = painterResource, contentDescription = "") }
+            }
         },
         trailingIcon = {
 
@@ -211,7 +216,7 @@ fun ButtonComponent(value: String, onButtonClicked: () -> Unit, isEnabled: Boole
 )
 @Composable
 fun TextFieldComponentPreview() {
-    MyTextFieldComponent(
+    TextFieldComponent(
         text = "",
         labelValue = "Label",
         painterResource = null,

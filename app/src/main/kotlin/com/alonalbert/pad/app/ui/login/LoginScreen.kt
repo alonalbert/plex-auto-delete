@@ -26,9 +26,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alonalbert.pad.app.R
 import com.alonalbert.pad.app.ui.components.ButtonComponent
 import com.alonalbert.pad.app.ui.components.HeadingTextComponent
-import com.alonalbert.pad.app.ui.components.MyTextFieldComponent
 import com.alonalbert.pad.app.ui.components.NormalTextComponent
 import com.alonalbert.pad.app.ui.components.PasswordTextFieldComponent
+import com.alonalbert.pad.app.ui.components.TextFieldComponent
 import com.alonalbert.pad.app.ui.login.LoginViewModel.LoginInfo
 
 @Composable
@@ -82,7 +82,7 @@ fun LoginScreenContent(
                 HeadingTextComponent(value = stringResource(id = R.string.welcome))
                 Spacer(modifier = Modifier.height(20.dp))
 
-                MyTextFieldComponent(
+                TextFieldComponent(
                     text = server,
                     labelValue = stringResource(id = R.string.server),
                     painterResource(id = R.drawable.server),
@@ -90,7 +90,7 @@ fun LoginScreenContent(
                     isError = server.isBlank()
                 )
 
-                MyTextFieldComponent(
+                TextFieldComponent(
                     text = username,
                     labelValue = stringResource(id = R.string.username),
                     painterResource(id = R.drawable.username),
