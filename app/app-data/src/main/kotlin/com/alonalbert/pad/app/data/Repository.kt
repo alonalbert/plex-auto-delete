@@ -25,6 +25,6 @@ interface Repository {
 
     suspend fun runAutoWatch(): AutoWatchResult
 
-    suspend fun runAutoDelete(): AutoDeleteResult
+    suspend fun runAutoDelete(days: Int, isTestMode: Boolean): AutoDeleteResult
 }
 

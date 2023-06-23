@@ -22,6 +22,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -53,7 +56,7 @@ fun UserListScreen(
     val users by viewModel.userListState.collectAsStateWithLifecycle()
 
     val onAutoWatchClick = { viewModel.runAutoWatch() }
-    val onAutoDeleteClick = { viewModel.runAutoDelete() }
+    val onAutoDeleteClick = { days: Int, isTestMode: Boolean -> viewModel.runAutoDelete(days, isTestMode) }
 
     PadDialogScreen(
         viewModel = viewModel,
@@ -127,11 +130,11 @@ fun AutoDeleteResultDialog(
 internal fun UserListScreen(
     users: List<User>,
     onAutoWatchClick: () -> Unit,
-    onAutoDeleteClick: () -> Unit,
+    onAutoDeleteClick: (Int, Boolean) -> Unit,
     onUserClick: (user: User) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier.padding(8.dp)) {
+    Column(modifier = modifier) {
         ActionButtons(onAutoWatchClick, onAutoDeleteClick)
 
         UsersTitle()
@@ -143,16 +146,26 @@ internal fun UserListScreen(
 @Composable
 private fun ActionButtons(
     onAutoWatchClick: () -> Unit,
-    onAutoDeleteClick: () -> Unit,
+    onAutoDeleteClick: (Int, Boolean) -> Unit,
 ) {
+    var showAutoDeleteDialog by remember { mutableStateOf(false) }
+    if (showAutoDeleteDialog) {
+        AutoDeleteDialog(
+            days = 7,
+            onDismissRequest = { showAutoDeleteDialog = false },
+            onDoneClick = { days, isTestMode -> onAutoDeleteClick(days, isTestMode) })
+    }
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
     ) {
         Button(onClick = onAutoWatchClick) {
             Text(text = "Auto Watch")
         }
-        Button(onClick = onAutoDeleteClick) {
+
+        Button(onClick = { showAutoDeleteDialog = true }) {
             Text(text = "Auto Delete")
         }
     }
@@ -178,6 +191,7 @@ private fun UsersTitle() {
         modifier = Modifier
             .wrapContentSize(Alignment.Center)
             .padding(bottom = 10.dp)
+            .padding(horizontal = 8.dp)
     )
 }
 
@@ -226,7 +240,7 @@ private fun DefaultPreview() {
         UserListScreen(
             users,
             onAutoWatchClick = {},
-            onAutoDeleteClick = {},
+            onAutoDeleteClick = { _, _ -> },
             onUserClick = {},
         )
     }

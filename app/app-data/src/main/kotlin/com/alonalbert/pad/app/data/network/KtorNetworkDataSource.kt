@@ -70,7 +70,8 @@ internal class KtorNetworkDataSource @Inject constructor(
 
     override suspend fun runAutoWatch(): AutoWatchResult = get<NetworkAutoWatchResult>("action/auto-watch").toExternal()
 
-    override suspend fun runAutoDelete(): AutoDeleteResult = get<NetworkAutoDeleteResult>("action/auto-delete").toExternal()
+    override suspend fun runAutoDelete(days: Int, isTestMode: Boolean): AutoDeleteResult =
+        get<NetworkAutoDeleteResult>("action/auto-delete?days=$days&isTestMode=$isTestMode").toExternal()
 
     private suspend inline fun <reified T> get(url: String): T {
         return httpClient().use {

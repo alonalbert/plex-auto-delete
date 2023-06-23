@@ -36,9 +36,9 @@ class UserListViewModel @Inject constructor(
         }
     }
 
-    fun runAutoDelete() {
+    fun runAutoDelete(days: Int, isTestMode: Boolean) {
         runTaskWithDialogResult {
-            AutoDeleteDialog(repository.runAutoDelete())
+            AutoDeleteDialog(repository.runAutoDelete(days, isTestMode))
         }
     }
 

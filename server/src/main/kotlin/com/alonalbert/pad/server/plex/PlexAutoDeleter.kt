@@ -21,6 +21,7 @@ import kotlinx.datetime.Clock
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.nio.file.Path
+import kotlin.io.path.deleteIfExists
 import kotlin.io.path.fileSize
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
@@ -95,15 +96,36 @@ class PlexAutoDeleter(
         var size = 0L
         var count = 0
         deleteFiles.forEach {
-            logger.info("Deleting file $it")
             try {
-                size += Path.of(it).fileSize()
-                count++
+                val path = Path.of(it)
+                val fileSize = path.fileSize()
+                val updateStats = when (testOnly) {
+                    true -> testDeleteFile(path)
+                    false -> deleteFile(path)
+                }
+                if (updateStats) {
+                    size += fileSize
+                    count++
+                }
             } catch (e: Throwable) {
                 logger.warn("Error deleting $it", e)
             }
         }
         return AutoDeleteResult(count, size, showsWithDeletions)
+    }
+
+    private fun deleteFile(path: Path): Boolean {
+        val deleted = path.deleteIfExists()
+        when (deleted) {
+            true -> logger.info("Deleted: $path")
+            false -> logger.info("Does not exist: $path")
+        }
+        return deleted
+    }
+
+    private fun testDeleteFile(path: Path): Boolean {
+        logger.info("test deleted: $path")
+        return true
     }
 
     private suspend fun getDeleteCandidates(

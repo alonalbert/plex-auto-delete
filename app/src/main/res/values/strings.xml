@@ -46,6 +46,9 @@
     <string name="show_password">Show password</string>
     <string name="welcome">Welcom Back</string>
     <string name="loading">Loading…</string>
+    <string name="run_auto_delete">Run Auto Delete</string>
+    <string name="run">Run</string>
+    <string name="test_mode">Test mode</string>
 
     <plurals name="excludes_shows">
         <item quantity="zero">Excludes no shows</item>
