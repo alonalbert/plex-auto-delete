@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class PlexData<T>(
     @SerialName("MediaContainer")
-    var mediaContainer: MediaContainer<T> = MediaContainer(),
+    var mediaContainer: PlexMediaContainer<T> = PlexMediaContainer(),
 )
