@@ -4,11 +4,12 @@ services:
     image: alonalbert/padserver
     container_name: pad
     user: "1000"
-    network_mode: host,
+    network_mode: host
     volumes:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
       - ./config:/config
+      - /storage:/storage
       - /var/lib/plexmediaserver/Library/Application Support/Plex Media Server/Plug-in Support/Databases/:/plex
     restart: unless-stopped
 
