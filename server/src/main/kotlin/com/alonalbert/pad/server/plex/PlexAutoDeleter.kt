@@ -59,6 +59,7 @@ class PlexAutoDeleter(
         if (updatedShows.isNotEmpty()) {
             val details = updatedShows.entries.joinToString("\n  ") { entry -> "${entry.key}: ${entry.value.joinToString { user -> user }}" }
             pushoverClient.send("Marked watched:\n  $details")
+            logger.info("Marked watched:\n  $details")
         }
         return AutoWatchResult(updatedShows)
     }
@@ -101,6 +102,7 @@ class PlexAutoDeleter(
         }
         if (count > 0) {
             pushoverClient.send("Deleted ${size.toByteUnitString()} in $count files")
+            logger.info("Deleted ${size.toByteUnitString()} in $count files")
         }
 
         return AutoDeleteResult(count, size, showsWithDeletions)
