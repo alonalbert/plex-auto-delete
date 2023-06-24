@@ -70,7 +70,7 @@ android {
 
 dependencies {
     implementation(project(":app:app-data"))
-    implementation(project(":app:app-data"))
+    implementation(project(":app:app-annotations"))
     implementation(project(":shared"))
 
     val composeBom = platform(libs.androidx.compose.bom)
