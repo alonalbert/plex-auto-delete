@@ -1,34 +1,18 @@
 package com.alonalbert.pad.server.config
 
-import org.springframework.context.annotation.Bean
 import org.springframework.core.env.Environment
-import org.springframework.core.env.get
-import org.springframework.stereotype.Component
+import kotlin.time.Duration.Companion.days
 
 private const val PLEX_URL = "plex.url"
 private const val PLEX_DATABASE_PATH = "plex.database.path"
+private const val PLEX_SECTION_LIST = "plex.section.list"
+private const val PLEX_AUTO_DELETE_DAYS = "plex.auto.delete.days"
 
-@Component
-class Config(private val environment: Environment) {
-    @Bean
-    fun plexConfiguration() = Configuration(
-        plexDatabasePath = getPlexDatabasePath(),
-        plexUrl = getPlexUrl(),
-        plexSections = environment["plex.section.list"]?.split(",")?.toSet() ?: emptySet(),
-        autoDeleteDays = environment["plex.auto.delete.days"]?.toInt() ?: 7,
-    )
+fun Environment.getPlexDatabasePath() = getConfigProperty(PLEX_DATABASE_PATH)
+fun Environment.getPlexUrl() = getConfigProperty(PLEX_URL)
+fun Environment.getPlexSections() = getConfigProperty(PLEX_SECTION_LIST, "").split(",").toList().distinct()
+fun Environment.getAutoDeleteDuration() = getConfigProperty(PLEX_AUTO_DELETE_DAYS, "7").toInt().days
 
-    private fun getPlexDatabasePath(): String {
-        return System.getProperty(PLEX_DATABASE_PATH, environment[PLEX_DATABASE_PATH]) ?: throw IllegalStateException("Can't find Plex database")
-    }
+private fun Environment.getConfigProperty(name: String, defaultValue: String? = null) =
+    System.getProperty(name, getProperty(name)) ?: defaultValue ?: throw IllegalStateException("Can't find property $name")
 
-    private fun getPlexUrl() =
-        System.getProperty(PLEX_URL, environment[PLEX_URL]) ?: throw IllegalStateException("Can't find Plex database")
-
-    data class Configuration(
-        val plexDatabasePath: String,
-        val plexUrl: String,
-        val plexSections: Set<String>,
-        val autoDeleteDays: Int,
-    )
-}

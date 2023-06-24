@@ -1,5 +1,6 @@
 package com.alonalbert.pad.server.plex
 
+import com.alonalbert.pad.server.config.getPlexUrl
 import com.alonalbert.pad.server.plex.model.PlexData
 import com.alonalbert.pad.server.plex.model.PlexEpisode
 import com.alonalbert.pad.server.plex.model.PlexSection
@@ -14,25 +15,31 @@ import io.ktor.client.request.header
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import org.springframework.core.env.Environment
+import org.springframework.stereotype.Component
 import org.springframework.web.util.DefaultUriBuilderFactory
 import org.springframework.web.util.UriBuilder
 import java.net.URI
 
 
-class PlexClient(private val plexUrl: String, private val userToken: String = "") {
+@Component
+class PlexClient(environment: Environment) {
+    private val plexUrl = environment.getPlexUrl()
 
-    suspend fun getTvSections() = getItems<PlexSection>("/library/sections").filter { it.type == "show" }
+    suspend fun getTvSections(userToken: String = "") =
+        getItems<PlexSection>("/library/sections", userToken).filter { it.type == "show" }
 
-    suspend fun getUnwatchedShows(sectionKey: String) =
-        getItems<PlexShow>("/library/sections/$sectionKey/unwatched")
+    suspend fun getUnwatchedShows(sectionKey: String, userToken: String = "") =
+        getItems<PlexShow>("/library/sections/$sectionKey/unwatched", userToken)
 
-    suspend fun getAllShows(sectionKey: String) = getItems<PlexShow>("/library/sections/$sectionKey/all")
+    suspend fun getAllShows(sectionKey: String, userToken: String = "") =
+        getItems<PlexShow>("/library/sections/$sectionKey/all", userToken)
 
-    suspend fun getEpisodes(showKey: String): List<PlexEpisode> =
-        getItems<PlexEpisode>("library/metadata/$showKey/allLeaves")
+    suspend fun getEpisodes(showKey: String, userToken: String = ""): List<PlexEpisode> =
+        getItems<PlexEpisode>("library/metadata/$showKey/allLeaves", userToken)
 
-    fun markShowWatched(plexShow: PlexShow) {
-        val url = createUriBuilder(plexUrl)
+    fun markShowWatched(plexShow: PlexShow, userToken: String = "") {
+        val url = createUriBuilder(plexUrl, userToken)
             .pathSegment(":", "scrobble")
             .queryParam("key", plexShow.ratingKey)
             .queryParam("identifier", "com.plexapp.plugins.library")
@@ -58,8 +65,8 @@ class PlexClient(private val plexUrl: String, private val userToken: String = ""
         }
     }
 
-    private suspend inline fun <reified T> getItems(path: String): List<T> {
-        val url = createUriBuilder(plexUrl).pathSegment(*path.split("/").toTypedArray()).build().toURL()
+    private suspend inline fun <reified T> getItems(path: String, userToken: String): List<T> {
+        val url = createUriBuilder(plexUrl, userToken).pathSegment(*path.split("/").toTypedArray()).build().toURL()
         return runBlocking {
             httpClient().use {
                 val response = it.get(url) {
@@ -71,7 +78,7 @@ class PlexClient(private val plexUrl: String, private val userToken: String = ""
         }
     }
 
-    private fun createUriBuilder(plexUrl: String): UriBuilder {
+    private fun createUriBuilder(plexUrl: String, userToken: String): UriBuilder {
         val baseUri = URI.create(plexUrl)
         val builder = DefaultUriBuilderFactory().builder()
             .scheme(baseUri.scheme)

@@ -1,9 +1,10 @@
 package com.alonalbert.pad.server.controller
 
 import com.alonalbert.pad.model.Show
-import com.alonalbert.pad.server.config.Config.Configuration
+import com.alonalbert.pad.server.config.getPlexDatabasePath
 import com.alonalbert.pad.server.repository.ShowRepository
 import org.slf4j.LoggerFactory
+import org.springframework.core.env.Environment
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -29,10 +30,11 @@ private val STATEMENTS = listOf(STATEMENT1, STATEMENT2)
 @RestController
 @RequestMapping("/api")
 class ShowController(
+    environment: Environment,
     private val showRepository: ShowRepository,
-    private val configuration: Configuration,
 ) {
     private val logger = LoggerFactory.getLogger(ShowController::class.java)
+    private val plexDatabasePath = environment.getPlexDatabasePath()
 
     @GetMapping("/shows")
     fun getUsers(): List<Show> {
@@ -41,7 +43,6 @@ class ShowController(
     }
 
     private fun updateShowsFromPlex() {
-        val plexDatabasePath = configuration.plexDatabasePath
         val plexShows = DriverManager.getConnection("jdbc:sqlite:${plexDatabasePath}").use { connection ->
             buildSet {
                 connection.createStatement().use { statement ->

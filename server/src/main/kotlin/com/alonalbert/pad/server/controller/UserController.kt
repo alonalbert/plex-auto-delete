@@ -1,10 +1,11 @@
 package com.alonalbert.pad.server.controller
 
 import com.alonalbert.pad.model.User
-import com.alonalbert.pad.server.config.Config.Configuration
+import com.alonalbert.pad.server.config.getPlexDatabasePath
 import com.alonalbert.pad.server.repository.UserRepository
 import jakarta.validation.Valid
 import org.slf4j.LoggerFactory
+import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -19,10 +20,11 @@ import java.sql.DriverManager
 @RestController
 @RequestMapping("/api")
 class UserController(
+    environment: Environment,
     private val userRepository: UserRepository,
-    private val configuration: Configuration,
 ) {
     private val logger = LoggerFactory.getLogger(UserController::class.java)
+    private val plexDatabasePath = environment.getPlexDatabasePath()
 
     @GetMapping("/users")
     fun getUsers(): List<User> {
@@ -54,8 +56,6 @@ class UserController(
     }
 
     private fun updateUsersFromPlex() {
-        val plexDatabasePath = configuration.plexDatabasePath
-        logger.info("Database: ${configuration.plexDatabasePath}")
         val plexUsers = DriverManager.getConnection("jdbc:sqlite:${plexDatabasePath}").use { connection ->
             buildSet {
                 connection.createStatement().use { statement ->

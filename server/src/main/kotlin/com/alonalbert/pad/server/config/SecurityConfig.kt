@@ -2,7 +2,6 @@ package com.alonalbert.pad.server.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.PropertySource
 import org.springframework.core.env.Environment
 import org.springframework.core.env.get
 import org.springframework.security.config.Customizer
@@ -17,7 +16,6 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager
 import org.springframework.security.web.SecurityFilterChain
 
 
-@PropertySource("classpath:local.properties")
 @Configuration
 @EnableWebSecurity
 class SpringSecurityConfig(private val environment: Environment) {
@@ -33,8 +31,8 @@ class SpringSecurityConfig(private val environment: Environment) {
     @Bean
     fun userDetailsService(): UserDetailsService {
         val al: UserDetails = User.builder()
-            .username("al")
-            .password(passwordEncoder().encode(environment["password"]))
+            .username(environment["server.username"])
+            .password(passwordEncoder().encode(environment["server.password"]))
             .roles("USER")
             .build()
         return InMemoryUserDetailsManager(al)
