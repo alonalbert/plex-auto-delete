@@ -11,9 +11,11 @@ import com.alonalbert.pad.server.config.getPlexSections
 import com.alonalbert.pad.server.plex.model.PlexEpisode
 import com.alonalbert.pad.server.plex.model.PlexSection
 import com.alonalbert.pad.server.plex.model.PlexShow
+import com.alonalbert.pad.server.pushover.PushoverClient
 import com.alonalbert.pad.server.repository.ShowRepository
 import com.alonalbert.pad.server.repository.UserRepository
 import com.alonalbert.pad.util.intersect
+import com.alonalbert.pad.util.toByteUnitString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -34,6 +36,7 @@ class PlexAutoDeleter(
     private val userRepository: UserRepository,
     private val showRepository: ShowRepository,
     private val plexClient: PlexClient,
+    private val pushoverClient: PushoverClient,
 ) {
     private val logger = LoggerFactory.getLogger(PlexAutoDeleter::class.java)
     private val plexSections = environment.getPlexSections()
@@ -50,32 +53,11 @@ class PlexAutoDeleter(
             }
             .filter { it.shows.isNotEmpty() }
             .associate { user -> user.name to user.shows.map { show -> show.name } }
-        return AutoWatchResult(result)
-    }
 
-    private suspend fun PlexClient.getMonitoredSections() =
-        getTvSections().filter { it.title in plexSections && it.type == "show" }
-
-    private suspend fun runAutoWatch(
-        user: User,
-        sections: List<PlexSection>,
-        allShows: Map<String, Show>
-    ): User {
-        val markedShows = mutableListOf<Show>()
-        sections.forEach { section ->
-            val unwatchedShows = plexClient.getUnwatchedShows(section.key, user.plexToken)
-            val userShows = user.shows.mapTo(mutableSetOf()) { it.name }
-            val showsToMark = when (user.type) {
-                EXCLUDE -> unwatchedShows.filter { it.title in userShows }
-                INCLUDE -> unwatchedShows.filter { it.title !in userShows }
-            }
-            showsToMark.forEach {
-                logger.debug("Marking watched for user {}: {}", user.name, { it.title })
-                plexClient.markShowWatched(it, user.plexToken)
-            }
-            markedShows.addAll(showsToMark.mapNotNull { allShows[it.title] })
+        if (result.isNotEmpty()) {
+            pushoverClient.send(result.toString())
         }
-        return user.copy(shows = markedShows)
+        return AutoWatchResult(result)
     }
 
     suspend fun runAutoDelete(
@@ -112,7 +94,36 @@ class PlexAutoDeleter(
                 logger.warn("Error deleting $it", e)
             }
         }
+        if (count > 0) {
+            pushoverClient.send("Deleted ${size.toByteUnitString()} in $count files")
+        }
+
         return AutoDeleteResult(count, size, showsWithDeletions)
+    }
+
+    private suspend fun PlexClient.getMonitoredSections() =
+        getTvSections().filter { it.title in plexSections && it.type == "show" }
+
+    private suspend fun runAutoWatch(
+        user: User,
+        sections: List<PlexSection>,
+        allShows: Map<String, Show>
+    ): User {
+        val markedShows = mutableListOf<Show>()
+        sections.forEach { section ->
+            val unwatchedShows = plexClient.getUnwatchedShows(section.key, user.plexToken)
+            val userShows = user.shows.mapTo(mutableSetOf()) { it.name }
+            val showsToMark = when (user.type) {
+                EXCLUDE -> unwatchedShows.filter { it.title in userShows }
+                INCLUDE -> unwatchedShows.filter { it.title !in userShows }
+            }
+            showsToMark.forEach {
+                logger.debug("Marking watched for user {}: {}", user.name, { it.title })
+                plexClient.markShowWatched(it, user.plexToken)
+            }
+            markedShows.addAll(showsToMark.mapNotNull { allShows[it.title] })
+        }
+        return user.copy(shows = markedShows)
     }
 
     private fun deleteFile(path: Path): Boolean {

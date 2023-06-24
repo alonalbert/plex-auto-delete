@@ -1,4 +1,4 @@
-package com.alonalbert.pad.app.util
+package com.alonalbert.pad.util
 
 import java.text.StringCharacterIterator
 

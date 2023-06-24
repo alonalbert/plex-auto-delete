@@ -43,7 +43,7 @@ import com.alonalbert.pad.app.ui.padscreen.PadDialogScreen
 import com.alonalbert.pad.app.ui.theme.MyApplicationTheme
 import com.alonalbert.pad.app.ui.userlist.UserListViewModel.DialogState.AutoDeleteDialog
 import com.alonalbert.pad.app.ui.userlist.UserListViewModel.DialogState.AutoWatchDialog
-import com.alonalbert.pad.app.util.toByteUnitString
+import com.alonalbert.pad.util.toByteUnitString
 import timber.log.Timber
 
 @Composable
