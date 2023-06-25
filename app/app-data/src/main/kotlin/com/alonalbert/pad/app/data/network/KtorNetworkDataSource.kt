@@ -59,6 +59,9 @@ internal class KtorNetworkDataSource @Inject constructor(
         }
         install(Auth) {
             basic {
+                sendWithoutRequest {
+                    true
+                }
                 credentials {
                     BasicAuthCredentials(application.getSetting(USERNAME) ?: "", application.getSetting(PASSWORD) ?: "")
                 }
