@@ -1,8 +1,8 @@
 package com.alonalbert.pad.app.ui.theme
 
 import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
@@ -13,29 +13,20 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.colorResource
 import androidx.core.view.WindowCompat
+import com.alonalbert.pad.app.R
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
 
-private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
-)
+@Composable
+private fun colorScheme(darkTheme: Boolean): ColorScheme {
+    return (if (darkTheme) darkColorScheme() else lightColorScheme()).copy(
+        primary = colorResource(R.color.primary),
+        secondary = colorResource(R.color.secondary),
+        tertiary = colorResource(R.color.tertiary),
+        surface = colorResource(R.color.surface),
+    )
+}
 
 @Composable
 fun MyApplicationTheme(
@@ -45,13 +36,9 @@ fun MyApplicationTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        !dynamicColor -> colorScheme(darkTheme)
+        darkTheme -> dynamicDarkColorScheme(LocalContext.current)
+        else -> dynamicLightColorScheme(LocalContext.current)
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
