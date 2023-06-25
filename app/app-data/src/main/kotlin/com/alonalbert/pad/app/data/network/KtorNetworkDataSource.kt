@@ -60,7 +60,6 @@ internal class KtorNetworkDataSource @Inject constructor(
         install(Auth) {
             basic {
                 credentials {
-                    // TODO: Password settings
                     BasicAuthCredentials(application.getSetting(USERNAME) ?: "", application.getSetting(PASSWORD) ?: "")
                 }
             }
