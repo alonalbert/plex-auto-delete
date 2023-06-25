@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface ShowDao {
-    @Query("SELECT * FROM show ORDER BY name")
+    @Query("SELECT * FROM show ORDER BY name COLLATE NOCASE")
     fun observeAll(): Flow<List<LocalShow>>
 
     @Upsert

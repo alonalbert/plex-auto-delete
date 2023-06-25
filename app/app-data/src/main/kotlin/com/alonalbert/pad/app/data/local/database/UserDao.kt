@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 @Dao
 internal interface UserDao {
     @Transaction
-    @Query("SELECT * FROM user ORDER BY name")
+    @Query("SELECT * FROM user ORDER BY name COLLATE NOCASE")
     fun observeAllUsersWithShow(): Flow<List<LocalUserWithShows>>
 
     fun observeAll(): Flow<List<LocalUser>> = observeAllUsersWithShow().map { list -> list.map { it.toLocalUser() } }
