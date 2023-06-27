@@ -40,7 +40,7 @@ import com.alonalbert.pad.app.data.User
 import com.alonalbert.pad.app.data.User.UserType.EXCLUDE
 import com.alonalbert.pad.app.data.User.UserType.INCLUDE
 import com.alonalbert.pad.app.ui.padscreen.PadDialogScreen
-import com.alonalbert.pad.app.ui.theme.MyApplicationTheme
+import com.alonalbert.pad.app.ui.theme.ApplicationTheme
 import com.alonalbert.pad.app.ui.userlist.UserListViewModel.DialogState.AutoDeleteDialog
 import com.alonalbert.pad.app.ui.userlist.UserListViewModel.DialogState.AutoWatchDialog
 import com.alonalbert.pad.util.toByteUnitString
@@ -235,7 +235,7 @@ private fun User.displayType() = when (type) {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun DefaultPreview() {
-    MyApplicationTheme {
+    ApplicationTheme(darkTheme = true) {
         val users = listOf(User(name = "Mark"), User(name = "Ted"), User(name = "Bob"))
         UserListScreen(
             users,

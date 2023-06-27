@@ -45,7 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.alonalbert.pad.app.R
-import com.alonalbert.pad.app.ui.theme.MyApplicationTheme
+import com.alonalbert.pad.app.ui.theme.ApplicationTheme
 
 @Composable
 fun AutoDeleteDialog(
@@ -172,7 +172,7 @@ fun AutoDeleteDialog(
 )
 @Composable
 fun AutoDeleteDialogPreview() {
-    MyApplicationTheme {
+    ApplicationTheme {
         AutoDeleteDialog(days = 7, onDismissRequest = { }, onDoneClick = { _, _ -> })
     }
 }
