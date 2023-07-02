@@ -52,7 +52,7 @@ class PlexAutoDeleter(
         userRepository.findAll()
             .forEach { user ->
                 runAutoWatch(user, sections, allShows).forEach { show ->
-                    updatedShows.getOrPut(show.name, { mutableListOf() }).add(user.name)
+                    updatedShows.getOrPut(show.name) { mutableListOf() }.add(user.name)
                 }
             }
 
