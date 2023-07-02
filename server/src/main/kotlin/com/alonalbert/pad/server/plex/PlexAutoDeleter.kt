@@ -125,7 +125,7 @@ class PlexAutoDeleter(
                 INCLUDE -> unwatchedShows.filter { it.title !in userShows }
             }
             showsToMark.forEach {
-                logger.debug("Marking watched for user {}: {}", user.name, { it.title })
+                logger.info("Marking watched for user {}: {}", user.name, { it.title })
                 plexClient.markShowWatched(it, user.plexToken)
             }
             markedShows.addAll(showsToMark.mapNotNull { allShows[it.title] })
