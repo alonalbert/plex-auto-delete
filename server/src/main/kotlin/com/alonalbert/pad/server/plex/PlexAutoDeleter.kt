@@ -2,7 +2,6 @@ package com.alonalbert.pad.server.plex
 
 import com.alonalbert.pad.model.AutoDeleteResult
 import com.alonalbert.pad.model.AutoWatchResult
-import com.alonalbert.pad.model.Show
 import com.alonalbert.pad.model.User
 import com.alonalbert.pad.model.User.UserType.EXCLUDE
 import com.alonalbert.pad.model.User.UserType.INCLUDE
@@ -12,7 +11,6 @@ import com.alonalbert.pad.server.plex.model.PlexEpisode
 import com.alonalbert.pad.server.plex.model.PlexSection
 import com.alonalbert.pad.server.plex.model.PlexShow
 import com.alonalbert.pad.server.pushover.PushoverClient
-import com.alonalbert.pad.server.repository.ShowRepository
 import com.alonalbert.pad.server.repository.UserRepository
 import com.alonalbert.pad.util.intersect
 import com.alonalbert.pad.util.toByteUnitString
@@ -34,7 +32,6 @@ import kotlin.time.Duration
 class PlexAutoDeleter(
     environment: Environment,
     private val userRepository: UserRepository,
-    private val showRepository: ShowRepository,
     private val plexClient: PlexClient,
     private val pushoverClient: PushoverClient,
 ) {
@@ -46,13 +43,12 @@ class PlexAutoDeleter(
         logger.info("Running auto watch")
 
         val sections = plexClient.getMonitoredSections()
-        val allShows = showRepository.findAll().associateBy { it.name }
 
         val updatedShows = mutableMapOf<String, MutableList<String>>()
         userRepository.findAll()
             .forEach { user ->
-                runAutoWatch(user, sections, allShows).forEach { show ->
-                    updatedShows.getOrPut(show.name) { mutableListOf() }.add(user.name)
+                runAutoWatch(user, sections).forEach { show ->
+                    updatedShows.getOrPut(show) { mutableListOf() }.add(user.name)
                 }
             }
 
@@ -114,9 +110,8 @@ class PlexAutoDeleter(
     private suspend fun runAutoWatch(
         user: User,
         sections: List<PlexSection>,
-        allShows: Map<String, Show>
-    ): List<Show> {
-        val markedShows = mutableListOf<Show>()
+    ): List<String> {
+        val markedShows = mutableListOf<String>()
         sections.forEach { section ->
             val unwatchedShows = plexClient.getUnwatchedShows(section.key, user.plexToken)
             val userShows = user.shows.mapTo(mutableSetOf()) { it.name }
@@ -128,7 +123,7 @@ class PlexAutoDeleter(
                 logger.info("Marking watched for user {}: {}", user.name, { it.title })
                 plexClient.markShowWatched(it, user.plexToken)
             }
-            markedShows.addAll(showsToMark.mapNotNull { allShows[it.title] })
+            markedShows.addAll(showsToMark.map { it.title })
         }
         return markedShows
     }
