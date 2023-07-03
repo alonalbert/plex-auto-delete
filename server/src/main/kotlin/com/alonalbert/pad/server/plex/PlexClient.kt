@@ -54,6 +54,22 @@ class PlexClient(environment: Environment) {
         }
     }
 
+    fun markShowUnwatched(plexShow: PlexShow, userToken: String = "") {
+        val url = createUriBuilder(plexUrl, userToken)
+            .pathSegment(":", "unscrobble")
+            .queryParam("key", plexShow.ratingKey)
+            .queryParam("identifier", "com.plexapp.plugins.library")
+            .build()
+            .toURL()
+        httpClient().use {
+            runBlocking {
+                it.get(url) {
+                    header("Accept", "application/json")
+                }
+            }
+        }
+    }
+
     private fun httpClient() = HttpClient(Apache) {
         install(ContentNegotiation) {
             json(Json {
