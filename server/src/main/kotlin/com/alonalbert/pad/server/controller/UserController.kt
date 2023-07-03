@@ -1,9 +1,14 @@
 package com.alonalbert.pad.server.controller
 
 import com.alonalbert.pad.model.User
+import com.alonalbert.pad.model.User.UserType.EXCLUDE
+import com.alonalbert.pad.model.User.UserType.INCLUDE
 import com.alonalbert.pad.server.config.getPlexDatabasePath
+import com.alonalbert.pad.server.plex.PlexAutoDeleter
 import com.alonalbert.pad.server.repository.UserRepository
 import jakarta.validation.Valid
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import org.slf4j.LoggerFactory
 import org.springframework.core.env.Environment
 import org.springframework.http.HttpStatus
@@ -22,6 +27,7 @@ import java.sql.DriverManager
 class UserController(
     environment: Environment,
     private val userRepository: UserRepository,
+    private val plexAutoDeleter: PlexAutoDeleter,
 ) {
     private val logger = LoggerFactory.getLogger(UserController::class.java)
     private val plexDatabasePath = environment.getPlexDatabasePath()
@@ -35,12 +41,23 @@ class UserController(
     @PutMapping("/users/{id}")
     fun updateUser(
         @PathVariable(value = "id") id: Long,
-        @Valid @RequestBody value: User
+        @Valid @RequestBody user: User
     ): ResponseEntity<User> {
         updateUsersFromPlex()
-        return userRepository.findById(id).map { existing ->
-            val updated = existing
-                .copy(name = value.name, type = value.type, plexToken = value.plexToken, shows = value.shows)
+        return userRepository.findById(id).map { existingUser ->
+            val updated = existingUser
+                .copy(name = user.name, type = user.type, plexToken = user.plexToken, shows = user.shows)
+            user.shows.filter {
+                when (user.type) {
+                    EXCLUDE -> it !in user.shows && it in existingUser.shows
+                    INCLUDE -> it in user.shows && it !in existingUser.shows
+                }
+            }.forEach {
+                runBlocking(Dispatchers.IO) {
+                    plexAutoDeleter.markUnwatched(user, it.name)
+                }
+            }
+
             ResponseEntity.ok().body(userRepository.save(updated))
         }.orElse(ResponseEntity.notFound().build())
 
