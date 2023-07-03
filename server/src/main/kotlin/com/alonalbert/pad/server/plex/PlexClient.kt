@@ -38,7 +38,7 @@ class PlexClient(environment: Environment) {
     suspend fun getEpisodes(showKey: String, userToken: String = ""): List<PlexEpisode> =
         getItems<PlexEpisode>("library/metadata/$showKey/allLeaves", userToken)
 
-    fun markShowWatched(plexShow: PlexShow, userToken: String = "") {
+    suspend fun markShowWatched(plexShow: PlexShow, userToken: String = "") {
         val url = createUriBuilder(plexUrl, userToken)
             .pathSegment(":", "scrobble")
             .queryParam("key", plexShow.ratingKey)
@@ -46,15 +46,13 @@ class PlexClient(environment: Environment) {
             .build()
             .toURL()
         httpClient().use {
-            runBlocking {
-                it.get(url) {
-                    header("Accept", "application/json")
-                }
+            it.get(url) {
+                header("Accept", "application/json")
             }
         }
     }
 
-    fun markShowUnwatched(plexShow: PlexShow, userToken: String = "") {
+    suspend fun markShowUnwatched(plexShow: PlexShow, userToken: String = "") {
         val url = createUriBuilder(plexUrl, userToken)
             .pathSegment(":", "unscrobble")
             .queryParam("key", plexShow.ratingKey)
@@ -62,10 +60,8 @@ class PlexClient(environment: Environment) {
             .build()
             .toURL()
         httpClient().use {
-            runBlocking {
-                it.get(url) {
-                    header("Accept", "application/json")
-                }
+            it.get(url) {
+                header("Accept", "application/json")
             }
         }
     }
