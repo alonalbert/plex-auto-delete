@@ -1,74 +1,61 @@
 package com.alonalbert.pad.server.controller
 
 import com.alonalbert.pad.model.Show
-import com.alonalbert.pad.server.config.getPlexDatabasePath
+import com.alonalbert.pad.server.config.getPlexSections
+import com.alonalbert.pad.server.plex.PlexClient
 import com.alonalbert.pad.server.repository.ShowRepository
+import com.alonalbert.pad.server.sonarr.SonarrClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.slf4j.LoggerFactory
 import org.springframework.core.env.Environment
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.sql.DriverManager
-
-private val STATEMENT1 = """ 
-  SELECT DISTINCT 
-    grandparent_title as show
-  FROM metadata_item_views 
-  WHERE metadata_type = 4 
-""".trimIndent()
-
-private val STATEMENT2 = """
-  SELECT
-    D.path as show
-  FROM library_sections AS S
-  INNER JOIN directories AS d ON D.parent_directory_id = S.id
-   WHERE S.section_type = 2 AND S.name in ('TV', '')
-""".trimIndent()
-
-private val STATEMENTS = listOf(STATEMENT1, STATEMENT2)
 
 @RestController
 @RequestMapping("/api")
 class ShowController(
-    environment: Environment,
+    private val environment: Environment,
     private val showRepository: ShowRepository,
+    private val plexClient: PlexClient,
+    private val sonarrClient: SonarrClient,
 ) {
     private val logger = LoggerFactory.getLogger(ShowController::class.java)
-    private val plexDatabasePath = environment.getPlexDatabasePath()
 
     @GetMapping("/shows")
-    fun getUsers(): List<Show> {
-        updateShowsFromPlex()
+    fun getShows(): List<Show> {
+        updateShows()
         return showRepository.findAll()
     }
 
-    private fun updateShowsFromPlex() {
-        val plexShows = DriverManager.getConnection("jdbc:sqlite:${plexDatabasePath}").use { connection ->
-            buildSet {
-                connection.createStatement().use { statement ->
-                    STATEMENTS.forEach {
-                        statement.executeQuery(it).use { result ->
-                            while (result.next()) {
-                                val show = result.getString("show")
-                                if (show.isNotBlank()) {
-                                    add(show)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+    private suspend fun getPlexShows(): List<String> = withContext(Dispatchers.IO) {
+        val plexSections = environment.getPlexSections().toHashSet()
+        plexClient.getTvSections().filter { it.title in plexSections }.flatMap { plexClient.getAllShows(it.key) }.map { it.title }
+    }
+
+    private suspend fun getSonarrShows(): List<String> = withContext(Dispatchers.IO) {
+        sonarrClient.getShows()
+    }
+
+    private fun updateShows() {
+        val currentShows = runBlocking {
+            getPlexShows() + getSonarrShows()
+        }.toHashSet()
+
         val shows = showRepository.findAll().associateBy { it.name }
-        val newShows = plexShows - shows.keys
-        val deletedShows = (shows.keys - plexShows).mapNotNull { shows[it]?.id }
+        val newShows = currentShows - shows.keys
+        val deletedShows = (shows.keys - currentShows).mapNotNull { shows[it] }
 
         if (newShows.isNotEmpty()) {
             logger.info("Adding new shows:\n  ${newShows.joinToString("\n  ") { it }}")
             showRepository.saveAll(newShows.map { Show(name = it) })
         }
         if (deletedShows.isNotEmpty()) {
-            showRepository.deleteAllById(deletedShows)
+            showRepository.deleteAllById(deletedShows.map { it.id })
         }
+        val dups = showRepository.findAll().groupBy { it.name }.filter { it.value.size > 1 }
+        dups.values.map { it.drop(1) }.flatten().forEach { showRepository.deleteById(it.id) }
     }
 }

@@ -20,12 +20,17 @@ import org.springframework.security.web.SecurityFilterChain
 @EnableWebSecurity
 class SpringSecurityConfig(private val environment: Environment) {
     @Bean
-    fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
-        return http
-            .csrf { it.disable() }
-            .authorizeHttpRequests { it.anyRequest().authenticated() }
-            .httpBasic(Customizer.withDefaults())
-            .build()
+    fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
+        return httpSecurity.also { security ->
+            if (!environment.isTestMode()) {
+                security
+                    .csrf { it.disable() }
+                    .authorizeHttpRequests { it.anyRequest().authenticated() }
+                    .httpBasic(Customizer.withDefaults())
+
+            }
+
+        }.build()
     }
 
     @Bean

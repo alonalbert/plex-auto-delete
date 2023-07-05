@@ -15,6 +15,7 @@ dependencies {
     implementation(libs.kotlinx.cli)
     implementation(libs.kotlinx.datetime)
     implementation(libs.ktor.client.apache)
+    implementation(libs.ktor.client.auth)
     implementation(libs.ktor.client.content.negotiation)
     implementation(libs.ktor.client.core)
     implementation(libs.ktor.serialization.kotlinx.json)
