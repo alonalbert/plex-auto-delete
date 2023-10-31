@@ -11,13 +11,13 @@ plugins {
 
 android {
     namespace = "com.alonalbert.pad.app"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.alonalbert.pad.app"
         minSdk = 33
         //noinspection OldTargetApi
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
