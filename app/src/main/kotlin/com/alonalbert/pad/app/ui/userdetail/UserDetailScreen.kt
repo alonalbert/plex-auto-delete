@@ -73,7 +73,7 @@ fun UserDetailScreen(
     // TODO: Implement empty content
     userState?.let { user ->
         val toggleUser = { viewModel.toggleUser(userState) }
-        val deleteShow = { show: Show -> viewModel.updateUser(user.copy(shows = user.shows.dropWhile { it == show })) }
+        val deleteShow = { show: Show -> viewModel.updateUser(user.copy(shows = user.shows.filterNot { it == show })) }
         val setPlexToken = { token: String ->
             viewModel.updateUser(user.copy(plexToken = token))
         }
