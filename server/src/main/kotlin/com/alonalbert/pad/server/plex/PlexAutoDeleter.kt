@@ -104,8 +104,6 @@ class PlexAutoDeleter(
         return AutoDeleteResult(count, size, showsWithDeletions)
     }
 
-    private fun getActiveUsers(): List<User> = userRepository.findAll().filter { it.plexToken.isNotEmpty() }
-
     suspend fun markUnwatched(user: User, show: String) {
         plexClient.getMonitoredSections().flatMap {
             plexClient.getAllShows(it.key, user.plexToken)
@@ -116,6 +114,8 @@ class PlexAutoDeleter(
             plexClient.markShowUnwatched(it, user.plexToken)
         }
     }
+
+    private fun getActiveUsers(): List<User> = userRepository.findAll().filter { it.plexToken.isNotEmpty() }
 
     private suspend fun PlexClient.getMonitoredSections() =
         getTvSections().filter { it.title in plexSections && it.type == "show" }
