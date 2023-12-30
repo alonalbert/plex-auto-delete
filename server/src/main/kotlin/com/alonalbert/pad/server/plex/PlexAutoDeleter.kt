@@ -45,7 +45,7 @@ class PlexAutoDeleter(
         val sections = plexClient.getMonitoredSections()
 
         val updatedShows = mutableMapOf<String, MutableList<String>>()
-        userRepository.findAll()
+        getActiveUsers()
             .forEach { user ->
                 runAutoWatch(user, sections).forEach { show ->
                     updatedShows.getOrPut(show) { mutableListOf() }.add(user.name)
@@ -69,7 +69,7 @@ class PlexAutoDeleter(
         val shows = plexClient.getMonitoredSections().flatMap { plexClient.getAllShows(it.key) }
 
         val candidates = withContext(Dispatchers.IO) {
-            userRepository.findAll().map {
+            getActiveUsers().map {
                 async { getDeleteCandidates(it, shows, watchedDuration) }
             }.awaitAll()
         }
@@ -103,6 +103,8 @@ class PlexAutoDeleter(
 
         return AutoDeleteResult(count, size, showsWithDeletions)
     }
+
+    private fun getActiveUsers(): List<User> = userRepository.findAll().filter { it.plexToken.isNotEmpty() }
 
     suspend fun markUnwatched(user: User, show: String) {
         plexClient.getMonitoredSections().flatMap {
