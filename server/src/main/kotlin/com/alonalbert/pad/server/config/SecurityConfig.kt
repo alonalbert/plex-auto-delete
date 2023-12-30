@@ -22,13 +22,10 @@ class SpringSecurityConfig(private val environment: Environment) {
     @Bean
     fun securityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
         return httpSecurity.also { security ->
-            if (!environment.isTestMode()) {
-                security
-                    .csrf { it.disable() }
-                    .authorizeHttpRequests { it.anyRequest().authenticated() }
-                    .httpBasic(Customizer.withDefaults())
-
-            }
+            security
+                .csrf { it.disable() }
+                .authorizeHttpRequests { it.anyRequest().authenticated() }
+                .httpBasic(Customizer.withDefaults())
 
         }.build()
     }
