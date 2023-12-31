@@ -12,6 +12,7 @@ import org.springframework.core.env.Environment
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
 import java.util.concurrent.TimeUnit
+import java.util.logging.Logger
 
 @SpringBootApplication
 @PropertySource("classpath:local.properties")
@@ -21,6 +22,12 @@ class Server(
     private val environment: Environment,
     private val plexAutoDeleter: PlexAutoDeleter,
 ) {
+    init {
+        if (environment.isTestMode()) {
+            Logger.getLogger(Server::class.java.simpleName).info("Running in test mode")
+        }
+    }
+
     @Scheduled(timeUnit = TimeUnit.MINUTES, fixedRate = 10)
     fun autoWatch() {
         if (!environment.isTestMode()) {
