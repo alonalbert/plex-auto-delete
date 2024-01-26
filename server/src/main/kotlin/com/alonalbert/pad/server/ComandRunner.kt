@@ -29,6 +29,8 @@ class CommandRunner(
         "auto-watch" -> plexAutoDeleterCommand.runAutoWatch()
         "auto-delete" -> runAutoDelete(argsArray)
         "get-unwatched" -> getUnwatched()
+        "get-all-shows" -> getAllShows()
+        "get-unwatched-by" -> getUnwatchedBy()
         else -> println("Please specify a commend to run")
       }
     }
@@ -52,6 +54,20 @@ class CommandRunner(
       shows.forEach { (show, count) ->
         println("    $show: $count")
       }
+    }
+  }
+
+  private suspend fun getAllShows() {
+    println("Shows:")
+    plexAutoDeleterCommand.getAllShows().forEach { (name, count) ->
+      println("%3d: %s".format(count, name))
+    }
+  }
+
+  private suspend fun getUnwatchedBy() {
+    println("Shows:")
+    plexAutoDeleterCommand.getUnwatchedBy().forEach { (name, users) ->
+      println("$name: $users")
     }
   }
 }
