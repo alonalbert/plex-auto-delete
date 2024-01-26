@@ -28,7 +28,8 @@ class CommandRunner(
                 "import-config" -> importConfigCommand.import()
                 "auto-watch" -> plexAutoDeleterCommand.runAutoWatch()
                 "auto-delete" -> runAutoDelete(argsArray)
-                else -> {}
+                "get-unwatched" -> getUnwatched()
+                else -> println("Please specify a commend to run")
             }
         }
     }
@@ -43,6 +44,15 @@ class CommandRunner(
         println("============================================")
         println(result)
         return result
+    }
+
+    private suspend fun getUnwatched() {
+        plexAutoDeleterCommand.getUnwatchedForUsers().forEach { (user, shows) ->
+            println("$user:")
+            shows.forEach { (show, count) ->
+                println("    $show: $count")
+            }
+        }
     }
 }
 

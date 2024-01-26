@@ -38,6 +38,9 @@ class PlexClient(environment: Environment) {
     suspend fun getEpisodes(showKey: String, userToken: String = ""): List<PlexEpisode> =
         getItems<PlexEpisode>("library/metadata/$showKey/allLeaves", userToken)
 
+    suspend fun getUnwatchedEpisodes(showKey: String, userToken: String): List<PlexEpisode> =
+        getItems<PlexEpisode>("library/metadata/$showKey/allLeaves?unwatched=1", userToken)
+
     suspend fun markShowWatched(plexShow: PlexShow, userToken: String = "") {
         val url = createUriBuilder(plexUrl, userToken)
             .pathSegment(":", "scrobble")
@@ -77,8 +80,14 @@ class PlexClient(environment: Environment) {
         }
     }
 
-    private suspend inline fun <reified T> getItems(path: String, userToken: String): List<T> {
-        val url = createUriBuilder(plexUrl, userToken).pathSegment(*path.split("/").toTypedArray()).build().toURL()
+    private suspend inline fun <reified T> getItems(request: String, userToken: String): List<T> {
+        val path = request.substringBefore('?')
+        val params = request.substring(path.length).substringAfter('?')
+        val url = createUriBuilder(plexUrl, userToken)
+            .pathSegment(*path.split("/").toTypedArray())
+            .query(params)
+            .build()
+            .toURL()
         return runBlocking {
             httpClient().use {
                 val response = it.get(url) {
