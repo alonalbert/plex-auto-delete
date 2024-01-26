@@ -48,186 +48,186 @@ import timber.log.Timber
 
 @Composable
 fun UserListScreen(
-    onLogout: () -> Unit,
-    onUserClick: (User) -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: UserListViewModel = hiltViewModel(),
+  onLogout: () -> Unit,
+  onUserClick: (User) -> Unit,
+  modifier: Modifier = Modifier,
+  viewModel: UserListViewModel = hiltViewModel(),
 ) {
-    val users by viewModel.userListState.collectAsStateWithLifecycle()
+  val users by viewModel.userListState.collectAsStateWithLifecycle()
 
-    val onAutoWatchClick = { viewModel.runAutoWatch() }
-    val onAutoDeleteClick = { days: Int, isTestMode: Boolean -> viewModel.runAutoDelete(days, isTestMode) }
+  val onAutoWatchClick = { viewModel.runAutoWatch() }
+  val onAutoDeleteClick = { days: Int, isTestMode: Boolean -> viewModel.runAutoDelete(days, isTestMode) }
 
-    PadDialogScreen(
-        viewModel = viewModel,
-        onLogout = onLogout,
-        dialog = { dialogState, onDismiss ->
-            when (dialogState) {
-                is AutoWatchDialog -> AutoWatchResultDialog(result = dialogState.result, onDismiss = onDismiss)
-                is AutoDeleteDialog -> AutoDeleteResultDialog(result = dialogState.result, onDismiss = onDismiss)
-            }
-        },
-        modifier = modifier,
-    ) {
-        UserListScreen(
-            users = users,
-            onAutoWatchClick = onAutoWatchClick,
-            onAutoDeleteClick = onAutoDeleteClick,
-            onUserClick = onUserClick,
-            modifier = Modifier.fillMaxSize()
-        )
-    }
+  PadDialogScreen(
+    viewModel = viewModel,
+    onLogout = onLogout,
+    dialog = { dialogState, onDismiss ->
+      when (dialogState) {
+        is AutoWatchDialog -> AutoWatchResultDialog(result = dialogState.result, onDismiss = onDismiss)
+        is AutoDeleteDialog -> AutoDeleteResultDialog(result = dialogState.result, onDismiss = onDismiss)
+      }
+    },
+    modifier = modifier,
+  ) {
+    UserListScreen(
+      users = users,
+      onAutoWatchClick = onAutoWatchClick,
+      onAutoDeleteClick = onAutoDeleteClick,
+      onUserClick = onUserClick,
+      modifier = Modifier.fillMaxSize()
+    )
+  }
 }
 
 @Composable
 fun AutoWatchResultDialog(
-    result: AutoWatchResult,
-    onDismiss: () -> Unit,
+  result: AutoWatchResult,
+  onDismiss: () -> Unit,
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = stringResource(R.string.auto_watch_results)) },
-        text = {
-            val text = when {
-                result.users.isEmpty() -> stringResource(R.string.auto_watch_noop)
-                else -> result.users.entries.joinToString("\n") { (user, shows) -> "${user}: ${shows.joinToString { show -> show }}" }
-            }
-            Text(text = text)
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.ok))
-            }
-        },
-    )
+  AlertDialog(
+    onDismissRequest = onDismiss,
+    title = { Text(text = stringResource(R.string.auto_watch_results)) },
+    text = {
+      val text = when {
+        result.users.isEmpty() -> stringResource(R.string.auto_watch_noop)
+        else -> result.users.entries.joinToString("\n") { (user, shows) -> "${user}: ${shows.joinToString { show -> show }}" }
+      }
+      Text(text = text)
+    },
+    confirmButton = {
+      TextButton(onClick = onDismiss) {
+        Text(stringResource(android.R.string.ok))
+      }
+    },
+  )
 }
 
 @Composable
 fun AutoDeleteResultDialog(
-    result: AutoDeleteResult,
-    onDismiss: () -> Unit,
+  result: AutoDeleteResult,
+  onDismiss: () -> Unit,
 ) {
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { Text(text = stringResource(R.string.auto_watch_results)) },
-        text = {
-            val text1 = stringResource(R.string.auto_delete_text1, result.numBytes.toByteUnitString(), result.numFiles)
-            val text2 = stringResource(R.string.auto_delete_text2, result.shows.joinToString { it })
-            Column {
-                Text(text = text1)
-                Text(text = text2)
-            }
-        },
-        confirmButton = {
-            TextButton(onClick = onDismiss) {
-                Text(stringResource(android.R.string.ok))
-            }
-        },
-    )
+  AlertDialog(
+    onDismissRequest = onDismiss,
+    title = { Text(text = stringResource(R.string.auto_watch_results)) },
+    text = {
+      val text1 = stringResource(R.string.auto_delete_text1, result.numBytes.toByteUnitString(), result.numFiles)
+      val text2 = stringResource(R.string.auto_delete_text2, result.shows.joinToString { it })
+      Column {
+        Text(text = text1)
+        Text(text = text2)
+      }
+    },
+    confirmButton = {
+      TextButton(onClick = onDismiss) {
+        Text(stringResource(android.R.string.ok))
+      }
+    },
+  )
 }
 
 @Composable
 internal fun UserListScreen(
-    users: List<User>,
-    onAutoWatchClick: () -> Unit,
-    onAutoDeleteClick: (Int, Boolean) -> Unit,
-    onUserClick: (user: User) -> Unit,
-    modifier: Modifier = Modifier
+  users: List<User>,
+  onAutoWatchClick: () -> Unit,
+  onAutoDeleteClick: (Int, Boolean) -> Unit,
+  onUserClick: (user: User) -> Unit,
+  modifier: Modifier = Modifier
 ) {
-    Column(modifier = modifier) {
-        ActionButtons(onAutoWatchClick, onAutoDeleteClick)
+  Column(modifier = modifier) {
+    ActionButtons(onAutoWatchClick, onAutoDeleteClick)
 
-        UsersTitle()
+    UsersTitle()
 
-        UsersList(users, onUserClick)
-    }
+    UsersList(users, onUserClick)
+  }
 }
 
 @Composable
 private fun ActionButtons(
-    onAutoWatchClick: () -> Unit,
-    onAutoDeleteClick: (Int, Boolean) -> Unit,
+  onAutoWatchClick: () -> Unit,
+  onAutoDeleteClick: (Int, Boolean) -> Unit,
 ) {
-    var showAutoDeleteDialog by remember { mutableStateOf(false) }
-    if (showAutoDeleteDialog) {
-        AutoDeleteDialog(
-            days = 7,
-            onDismissRequest = { showAutoDeleteDialog = false },
-            onDoneClick = { days, isTestMode -> onAutoDeleteClick(days, isTestMode) })
+  var showAutoDeleteDialog by remember { mutableStateOf(false) }
+  if (showAutoDeleteDialog) {
+    AutoDeleteDialog(
+      days = 7,
+      onDismissRequest = { showAutoDeleteDialog = false },
+      onDoneClick = { days, isTestMode -> onAutoDeleteClick(days, isTestMode) })
+  }
+  Row(
+    horizontalArrangement = Arrangement.SpaceEvenly,
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(8.dp)
+  ) {
+    Button(onClick = onAutoWatchClick) {
+      Text(text = "Auto Watch")
     }
-    Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-    ) {
-        Button(onClick = onAutoWatchClick) {
-            Text(text = "Auto Watch")
-        }
 
-        Button(onClick = { showAutoDeleteDialog = true }) {
-            Text(text = "Auto Delete")
-        }
+    Button(onClick = { showAutoDeleteDialog = true }) {
+      Text(text = "Auto Delete")
     }
+  }
 }
 
 @Composable
 private fun UsersList(
-    users: List<User>,
-    onUserClick: (user: User) -> Unit
+  users: List<User>,
+  onUserClick: (user: User) -> Unit
 ) {
-    LazyColumn {
-        items(items = users) {
-            UserCard(it, onUserClick)
-        }
+  LazyColumn {
+    items(items = users) {
+      UserCard(it, onUserClick)
     }
+  }
 }
 
 @Composable
 private fun UsersTitle() {
-    Text(
-        text = stringResource(R.string.users),
-        style = MaterialTheme.typography.headlineMedium,
-        modifier = Modifier
-            .wrapContentSize(Alignment.Center)
-            .padding(bottom = 10.dp)
-            .padding(horizontal = 8.dp)
-    )
+  Text(
+    text = stringResource(R.string.users),
+    style = MaterialTheme.typography.headlineMedium,
+    modifier = Modifier
+      .wrapContentSize(Alignment.Center)
+      .padding(bottom = 10.dp)
+      .padding(horizontal = 8.dp)
+  )
 }
 
 @Composable
 private fun UserCard(user: User, onUserClick: (User) -> Unit) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
-        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp)
-            .clickable { onUserClick(user) }
+  Card(
+    shape = RoundedCornerShape(16.dp),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer),
+    elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(4.dp)
+      .clickable { onUserClick(user) }
+  ) {
+    Row(
+      verticalAlignment = Alignment.CenterVertically,
+      modifier = Modifier.padding(16.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(16.dp)
-        ) {
-            Timber.d("Composing card for $user")
-            Text(
-                text = user.name,
-                style = MaterialTheme.typography.headlineMedium,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = user.displayType(),
-            )
-        }
+      Timber.d("Composing card for $user")
+      Text(
+        text = user.name,
+        style = MaterialTheme.typography.headlineMedium,
+        modifier = Modifier.weight(1f)
+      )
+      Text(
+        text = user.displayType(),
+      )
     }
+  }
 }
 
 @Composable
 private fun User.displayType() = when (type) {
-    EXCLUDE -> pluralStringResource(id = R.plurals.excludes_shows, count = shows.size, shows.size)
-    INCLUDE -> pluralStringResource(id = R.plurals.includes_shows, count = shows.size, shows.size)
+  EXCLUDE -> pluralStringResource(id = R.plurals.excludes_shows, count = shows.size, shows.size)
+  INCLUDE -> pluralStringResource(id = R.plurals.includes_shows, count = shows.size, shows.size)
 }
 
 // Previews
@@ -235,13 +235,13 @@ private fun User.displayType() = when (type) {
 @Preview(showBackground = true, uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 private fun DefaultPreview() {
-    ApplicationTheme(darkTheme = true) {
-        val users = listOf(User(name = "Mark"), User(name = "Ted"), User(name = "Bob"))
-        UserListScreen(
-            users,
-            onAutoWatchClick = {},
-            onAutoDeleteClick = { _, _ -> },
-            onUserClick = {},
-        )
-    }
+  ApplicationTheme(darkTheme = true) {
+    val users = listOf(User(name = "Mark"), User(name = "Ted"), User(name = "Bob"))
+    UserListScreen(
+      users,
+      onAutoWatchClick = {},
+      onAutoDeleteClick = { _, _ -> },
+      onUserClick = {},
+    )
+  }
 }

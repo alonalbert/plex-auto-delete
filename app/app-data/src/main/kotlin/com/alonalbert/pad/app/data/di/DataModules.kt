@@ -22,38 +22,38 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 internal abstract class RepositoryModule {
 
-    @Singleton
-    @Binds
-    abstract fun bindRepository(repository: AppRepository): Repository
+  @Singleton
+  @Binds
+  abstract fun bindRepository(repository: AppRepository): Repository
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal abstract class DataSourceModule {
 
-    @Singleton
-    @Binds
-    abstract fun bindNetworkDataSource(dataSource: KtorNetworkDataSource): NetworkDataSource
+  @Singleton
+  @Binds
+  abstract fun bindNetworkDataSource(dataSource: KtorNetworkDataSource): NetworkDataSource
 
-    @Singleton
-    @Binds
-    abstract fun bindLocalDataSource(dataSource: RoomLocalDataSource): LocalDataSource
+  @Singleton
+  @Binds
+  abstract fun bindLocalDataSource(dataSource: RoomLocalDataSource): LocalDataSource
 }
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal object DatabaseModule {
 
-    @Singleton
-    @Provides
-    fun provideDataBase(@ApplicationContext context: Context): AppDatabase {
-        return Room.databaseBuilder(
-            context.applicationContext,
-            AppDatabase::class.java,
-            "pad-database.db"
-        ).build()
-    }
+  @Singleton
+  @Provides
+  fun provideDataBase(@ApplicationContext context: Context): AppDatabase {
+    return Room.databaseBuilder(
+      context.applicationContext,
+      AppDatabase::class.java,
+      "pad-database.db"
+    ).build()
+  }
 
-    @Provides
-    fun provideUserDao(database: AppDatabase): UserDao = database.userDao()
+  @Provides
+  fun provideUserDao(database: AppDatabase): UserDao = database.userDao()
 }

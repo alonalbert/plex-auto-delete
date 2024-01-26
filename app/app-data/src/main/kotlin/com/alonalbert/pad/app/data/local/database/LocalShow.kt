@@ -5,10 +5,10 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = "show",
-    indices = [Index(value = ["id"])],
+  tableName = "show",
+  indices = [Index(value = ["id"])],
 )
 internal data class LocalShow(
-    @PrimaryKey val id: Long = 0,
-    val name: String = "",
+  @PrimaryKey val id: Long = 0,
+  val name: String = "",
 )

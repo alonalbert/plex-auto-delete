@@ -31,5 +31,5 @@ fun Environment.getSonarrApiKey() = getConfigProperty(SONARR_API_KEY)
 fun Environment.isTestMode() = getConfigProperty(TEST_MODE, "false").toBoolean()
 
 private fun Environment.getConfigProperty(name: String, defaultValue: String? = null) =
-    System.getProperty(name, getProperty(name)) ?: defaultValue ?: throw IllegalStateException("Can't find property $name")
+  System.getProperty(name, getProperty(name)) ?: defaultValue ?: throw IllegalStateException("Can't find property $name")
 

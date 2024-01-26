@@ -8,37 +8,37 @@ import androidx.room.Relation
 
 @Entity(tableName = "user")
 internal data class LocalUser(
-    @PrimaryKey val id: Long = 0,
+  @PrimaryKey val id: Long = 0,
 
-    val name: String = "",
+  val name: String = "",
 
-    val plexToken: String = "",
+  val plexToken: String = "",
 
-    val type: UserType = UserType.INCLUDE,
+  val type: UserType = UserType.INCLUDE,
 
-    @Ignore
-    @Relation(
-        parentColumn = "id",
-        entityColumn = "id",
-        associateBy = Junction(
-            LocalUserShow::class,
-            parentColumn = "userId",
-            entityColumn = "showId",
-        )
+  @Ignore
+  @Relation(
+    parentColumn = "id",
+    entityColumn = "id",
+    associateBy = Junction(
+      LocalUserShow::class,
+      parentColumn = "userId",
+      entityColumn = "showId",
     )
-    val shows: List<LocalShow> = emptyList(),
+  )
+  val shows: List<LocalShow> = emptyList(),
 ) {
-    enum class UserType {
-        EXCLUDE,
-        INCLUDE,
-    }
+  enum class UserType {
+    EXCLUDE,
+    INCLUDE,
+  }
 
-    @Suppress("unused")
-    constructor(
-        id: Long,
-        name: String,
-        plexToken: String,
-        type: UserType,
-    ) : this(id, name, plexToken, type, emptyList())
+  @Suppress("unused")
+  constructor(
+    id: Long,
+    name: String,
+    plexToken: String,
+    type: UserType,
+  ) : this(id, name, plexToken, type, emptyList())
 }
 

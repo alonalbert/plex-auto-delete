@@ -6,17 +6,17 @@ import com.alonalbert.pad.app.data.UserShow
 import kotlinx.coroutines.flow.Flow
 
 interface LocalDataSource {
-    fun getUsersFlow(): Flow<List<User>>
+  fun getUsersFlow(): Flow<List<User>>
 
-    fun getUserFlow(id: Long): Flow<User>
+  fun getUserFlow(id: Long): Flow<User>
 
-    suspend fun updateUser(user: User)
+  suspend fun updateUser(user: User)
 
-    suspend fun refreshUsers(users: List<User>)
+  suspend fun refreshUsers(users: List<User>)
 
-    suspend fun refreshShows(shows: List<Show>)
+  suspend fun refreshShows(shows: List<Show>)
 
-    fun getShowsFlow(): Flow<List<Show>>
+  fun getShowsFlow(): Flow<List<Show>>
 
-    suspend fun updateUserShows(userShows: List<UserShow>)
+  suspend fun updateUserShows(userShows: List<UserShow>)
 }

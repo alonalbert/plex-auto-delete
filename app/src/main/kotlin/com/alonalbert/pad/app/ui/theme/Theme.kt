@@ -17,26 +17,26 @@ import com.alonalbert.pad.app.R
 
 @Composable
 fun ApplicationTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
+  darkTheme: Boolean = isSystemInDarkTheme(),
+  content: @Composable () -> Unit
 ) {
-    val colorScheme = when (darkTheme) {
-        true -> dynamicDarkColorScheme(LocalContext.current)
-        false -> dynamicLightColorScheme(LocalContext.current)
-    }.copy(surface = colorResource(R.color.surface))
+  val colorScheme = when (darkTheme) {
+    true -> dynamicDarkColorScheme(LocalContext.current)
+    false -> dynamicLightColorScheme(LocalContext.current)
+  }.copy(surface = colorResource(R.color.surface))
 
-    val view = LocalView.current
-    if (!view.isInEditMode) {
-        SideEffect {
-            val window = (view.context as Activity).window
-            window.statusBarColor = colorScheme.primary.toArgb()
-            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
-        }
+  val view = LocalView.current
+  if (!view.isInEditMode) {
+    SideEffect {
+      val window = (view.context as Activity).window
+      window.statusBarColor = colorScheme.primary.toArgb()
+      WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
     }
+  }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+  MaterialTheme(
+    colorScheme = colorScheme,
+    typography = Typography,
+    content = content
+  )
 }

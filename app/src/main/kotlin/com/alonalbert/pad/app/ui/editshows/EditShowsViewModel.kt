@@ -16,23 +16,23 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditShowsViewModel @Inject constructor(
-    private val repository: Repository,
-    application: Application,
-    savedStateHandle: SavedStateHandle,
+  private val repository: Repository,
+  application: Application,
+  savedStateHandle: SavedStateHandle,
 ) : PadViewModel(application) {
 
-    private val userId: Long = savedStateHandle[DestinationsArgs.USER_ID_ARG]!!
+  private val userId: Long = savedStateHandle[DestinationsArgs.USER_ID_ARG]!!
 
-    val showListState: StateFlow<List<Show>> = repository.getShowsFlow().stateIn(viewModelScope, emptyList())
-    val userState: StateFlow<User?> = repository.getUserFlow(userId).stateIn(viewModelScope, null)
+  val showListState: StateFlow<List<Show>> = repository.getShowsFlow().stateIn(viewModelScope, emptyList())
+  val userState: StateFlow<User?> = repository.getUserFlow(userId).stateIn(viewModelScope, null)
 
-    override suspend fun refreshData() {
-        repository.refreshShows()
+  override suspend fun refreshData() {
+    repository.refreshShows()
+  }
+
+  fun updateUser(user: User) {
+    return repository.doUpdate(okMessage = application.getString(R.string.saved_shows)) {
+      updateUser(user)
     }
-
-    fun updateUser(user: User) {
-        return repository.doUpdate(okMessage = application.getString(R.string.saved_shows)) {
-            updateUser(user)
-        }
-    }
+  }
 }

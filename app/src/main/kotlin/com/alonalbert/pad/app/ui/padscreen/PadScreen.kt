@@ -31,89 +31,89 @@ import com.alonalbert.pad.app.R
 
 @Composable
 fun PadScreen(
-    viewModel: PadViewModel,
-    modifier: Modifier = Modifier,
-    floatingActionButton: @Composable () -> Unit = {},
-    onLogout: () -> Unit,
-    content: @Composable () -> Unit,
+  viewModel: PadViewModel,
+  modifier: Modifier = Modifier,
+  floatingActionButton: @Composable () -> Unit = {},
+  onLogout: () -> Unit,
+  content: @Composable () -> Unit,
 ) {
-    val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val message by viewModel.messageState.collectAsStateWithLifecycle()
-    val isLoading by viewModel.isLoadingState.collectAsStateWithLifecycle()
+  val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+  val message by viewModel.messageState.collectAsStateWithLifecycle()
+  val isLoading by viewModel.isLoadingState.collectAsStateWithLifecycle()
 
-    val onLogoutClick = { onLogout() }
+  val onLogoutClick = { onLogout() }
 
-    Scaffold(
-        topBar = { PadTopBar(onLogoutClick) },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-        floatingActionButton = floatingActionButton,
-        modifier = modifier.fillMaxSize()
-    ) { padding ->
-        LoadingContent(
-            isLoading = isLoading,
-            onRefresh = viewModel::refresh,
-            modifier = modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            content()
-        }
-
-        message?.let {
-            ShowSnackbar(snackbarHostState, it, viewModel)
-        }
+  Scaffold(
+    topBar = { PadTopBar(onLogoutClick) },
+    snackbarHost = { SnackbarHost(snackbarHostState) },
+    floatingActionButton = floatingActionButton,
+    modifier = modifier.fillMaxSize()
+  ) { padding ->
+    LoadingContent(
+      isLoading = isLoading,
+      onRefresh = viewModel::refresh,
+      modifier = modifier
+        .fillMaxSize()
+        .padding(padding)
+    ) {
+      content()
     }
+
+    message?.let {
+      ShowSnackbar(snackbarHostState, it, viewModel)
+    }
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PadTopBar(onLogoutClick: () -> Unit) {
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-        ),
-        title = {
-            Text(
-                text = stringResource(R.string.app_name),
-                color = MaterialTheme.colorScheme.onPrimary
-            )
-        },
-        actions = {
-            IconButton(onClick = onLogoutClick) {
-                Icon(
-                    imageVector = Icons.Filled.Logout,
-                    tint = MaterialTheme.colorScheme.onPrimary,
-                    contentDescription = stringResource(id = R.string.logout),
-                )
-            }
-        }
-    )
+  TopAppBar(
+    colors = TopAppBarDefaults.topAppBarColors(
+      containerColor = MaterialTheme.colorScheme.primary,
+    ),
+    title = {
+      Text(
+        text = stringResource(R.string.app_name),
+        color = MaterialTheme.colorScheme.onPrimary
+      )
+    },
+    actions = {
+      IconButton(onClick = onLogoutClick) {
+        Icon(
+          imageVector = Icons.Filled.Logout,
+          tint = MaterialTheme.colorScheme.onPrimary,
+          contentDescription = stringResource(id = R.string.logout),
+        )
+      }
+    }
+  )
 
 }
 
 @Composable
 private fun ShowSnackbar(
-    snackbarHostState: SnackbarHostState,
-    message: String,
-    viewModel: PadViewModel,
+  snackbarHostState: SnackbarHostState,
+  message: String,
+  viewModel: PadViewModel,
 ) {
-    LaunchedEffect(snackbarHostState, viewModel, message) {
-        snackbarHostState.showSnackbar(message)
-        viewModel.dismissMessage()
-    }
+  LaunchedEffect(snackbarHostState, viewModel, message) {
+    snackbarHostState.showSnackbar(message)
+    viewModel.dismissMessage()
+  }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun LoadingContent(
-    isLoading: Boolean,
-    onRefresh: () -> Unit,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
+  isLoading: Boolean,
+  onRefresh: () -> Unit,
+  modifier: Modifier = Modifier,
+  content: @Composable () -> Unit
 ) {
-    val pullRefreshState = rememberPullRefreshState(isLoading, onRefresh = onRefresh)
-    Box(modifier.pullRefresh(pullRefreshState)) {
-        content()
-        PullRefreshIndicator(isLoading, pullRefreshState, Modifier.align(Alignment.TopCenter))
-    }
+  val pullRefreshState = rememberPullRefreshState(isLoading, onRefresh = onRefresh)
+  Box(modifier.pullRefresh(pullRefreshState)) {
+    content()
+    PullRefreshIndicator(isLoading, pullRefreshState, Modifier.align(Alignment.TopCenter))
+  }
 }

@@ -5,9 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PlexMediaContainer<T>(
-    @SerialName("Directory")
-    val directories: List<T>? = null,
+  @SerialName("Directory")
+  val directories: List<T>? = null,
 
-    @SerialName("Metadata")
-    val metadataItems: List<T>? = null,
+  @SerialName("Metadata")
+  val metadataItems: List<T>? = null,
 )

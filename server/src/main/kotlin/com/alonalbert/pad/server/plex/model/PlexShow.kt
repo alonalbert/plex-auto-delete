@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PlexShow(
-    val key: String = "",
-    val ratingKey: String = "",
-    val title: String = "",
+  val key: String = "",
+  val ratingKey: String = "",
+  val title: String = "",
 )

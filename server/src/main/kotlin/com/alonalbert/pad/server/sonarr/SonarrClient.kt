@@ -23,45 +23,45 @@ import java.net.URI
 
 @Component
 class SonarrClient(private val environment: Environment) {
-    suspend fun getShows(): List<String> = get<List<SonarrShow>>("/api/v3/series").map { it.title }
+  suspend fun getShows(): List<String> = get<List<SonarrShow>>("/api/v3/series").map { it.title }
 
-    private suspend inline fun <reified T> get(path: String): T {
-        return httpClient().use { client ->
-            client.get(uri(path).toURL()) {
-                header("X-Api-Key", environment.getSonarrApiKey())
-            }.body<T>()
-        }
+  private suspend inline fun <reified T> get(path: String): T {
+    return httpClient().use { client ->
+      client.get(uri(path).toURL()) {
+        header("X-Api-Key", environment.getSonarrApiKey())
+      }.body<T>()
     }
+  }
 
-    @Suppress("SameParameterValue")
-    private fun uri(path: String): URI {
-        val url = URI.create(environment.getSonarrUrl())
-        return DefaultUriBuilderFactory().builder()
-            .scheme(url.scheme)
-            .host(url.host)
-            .port(url.port)
-            .path(path)
-            .build()
+  @Suppress("SameParameterValue")
+  private fun uri(path: String): URI {
+    val url = URI.create(environment.getSonarrUrl())
+    return DefaultUriBuilderFactory().builder()
+      .scheme(url.scheme)
+      .host(url.host)
+      .port(url.port)
+      .path(path)
+      .build()
+  }
+
+  private fun httpClient() = HttpClient(Apache) {
+    install(ContentNegotiation) {
+      json(Json {
+        ignoreUnknownKeys = true
+      })
     }
-
-    private fun httpClient() = HttpClient(Apache) {
-        install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-            })
+    install(Auth) {
+      basic {
+        sendWithoutRequest {
+          true
         }
-        install(Auth) {
-            basic {
-                sendWithoutRequest {
-                    true
-                }
-                credentials {
-                    BasicAuthCredentials(environment.getSonarrUsername(), environment.getSonarrPassword())
-                }
-            }
+        credentials {
+          BasicAuthCredentials(environment.getSonarrUsername(), environment.getSonarrPassword())
         }
+      }
     }
+  }
 
-    @Serializable
-    private data class SonarrShow(val title: String)
+  @Serializable
+  private data class SonarrShow(val title: String)
 }

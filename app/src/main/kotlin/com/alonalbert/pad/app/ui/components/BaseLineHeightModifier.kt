@@ -42,25 +42,25 @@ import androidx.compose.ui.unit.Dp
  * Copied from JetChat sample app
  */
 data class BaselineHeightModifier(
-    val heightFromBaseline: Dp
+  val heightFromBaseline: Dp
 ) : LayoutModifier {
 
-    override fun MeasureScope.measure(
-        measurable: Measurable,
-        constraints: Constraints
-    ): MeasureResult {
+  override fun MeasureScope.measure(
+    measurable: Measurable,
+    constraints: Constraints
+  ): MeasureResult {
 
-        val textPlaceable = measurable.measure(constraints)
-        val firstBaseline = textPlaceable[FirstBaseline]
-        val lastBaseline = textPlaceable[LastBaseline]
+    val textPlaceable = measurable.measure(constraints)
+    val firstBaseline = textPlaceable[FirstBaseline]
+    val lastBaseline = textPlaceable[LastBaseline]
 
-        val height = heightFromBaseline.roundToPx() + lastBaseline - firstBaseline
-        return layout(constraints.maxWidth, height) {
-            val topY = heightFromBaseline.roundToPx() - firstBaseline
-            textPlaceable.place(0, topY)
-        }
+    val height = heightFromBaseline.roundToPx() + lastBaseline - firstBaseline
+    return layout(constraints.maxWidth, height) {
+      val topY = heightFromBaseline.roundToPx() - firstBaseline
+      textPlaceable.place(0, topY)
     }
+  }
 }
 
 fun Modifier.baselineHeight(heightFromBaseline: Dp): Modifier =
-    this.then(BaselineHeightModifier(heightFromBaseline))
+  this.then(BaselineHeightModifier(heightFromBaseline))

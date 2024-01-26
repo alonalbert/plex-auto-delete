@@ -15,25 +15,25 @@ import java.net.URLEncoder
 
 @Component
 class PushoverClient(environment: Environment) {
-    private val token = environment.getPushoverToken()
-    private val userToken = environment.getPushoverUserToken()
+  private val token = environment.getPushoverToken()
+  private val userToken = environment.getPushoverUserToken()
 
-    suspend fun send(message: String) {
-        val url = URL("https://api.pushover.net/1/messages.json")
-        val postData = "token=$token&user=$userToken&message=${URLEncoder.encode(message, "UTF-8")}"
+  suspend fun send(message: String) {
+    val url = URL("https://api.pushover.net/1/messages.json")
+    val postData = "token=$token&user=$userToken&message=${URLEncoder.encode(message, "UTF-8")}"
 
-        httpClient().use {
-            it.post(url) {
-                setBody(postData)
-                header("Content-Type", "application/x-www-form-urlencoded")
-                header("Content-Length", postData.length.toString())
-            }
-        }
+    httpClient().use {
+      it.post(url) {
+        setBody(postData)
+        header("Content-Type", "application/x-www-form-urlencoded")
+        header("Content-Length", postData.length.toString())
+      }
     }
+  }
 
-    private fun httpClient() = HttpClient(Apache) {
-        install(HttpTimeout) {
-            requestTimeoutMillis = 10_000
-        }
+  private fun httpClient() = HttpClient(Apache) {
+    install(HttpTimeout) {
+      requestTimeoutMillis = 10_000
     }
+  }
 }

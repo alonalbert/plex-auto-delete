@@ -16,26 +16,26 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserDetailViewModel @Inject constructor(
-    private val repository: Repository,
-    application: Application,
-    savedStateHandle: SavedStateHandle,
+  private val repository: Repository,
+  application: Application,
+  savedStateHandle: SavedStateHandle,
 ) : PadViewModel(application) {
-    private val userId: Long = savedStateHandle[USER_ID_ARG]!!
+  private val userId: Long = savedStateHandle[USER_ID_ARG]!!
 
-    val userState: StateFlow<User?> = repository.getUserFlow(userId).stateIn(viewModelScope, null)
+  val userState: StateFlow<User?> = repository.getUserFlow(userId).stateIn(viewModelScope, null)
 
-    init {
-        refresh()
+  init {
+    refresh()
+  }
+
+  override suspend fun refreshData() {
+    repository.refreshShows()
+  }
+
+  fun updateUser(user: User) {
+    Timber.d("updateUser ${user.name}")
+    repository.doUpdate(application.getString(R.string.user_updated)) {
+      updateUser(user)
     }
-
-    override suspend fun refreshData() {
-        repository.refreshShows()
-    }
-
-    fun updateUser(user: User) {
-        Timber.d("updateUser ${user.name}")
-        repository.doUpdate(application.getString(R.string.user_updated)) {
-            updateUser(user)
-        }
-    }
+  }
 }

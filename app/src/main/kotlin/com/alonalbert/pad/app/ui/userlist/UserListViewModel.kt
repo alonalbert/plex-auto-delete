@@ -16,35 +16,35 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserListViewModel @Inject constructor(
-    private val repository: Repository,
-    application: Application,
+  private val repository: Repository,
+  application: Application,
 ) : PadDialogViewModel<DialogState>(application) {
 
-    val userListState: StateFlow<List<User>> = repository.getUsersFlow().stateIn(viewModelScope, emptyList())
+  val userListState: StateFlow<List<User>> = repository.getUsersFlow().stateIn(viewModelScope, emptyList())
 
-    init {
-        refresh()
-    }
+  init {
+    refresh()
+  }
 
-    override suspend fun refreshData() {
-        repository.refreshUsers()
-    }
+  override suspend fun refreshData() {
+    repository.refreshUsers()
+  }
 
-    fun runAutoWatch() {
-        runTaskWithDialogResult {
-            DialogState.AutoWatchDialog(repository.runAutoWatch())
-        }
+  fun runAutoWatch() {
+    runTaskWithDialogResult {
+      DialogState.AutoWatchDialog(repository.runAutoWatch())
     }
+  }
 
-    fun runAutoDelete(days: Int, isTestMode: Boolean) {
-        runTaskWithDialogResult {
-            AutoDeleteDialog(repository.runAutoDelete(days, isTestMode))
-        }
+  fun runAutoDelete(days: Int, isTestMode: Boolean) {
+    runTaskWithDialogResult {
+      AutoDeleteDialog(repository.runAutoDelete(days, isTestMode))
     }
+  }
 
-    sealed class DialogState {
-        class AutoDeleteDialog(val result: AutoDeleteResult) : DialogState()
-        class AutoWatchDialog(val result: AutoWatchResult) : DialogState()
-    }
+  sealed class DialogState {
+    class AutoDeleteDialog(val result: AutoDeleteResult) : DialogState()
+    class AutoWatchDialog(val result: AutoWatchResult) : DialogState()
+  }
 }
 

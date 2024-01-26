@@ -45,142 +45,142 @@ import timber.log.Timber
 
 @Composable
 fun EditShowsScreen(
-    modifier: Modifier = Modifier,
-    navController: NavHostController,
-    onLogout: () -> Unit,
-    viewModel: EditShowsViewModel = hiltViewModel(),
+  modifier: Modifier = Modifier,
+  navController: NavHostController,
+  onLogout: () -> Unit,
+  viewModel: EditShowsViewModel = hiltViewModel(),
 ) {
-    val allShows by viewModel.showListState.collectAsStateWithLifecycle()
-    val userState by viewModel.userState.collectAsStateWithLifecycle()
+  val allShows by viewModel.showListState.collectAsStateWithLifecycle()
+  val userState by viewModel.userState.collectAsStateWithLifecycle()
 
-    // todo: Handle better
-    userState?.let { user ->
-        val userShows = userState?.shows ?: return
-        val itemSelectionStates = allShows.associate { it.id to userShows.contains(it) }.toMutableMap()
+  // todo: Handle better
+  userState?.let { user ->
+    val userShows = userState?.shows ?: return
+    val itemSelectionStates = allShows.associate { it.id to userShows.contains(it) }.toMutableMap()
 
-        val onSaveClick: () -> Unit = {
-            val showMap = allShows.associateBy { it.id }
-            val shows = itemSelectionStates.filter { it.value }.mapNotNull { showMap[it.key] }
-            viewModel.updateUser(user.copy(shows = shows))
-            navController.popBackStack()
-        }
-
-        PadScreen(
-            viewModel = viewModel,
-            floatingActionButton = {
-                FloatingActionButton(onClick = onSaveClick) {
-                    Icon(Icons.Filled.Save, stringResource(id = R.string.save))
-                }
-            },
-            onLogout = onLogout,
-            modifier = modifier
-        ) {
-            ShowPickerContent(allShows, itemSelectionStates)
-        }
+    val onSaveClick: () -> Unit = {
+      val showMap = allShows.associateBy { it.id }
+      val shows = itemSelectionStates.filter { it.value }.mapNotNull { showMap[it.key] }
+      viewModel.updateUser(user.copy(shows = shows))
+      navController.popBackStack()
     }
+
+    PadScreen(
+      viewModel = viewModel,
+      floatingActionButton = {
+        FloatingActionButton(onClick = onSaveClick) {
+          Icon(Icons.Filled.Save, stringResource(id = R.string.save))
+        }
+      },
+      onLogout = onLogout,
+      modifier = modifier
+    ) {
+      ShowPickerContent(allShows, itemSelectionStates)
+    }
+  }
 }
 
 @Composable
 private fun ShowPickerContent(
-    allShows: List<Show>,
-    itemSelectionStates: MutableMap<Long, Boolean>,
+  allShows: List<Show>,
+  itemSelectionStates: MutableMap<Long, Boolean>,
 ) {
 
-    Column {
-        var filter by rememberSaveable { mutableStateOf(ShowFilter(query = "", selectedOnly = false)) }
+  Column {
+    var filter by rememberSaveable { mutableStateOf(ShowFilter(query = "", selectedOnly = false)) }
 
-        FilterField(
-            filter = filter,
-            onFilterChange = { filter = it }
-        )
+    FilterField(
+      filter = filter,
+      onFilterChange = { filter = it }
+    )
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary), RoundedCornerShape(4.dp))
-                .padding(8.dp)
-        ) {
+    LazyColumn(
+      modifier = Modifier
+        .fillMaxSize()
+        .border(BorderStroke(1.dp, MaterialTheme.colorScheme.primary), RoundedCornerShape(4.dp))
+        .padding(8.dp)
+    ) {
 
-            items(
-                items = filter.filter(allShows, itemSelectionStates.filter { it.value }.keys),
-                key = { it.id }
-            ) {
-                var isSelected by rememberSaveable { mutableStateOf(itemSelectionStates.getOrDefault(it.id, false)) }
-                val onClick = {
-                    isSelected = !isSelected
-                    itemSelectionStates[it.id] = isSelected
-                }
-                ShowCard(it, isSelected, onClick)
-            }
+      items(
+        items = filter.filter(allShows, itemSelectionStates.filter { it.value }.keys),
+        key = { it.id }
+      ) {
+        var isSelected by rememberSaveable { mutableStateOf(itemSelectionStates.getOrDefault(it.id, false)) }
+        val onClick = {
+          isSelected = !isSelected
+          itemSelectionStates[it.id] = isSelected
         }
+        ShowCard(it, isSelected, onClick)
+      }
     }
+  }
 }
 
 @Composable
 private fun FilterField(filter: ShowFilter, onFilterChange: (ShowFilter) -> Unit) {
-    val (icon, description) = when (filter.selectedOnly) {
-        true -> Icons.Filled.CheckCircle to "Show selected only"
-        false -> Icons.Filled.CheckCircleOutline to "Show all"
-    }
-    val focusRequester = remember { FocusRequester() }
+  val (icon, description) = when (filter.selectedOnly) {
+    true -> Icons.Filled.CheckCircle to "Show selected only"
+    false -> Icons.Filled.CheckCircleOutline to "Show all"
+  }
+  val focusRequester = remember { FocusRequester() }
 
-    OutlinedTextField(
-        value = filter.query,
-        readOnly = false,
-        onValueChange = { onFilterChange(filter.copy(query = it)) },
-        label = { Text(text = stringResource(R.string.filter_hint)) },
-        shape = RoundedCornerShape(8.dp),
-        trailingIcon = {
-            IconButton(onClick = { onFilterChange(filter.copy(selectedOnly = !filter.selectedOnly)) }) {
-                Icon(imageVector = icon, contentDescription = description)
-            }
+  OutlinedTextField(
+    value = filter.query,
+    readOnly = false,
+    onValueChange = { onFilterChange(filter.copy(query = it)) },
+    label = { Text(text = stringResource(R.string.filter_hint)) },
+    shape = RoundedCornerShape(8.dp),
+    trailingIcon = {
+      IconButton(onClick = { onFilterChange(filter.copy(selectedOnly = !filter.selectedOnly)) }) {
+        Icon(imageVector = icon, contentDescription = description)
+      }
 
-        },
-        modifier = Modifier
-            .focusRequester(focusRequester)
-            .fillMaxWidth()
-            .padding(8.dp)
-    )
-    LaunchedEffect(key1 = Unit) {
-        focusRequester.requestFocus()
-    }
+    },
+    modifier = Modifier
+      .focusRequester(focusRequester)
+      .fillMaxWidth()
+      .padding(8.dp)
+  )
+  LaunchedEffect(key1 = Unit) {
+    focusRequester.requestFocus()
+  }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun ShowCard(
-    show: Show,
-    isSelected: Boolean,
-    onClick: () -> Unit,
+  show: Show,
+  isSelected: Boolean,
+  onClick: () -> Unit,
 ) {
-    val color = when (isSelected) {
-        true -> MaterialTheme.colorScheme.primaryContainer
-        false -> MaterialTheme.colorScheme.background
-    }
-    Card(
-        onClick = onClick,
-        shape = RoundedCornerShape(4.dp),
-        colors = CardDefaults.cardColors(containerColor = color),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(0.dp)
-    ) {
-        Timber.v("Rendering show ${show.name}")
-        Text(
-            text = show.name,
-            style = MaterialTheme.typography.titleLarge,
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
-        )
-    }
+  val color = when (isSelected) {
+    true -> MaterialTheme.colorScheme.primaryContainer
+    false -> MaterialTheme.colorScheme.background
+  }
+  Card(
+    onClick = onClick,
+    shape = RoundedCornerShape(4.dp),
+    colors = CardDefaults.cardColors(containerColor = color),
+    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.primary),
+    modifier = Modifier
+      .fillMaxWidth()
+      .padding(0.dp)
+  ) {
+    Timber.v("Rendering show ${show.name}")
+    Text(
+      text = show.name,
+      style = MaterialTheme.typography.titleLarge,
+      modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp)
+    )
+  }
 }
 
 @Preview
 @Composable
 fun ShowPickerContentPreview() {
-    ShowPickerContent(
-        allShows = List(10) { Show(name = "Show $it", id = it.toLong()) },
-        itemSelectionStates = mutableMapOf(),
-    )
+  ShowPickerContent(
+    allShows = List(10) { Show(name = "Show $it", id = it.toLong()) },
+    itemSelectionStates = mutableMapOf(),
+  )
 }

@@ -7,12 +7,12 @@ import timber.log.Timber
 
 @HiltAndroidApp
 class PadApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
+  override fun onCreate() {
+    super.onCreate()
 
-        Timber.plant(object : Timber.DebugTree() {
-            override fun createStackElementTag(element: StackTraceElement) =
-                "PAD (${element.fileName}:${element.lineNumber})"
-        })
-    }
+    Timber.plant(object : Timber.DebugTree() {
+      override fun createStackElementTag(element: StackTraceElement) =
+        "PAD (${element.fileName}:${element.lineNumber})"
+    })
+  }
 }

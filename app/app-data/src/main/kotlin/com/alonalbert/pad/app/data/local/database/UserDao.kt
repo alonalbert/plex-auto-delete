@@ -10,26 +10,26 @@ import kotlinx.coroutines.flow.map
 
 @Dao
 internal interface UserDao {
-    @Transaction
-    @Query("SELECT * FROM user ORDER BY name COLLATE NOCASE")
-    fun observeAllUsersWithShow(): Flow<List<LocalUserWithShows>>
+  @Transaction
+  @Query("SELECT * FROM user ORDER BY name COLLATE NOCASE")
+  fun observeAllUsersWithShow(): Flow<List<LocalUserWithShows>>
 
-    fun observeAll(): Flow<List<LocalUser>> = observeAllUsersWithShow().map { list -> list.map { it.toLocalUser() } }
+  fun observeAll(): Flow<List<LocalUser>> = observeAllUsersWithShow().map { list -> list.map { it.toLocalUser() } }
 
-    @Transaction
-    @Query("SELECT * FROM user WHERE id = :id")
-    fun observeUserWithShow(id: Long): Flow<LocalUserWithShows>
+  @Transaction
+  @Query("SELECT * FROM user WHERE id = :id")
+  fun observeUserWithShow(id: Long): Flow<LocalUserWithShows>
 
-    fun observe(id: Long): Flow<LocalUser> = observeUserWithShow(id).map { it.copy(shows = it.shows).toLocalUser() }
+  fun observe(id: Long): Flow<LocalUser> = observeUserWithShow(id).map { it.copy(shows = it.shows).toLocalUser() }
 
-    @Update
-    suspend fun update(user: LocalUser)
+  @Update
+  suspend fun update(user: LocalUser)
 
-    @Upsert
-    suspend fun upsertAll(users: List<LocalUser>)
+  @Upsert
+  suspend fun upsertAll(users: List<LocalUser>)
 
-    @Query("DELETE  FROM user WHERE id NOT IN (:ids)")
-    suspend fun deleteExcept(ids: Collection<Long>)
+  @Query("DELETE  FROM user WHERE id NOT IN (:ids)")
+  suspend fun deleteExcept(ids: Collection<Long>)
 }
 
 private fun LocalUserWithShows.toLocalUser() = user.copy(shows = shows)

@@ -15,28 +15,28 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val application: Application,
+  private val application: Application,
 ) : ViewModel() {
 
-    val loginInfo = application.dataStore.data.map {
-        val server = it[SERVER]
-        val username = it[USERNAME]
-        val password = it[PASSWORD]
-        when {
-            server.isNullOrBlank() || username.isNullOrBlank() || password.isNullOrBlank() -> null
-            else -> LoginInfo(server, username, password)
-        }
-    }.stateIn(viewModelScope, null)
-
-    fun saveLoginInfo(server: String, username: String, password: String) {
-        with(viewModelScope) {
-            application.updateSettings {
-                set(SERVER, server)
-                set(USERNAME, username)
-                set(PASSWORD, password)
-            }
-        }
+  val loginInfo = application.dataStore.data.map {
+    val server = it[SERVER]
+    val username = it[USERNAME]
+    val password = it[PASSWORD]
+    when {
+      server.isNullOrBlank() || username.isNullOrBlank() || password.isNullOrBlank() -> null
+      else -> LoginInfo(server, username, password)
     }
+  }.stateIn(viewModelScope, null)
 
-    data class LoginInfo(val server: String = "", val username: String = "", val password: String = "")
+  fun saveLoginInfo(server: String, username: String, password: String) {
+    with(viewModelScope) {
+      application.updateSettings {
+        set(SERVER, server)
+        set(USERNAME, username)
+        set(PASSWORD, password)
+      }
+    }
+  }
+
+  data class LoginInfo(val server: String = "", val username: String = "", val password: String = "")
 }

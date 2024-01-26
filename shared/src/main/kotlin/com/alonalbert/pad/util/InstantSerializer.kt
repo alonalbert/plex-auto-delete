@@ -11,15 +11,15 @@ import kotlinx.serialization.encoding.Encoder
 
 object InstantSerializer : KSerializer<Instant> {
 
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("instant.epoch", PrimitiveKind.LONG)
+  override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("instant.epoch", PrimitiveKind.LONG)
 
-    @OptIn(ExperimentalSerializationApi::class)
-    @Suppress("INVISIBLE_MEMBER") // to be able to throw `MissingFieldException`
-    override fun deserialize(decoder: Decoder): Instant =
-        Instant.fromEpochSeconds(decoder.decodeLong())
+  @OptIn(ExperimentalSerializationApi::class)
+  @Suppress("INVISIBLE_MEMBER") // to be able to throw `MissingFieldException`
+  override fun deserialize(decoder: Decoder): Instant =
+    Instant.fromEpochSeconds(decoder.decodeLong())
 
-    override fun serialize(encoder: Encoder, value: Instant) {
-        encoder.encodeLong(value.epochSeconds)
-    }
+  override fun serialize(encoder: Encoder, value: Instant) {
+    encoder.encodeLong(value.epochSeconds)
+  }
 
 }

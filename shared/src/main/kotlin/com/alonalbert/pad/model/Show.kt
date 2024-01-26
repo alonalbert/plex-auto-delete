@@ -9,7 +9,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Entity
 data class Show(
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Long = 0,
-    val name: String = "",
+  @Id @GeneratedValue(strategy = GenerationType.AUTO)
+  val id: Long = 0,
+  val name: String = "",
 )

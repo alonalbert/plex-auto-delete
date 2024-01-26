@@ -39,43 +39,43 @@ import javax.inject.Singleton
  */
 @Singleton
 internal class AppRepository @Inject constructor(
-    private val networkDataSource: NetworkDataSource,
-    private val localDataSource: LocalDataSource,
-    @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
-    @ApplicationScope private val scope: CoroutineScope,
+  private val networkDataSource: NetworkDataSource,
+  private val localDataSource: LocalDataSource,
+  @DefaultDispatcher private val dispatcher: CoroutineDispatcher,
+  @ApplicationScope private val scope: CoroutineScope,
 ) : Repository {
 
-    override fun getUsersFlow(): Flow<List<User>> = localDataSource.getUsersFlow()
+  override fun getUsersFlow(): Flow<List<User>> = localDataSource.getUsersFlow()
 
-    override fun getUserFlow(id: Long): Flow<User> = localDataSource.getUserFlow(id)
+  override fun getUserFlow(id: Long): Flow<User> = localDataSource.getUserFlow(id)
 
-    override suspend fun updateUser(user: User) {
-        withContext(dispatcher) {
-            val updated = networkDataSource.updateUser(user)
-            localDataSource.updateUser(updated)
-        }
+  override suspend fun updateUser(user: User) {
+    withContext(dispatcher) {
+      val updated = networkDataSource.updateUser(user)
+      localDataSource.updateUser(updated)
     }
+  }
 
-    override suspend fun refreshUsers(): List<User> {
-        return withContext(dispatcher) {
-            localDataSource.refreshShows(networkDataSource.loadShows())
-            val users = networkDataSource.loadUsers()
-            localDataSource.refreshUsers(users)
-            users
-        }
+  override suspend fun refreshUsers(): List<User> {
+    return withContext(dispatcher) {
+      localDataSource.refreshShows(networkDataSource.loadShows())
+      val users = networkDataSource.loadUsers()
+      localDataSource.refreshUsers(users)
+      users
     }
+  }
 
-    override suspend fun runAutoWatch(): AutoWatchResult = networkDataSource.runAutoWatch()
+  override suspend fun runAutoWatch(): AutoWatchResult = networkDataSource.runAutoWatch()
 
-    override suspend fun runAutoDelete(days: Int, isTestMode: Boolean): AutoDeleteResult = networkDataSource.runAutoDelete(days, isTestMode)
+  override suspend fun runAutoDelete(days: Int, isTestMode: Boolean): AutoDeleteResult = networkDataSource.runAutoDelete(days, isTestMode)
 
-    override suspend fun refreshShows(): List<Show> {
-        return withContext(dispatcher) {
-            networkDataSource.loadShows().also {
-                localDataSource.refreshShows(it)
-            }
-        }
+  override suspend fun refreshShows(): List<Show> {
+    return withContext(dispatcher) {
+      networkDataSource.loadShows().also {
+        localDataSource.refreshShows(it)
+      }
     }
+  }
 
-    override fun getShowsFlow(): Flow<List<Show>> = localDataSource.getShowsFlow()
+  override fun getShowsFlow(): Flow<List<Show>> = localDataSource.getShowsFlow()
 }

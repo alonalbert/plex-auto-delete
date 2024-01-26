@@ -33,96 +33,96 @@ import com.alonalbert.pad.app.ui.login.LoginViewModel.LoginInfo
 
 @Composable
 fun LoginScreen(
-    onLoggedIn: () -> Unit,
+  onLoggedIn: () -> Unit,
 ) {
-    val viewModel: LoginViewModel = hiltViewModel()
+  val viewModel: LoginViewModel = hiltViewModel()
 
-    val loginState by viewModel.loginInfo.collectAsStateWithLifecycle(null)
+  val loginState by viewModel.loginInfo.collectAsStateWithLifecycle(null)
 
-    LoginScreenContent(loginState) { server, username, password ->
-        viewModel.saveLoginInfo(server, username, password)
-        onLoggedIn()
-    }
+  LoginScreenContent(loginState) { server, username, password ->
+    viewModel.saveLoginInfo(server, username, password)
+    onLoggedIn()
+  }
 }
 
 @Composable
 fun LoginScreenContent(
-    loginInfo: LoginInfo?,
-    onConnectClick: (String, String, String) -> Unit,
+  loginInfo: LoginInfo?,
+  onConnectClick: (String, String, String) -> Unit,
 ) {
-    var server by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+  var server by remember { mutableStateOf("") }
+  var username by remember { mutableStateOf("") }
+  var password by remember { mutableStateOf("") }
 
-    if (loginInfo != null) {
-        server = loginInfo.server
-        username = loginInfo.username
-        password = loginInfo.password
-    }
+  if (loginInfo != null) {
+    server = loginInfo.server
+    username = loginInfo.username
+    password = loginInfo.password
+  }
 
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
+  Box(
+    modifier = Modifier.fillMaxSize(),
+    contentAlignment = Alignment.Center
+  ) {
+    Surface(
+      modifier = Modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colorScheme.background)
+        .padding(28.dp)
     ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(28.dp)
-        ) {
-            Column(
-                modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
-                    .fillMaxSize()
-            ) {
+      Column(
+        modifier = Modifier
+          .background(MaterialTheme.colorScheme.background)
+          .fillMaxSize()
+      ) {
 
-                Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
-                NormalTextComponent(value = stringResource(id = R.string.connect))
-                HeadingTextComponent(value = stringResource(id = R.string.welcome))
-                Spacer(modifier = Modifier.height(20.dp))
+        NormalTextComponent(value = stringResource(id = R.string.connect))
+        HeadingTextComponent(value = stringResource(id = R.string.welcome))
+        Spacer(modifier = Modifier.height(20.dp))
 
-                TextFieldComponent(
-                    text = server,
-                    labelValue = stringResource(id = R.string.server),
-                    painterResource(id = R.drawable.server),
-                    onTextChanged = { server = it },
-                    isError = server.isBlank()
-                )
+        TextFieldComponent(
+          text = server,
+          labelValue = stringResource(id = R.string.server),
+          painterResource(id = R.drawable.server),
+          onTextChanged = { server = it },
+          isError = server.isBlank()
+        )
 
-                TextFieldComponent(
-                    text = username,
-                    labelValue = stringResource(id = R.string.username),
-                    painterResource(id = R.drawable.username),
-                    onTextChanged = { username = it },
-                    isError = username.isBlank()
-                )
+        TextFieldComponent(
+          text = username,
+          labelValue = stringResource(id = R.string.username),
+          painterResource(id = R.drawable.username),
+          onTextChanged = { username = it },
+          isError = username.isBlank()
+        )
 
-                PasswordTextFieldComponent(
-                    text = password,
-                    labelValue = stringResource(id = R.string.password),
-                    painterResource(id = R.drawable.lock),
-                    onTextChanged = { password = it },
-                    isError = password.isBlank()
-                )
+        PasswordTextFieldComponent(
+          text = password,
+          labelValue = stringResource(id = R.string.password),
+          painterResource(id = R.drawable.lock),
+          onTextChanged = { password = it },
+          isError = password.isBlank()
+        )
 
-                Spacer(modifier = Modifier.height(40.dp))
-                ButtonComponent(
-                    value = stringResource(id = R.string.connect),
-                    onButtonClicked = {
-                        onConnectClick(server, username, password)
-                    },
-                    isEnabled = server.isNotEmpty() && username.isNotEmpty() && password.isNotEmpty()
-                )
+        Spacer(modifier = Modifier.height(40.dp))
+        ButtonComponent(
+          value = stringResource(id = R.string.connect),
+          onButtonClicked = {
+            onConnectClick(server, username, password)
+          },
+          isEnabled = server.isNotEmpty() && username.isNotEmpty() && password.isNotEmpty()
+        )
 
-            }
+      }
 
-        }
     }
+  }
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
 fun PreviewLoginScreen() {
-    LoginScreenContent(loginInfo = LoginInfo(), onConnectClick = { _, _, _ -> })
+  LoginScreenContent(loginInfo = LoginInfo(), onConnectClick = { _, _, _ -> })
 }

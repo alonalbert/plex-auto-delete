@@ -7,26 +7,26 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun <T> PadDialogScreen(
-    viewModel: PadDialogViewModel<T>,
-    modifier: Modifier = Modifier,
-    onLogout: () -> Unit,
-    floatingActionButton: @Composable () -> Unit = {},
-    dialog: @Composable (T, () -> Unit) -> Unit,
-    content: @Composable () -> Unit,
+  viewModel: PadDialogViewModel<T>,
+  modifier: Modifier = Modifier,
+  onLogout: () -> Unit,
+  floatingActionButton: @Composable () -> Unit = {},
+  dialog: @Composable (T, () -> Unit) -> Unit,
+  content: @Composable () -> Unit,
 ) {
-    val dialogState by viewModel.dialogState.collectAsStateWithLifecycle()
+  val dialogState by viewModel.dialogState.collectAsStateWithLifecycle()
 
-    PadScreen(
-        viewModel = viewModel,
-        onLogout = onLogout,
-        floatingActionButton = floatingActionButton,
-        modifier = modifier,
-    ) {
-        val onDismiss = { viewModel.dismissDialog() }
+  PadScreen(
+    viewModel = viewModel,
+    onLogout = onLogout,
+    floatingActionButton = floatingActionButton,
+    modifier = modifier,
+  ) {
+    val onDismiss = { viewModel.dismissDialog() }
 
-        dialogState?.let {
-            dialog(it, onDismiss)
-        }
-        content()
+    dialogState?.let {
+      dialog(it, onDismiss)
     }
+    content()
+  }
 }

@@ -15,50 +15,50 @@
   -->
 
 <resources>
-    <string name="app_name">Plex Auto Delete</string>
+  <string name="app_name">Plex Auto Delete</string>
 
-    <string name="user_updated">User updated</string>
-    <string name="show_deleted">Show deleted</string>
-    <string name="network_error">Network error</string>
-    <string name="add_show">Add show</string>
-    <string name="user_type_including">Subscribed to shows</string>
-    <string name="user_type_excluding">Ignoring shows</string>
-    <string name="shows_title">Shows</string>
-    <string name="shows">Shows</string>
-    <string name="users">Users</string>
-    <string name="save">Save</string>
-    <string name="saved_shows">Saved shows</string>
-    <string name="filter_hint">Filter</string>
-    <string name="plex_token">Plex Token</string>
-    <string name="hide_token">Hide token</string>
-    <string name="show_token">Show token</string>
-    <string name="auto_watch_noop">No shows needed to auto watched</string>
-    <string name="auto_watch_results">Auto Watch Results</string>
-    <string name="auto_delete_results">Auto Delete Results</string>
-    <string name="auto_delete_text1">Deleted %1$s in %2$d files.</string>
-    <string name="auto_delete_text2">  Shows: %1s</string>
-    <string name="connect">Connect</string>
-    <string name="server">Server</string>
-    <string name="username">Username</string>
-    <string name="password">Password</string>
-    <string name="logout">Logout</string>
-    <string name="hide_password">Hide password</string>
-    <string name="show_password">Show password</string>
-    <string name="welcome">Welcom Back</string>
-    <string name="loading">Loading…</string>
-    <string name="run_auto_delete">Run Auto Delete</string>
-    <string name="run">Run</string>
-    <string name="test_mode">Test mode</string>
+  <string name="user_updated">User updated</string>
+  <string name="show_deleted">Show deleted</string>
+  <string name="network_error">Network error</string>
+  <string name="add_show">Add show</string>
+  <string name="user_type_including">Subscribed to shows</string>
+  <string name="user_type_excluding">Ignoring shows</string>
+  <string name="shows_title">Shows</string>
+  <string name="shows">Shows</string>
+  <string name="users">Users</string>
+  <string name="save">Save</string>
+  <string name="saved_shows">Saved shows</string>
+  <string name="filter_hint">Filter</string>
+  <string name="plex_token">Plex Token</string>
+  <string name="hide_token">Hide token</string>
+  <string name="show_token">Show token</string>
+  <string name="auto_watch_noop">No shows needed to auto watched</string>
+  <string name="auto_watch_results">Auto Watch Results</string>
+  <string name="auto_delete_results">Auto Delete Results</string>
+  <string name="auto_delete_text1">Deleted %1$s in %2$d files.</string>
+  <string name="auto_delete_text2">  Shows: %1s</string>
+  <string name="connect">Connect</string>
+  <string name="server">Server</string>
+  <string name="username">Username</string>
+  <string name="password">Password</string>
+  <string name="logout">Logout</string>
+  <string name="hide_password">Hide password</string>
+  <string name="show_password">Show password</string>
+  <string name="welcome">Welcom Back</string>
+  <string name="loading">Loading…</string>
+  <string name="run_auto_delete">Run Auto Delete</string>
+  <string name="run">Run</string>
+  <string name="test_mode">Test mode</string>
 
-    <plurals name="excludes_shows">
-        <item quantity="zero">Excludes no shows</item>
-        <item quantity="one">Excludes one show</item>
-        <item quantity="other">Excludes %1$d shows</item>
-    </plurals>
+  <plurals name="excludes_shows">
+    <item quantity="zero">Excludes no shows</item>
+    <item quantity="one">Excludes one show</item>
+    <item quantity="other">Excludes %1$d shows</item>
+  </plurals>
 
-    <plurals name="includes_shows">
-        <item quantity="zero">Includes no shows</item>
-        <item quantity="one">Includes one show</item>
-        <item quantity="other">Includes %1d shows</item>
-    </plurals>
+  <plurals name="includes_shows">
+    <item quantity="zero">Includes no shows</item>
+    <item quantity="one">Includes one show</item>
+    <item quantity="other">Includes %1d shows</item>
+  </plurals>
 </resources>

@@ -15,22 +15,22 @@ import kotlinx.serialization.Serializable
 @Serializable
 @Entity
 data class User(
-    @Id @GeneratedValue(strategy = GenerationType.AUTO)
-    val id: Long = 0,
-    val name: String = "",
-    val plexToken: String = "",
-    val type: UserType = INCLUDE,
-    @ManyToMany(cascade = [ALL], fetch = EAGER)
-    @JoinTable(
-        name = "user_show",
-        joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
-        inverseJoinColumns = [JoinColumn(name = "show_id", referencedColumnName = "id")]
-    )
-    val shows: List<Show> = emptyList(),
+  @Id @GeneratedValue(strategy = GenerationType.AUTO)
+  val id: Long = 0,
+  val name: String = "",
+  val plexToken: String = "",
+  val type: UserType = INCLUDE,
+  @ManyToMany(cascade = [ALL], fetch = EAGER)
+  @JoinTable(
+    name = "user_show",
+    joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "id")],
+    inverseJoinColumns = [JoinColumn(name = "show_id", referencedColumnName = "id")]
+  )
+  val shows: List<Show> = emptyList(),
 
-    ) {
-    enum class UserType {
-        EXCLUDE,
-        INCLUDE,
-    }
+  ) {
+  enum class UserType {
+    EXCLUDE,
+    INCLUDE,
+  }
 }

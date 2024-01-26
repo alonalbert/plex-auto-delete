@@ -38,67 +38,67 @@ import com.alonalbert.pad.model.User as NetworkUser
 
 
 internal class KtorNetworkDataSource @Inject constructor(
-    private val application: Application,
+  private val application: Application,
 ) : NetworkDataSource {
-    override suspend fun loadUsers() = get<List<NetworkUser>>("users").toExternal()
+  override suspend fun loadUsers() = get<List<NetworkUser>>("users").toExternal()
 
-    override suspend fun updateUser(user: User) = put<NetworkUser>("users/${user.id}", user.toNetwork()).toExternal()
+  override suspend fun updateUser(user: User) = put<NetworkUser>("users/${user.id}", user.toNetwork()).toExternal()
 
-    override suspend fun loadShows() = get<List<NetworkShow>>("shows").toExternal()
+  override suspend fun loadShows() = get<List<NetworkShow>>("shows").toExternal()
 
-    private fun httpClient() = HttpClient(Android) {
-        install(Logging) {
-            logger = TimberLogger
-            this.level = INFO
+  private fun httpClient() = HttpClient(Android) {
+    install(Logging) {
+      logger = TimberLogger
+      this.level = INFO
+    }
+    install(ContentNegotiation) {
+      json()
+    }
+    install(HttpTimeout) {
+      requestTimeoutMillis = 5_000
+    }
+    install(Auth) {
+      basic {
+        sendWithoutRequest {
+          true
         }
-        install(ContentNegotiation) {
-            json()
+        credentials {
+          BasicAuthCredentials(application.getSetting(USERNAME) ?: "", application.getSetting(PASSWORD) ?: "")
         }
-        install(HttpTimeout) {
-            requestTimeoutMillis = 5_000
-        }
-        install(Auth) {
-            basic {
-                sendWithoutRequest {
-                    true
-                }
-                credentials {
-                    BasicAuthCredentials(application.getSetting(USERNAME) ?: "", application.getSetting(PASSWORD) ?: "")
-                }
-            }
-        }
-
+      }
     }
 
-    override suspend fun runAutoWatch(): AutoWatchResult = get<NetworkAutoWatchResult>("action/auto-watch").toExternal()
+  }
 
-    override suspend fun runAutoDelete(days: Int, isTestMode: Boolean): AutoDeleteResult =
-        get<NetworkAutoDeleteResult>("action/auto-delete?days=$days&isTestMode=$isTestMode").toExternal()
+  override suspend fun runAutoWatch(): AutoWatchResult = get<NetworkAutoWatchResult>("action/auto-watch").toExternal()
 
-    private suspend inline fun <reified T> get(url: String): T {
-        return httpClient().use {
-            withContext(Dispatchers.IO) {
-                it.get(getUrl(url)).body()
-            }
-        }
+  override suspend fun runAutoDelete(days: Int, isTestMode: Boolean): AutoDeleteResult =
+    get<NetworkAutoDeleteResult>("action/auto-delete?days=$days&isTestMode=$isTestMode").toExternal()
+
+  private suspend inline fun <reified T> get(url: String): T {
+    return httpClient().use {
+      withContext(Dispatchers.IO) {
+        it.get(getUrl(url)).body()
+      }
     }
+  }
 
-    private suspend inline fun <reified T> put(url: String, value: T): T {
-        return httpClient().use {
-            withContext(Dispatchers.IO) {
-                it.put(getUrl(url)) {
-                    contentType(ContentType.Application.Json)
-                    setBody(value)
-                }.body()
-            }
-        }
+  private suspend inline fun <reified T> put(url: String, value: T): T {
+    return httpClient().use {
+      withContext(Dispatchers.IO) {
+        it.put(getUrl(url)) {
+          contentType(ContentType.Application.Json)
+          setBody(value)
+        }.body()
+      }
     }
+  }
 
-    private object TimberLogger : Logger {
-        override fun log(message: String) {
-            Timber.tag("PAD-HTTP").v(message)
-        }
+  private object TimberLogger : Logger {
+    override fun log(message: String) {
+      Timber.tag("PAD-HTTP").v(message)
     }
+  }
 
-    private suspend fun getUrl(segment: String) = "http://${application.getSetting(SERVER)}/api/$segment"
+  private suspend fun getUrl(segment: String) = "http://${application.getSetting(SERVER)}/api/$segment"
 }

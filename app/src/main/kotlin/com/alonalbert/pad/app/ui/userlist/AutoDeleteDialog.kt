@@ -49,130 +49,130 @@ import com.alonalbert.pad.app.ui.theme.ApplicationTheme
 
 @Composable
 fun AutoDeleteDialog(
-    days: Int = 7,
-    onDismissRequest: () -> Unit,
-    onDoneClick: (Int, Boolean) -> Unit
+  days: Int = 7,
+  onDismissRequest: () -> Unit,
+  onDoneClick: (Int, Boolean) -> Unit
 ) {
 
-    var isError by remember { mutableStateOf(false) }
-    var daysValue by remember { mutableStateOf(TextFieldValue(days.toString())) }
-    var isTestMode by remember { mutableStateOf(true) }
-    val interactionSource = remember { MutableInteractionSource() }
-    val isFocused by interactionSource.collectIsFocusedAsState()
-    val focusRequester = remember { FocusRequester() }
+  var isError by remember { mutableStateOf(false) }
+  var daysValue by remember { mutableStateOf(TextFieldValue(days.toString())) }
+  var isTestMode by remember { mutableStateOf(true) }
+  val interactionSource = remember { MutableInteractionSource() }
+  val isFocused by interactionSource.collectIsFocusedAsState()
+  val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(isFocused) {
-        daysValue = daysValue.copy(
-            selection = when {
-                isFocused -> TextRange(0, daysValue.text.length)
-                else -> TextRange.Zero
-            }
-        )
-    }
+  LaunchedEffect(isFocused) {
+    daysValue = daysValue.copy(
+      selection = when {
+        isFocused -> TextRange(0, daysValue.text.length)
+        else -> TextRange.Zero
+      }
+    )
+  }
 
-    Dialog(onDismissRequest = { onDismissRequest() }) {
-        Card(
-            shape = CardDefaults.shape,
-            modifier = Modifier.padding(8.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+  Dialog(onDismissRequest = { onDismissRequest() }) {
+    Card(
+      shape = CardDefaults.shape,
+      modifier = Modifier.padding(8.dp),
+      colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+      elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+    ) {
+      Column(
+        modifier = Modifier.padding(20.dp)
+      ) {
+        Row(
+          modifier = Modifier.fillMaxWidth(),
+          horizontalArrangement = Arrangement.SpaceBetween,
+          verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(
-                modifier = Modifier.padding(20.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.run_auto_delete),
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    Icon(
-                        imageVector = Icons.Filled.Cancel,
-                        contentDescription = "",
-                        tint = colorResource(android.R.color.darker_gray),
-                        modifier = Modifier
-                            .width(30.dp)
-                            .height(30.dp)
-                            .clickable { onDismissRequest() }
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                OutlinedTextField(
-                    label = { Text(text = "Number of days") },
-                    colors = OutlinedTextFieldDefaults.colors(
-                        focusedBorderColor = MaterialTheme.colorScheme.primary,
-                        focusedLabelColor = MaterialTheme.colorScheme.primary,
-                        cursorColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Next,
-                    ),
-                    interactionSource = interactionSource,
-                    singleLine = true,
-                    maxLines = 1,
-                    value = daysValue,
-                    onValueChange = {
-                        daysValue = it
-                        isError = it.text.toIntOrNull() == null
-                    },
-                    leadingIcon = null,
-                    isError = isError,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester)
-                )
-                LaunchedEffect("Focus") {
-                    focusRequester.requestFocus()
-                }
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Checkbox(
-                        checked = isTestMode,
-                        onCheckedChange = { isTestMode = it })
-                    Text(
-                        modifier = Modifier.padding(start = 2.dp),
-                        text = stringResource(R.string.test_mode)
-                    )
-                }
-
-
-                Spacer(modifier = Modifier.height(20.dp))
-
-                Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
-                    Button(
-                        enabled = !isError,
-                        onClick = {
-                            onDoneClick(daysValue.text.toInt(), isTestMode)
-                            onDismissRequest()
-                        },
-                        shape = RoundedCornerShape(50.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(50.dp)
-                    ) {
-                        Text(text = stringResource(R.string.run))
-                    }
-                }
-            }
+          Text(
+            text = stringResource(R.string.run_auto_delete),
+            style = MaterialTheme.typography.titleLarge
+          )
+          Icon(
+            imageVector = Icons.Filled.Cancel,
+            contentDescription = "",
+            tint = colorResource(android.R.color.darker_gray),
+            modifier = Modifier
+              .width(30.dp)
+              .height(30.dp)
+              .clickable { onDismissRequest() }
+          )
         }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        OutlinedTextField(
+          label = { Text(text = "Number of days") },
+          colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = MaterialTheme.colorScheme.primary,
+            focusedLabelColor = MaterialTheme.colorScheme.primary,
+            cursorColor = MaterialTheme.colorScheme.primary,
+          ),
+          keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = ImeAction.Next,
+          ),
+          interactionSource = interactionSource,
+          singleLine = true,
+          maxLines = 1,
+          value = daysValue,
+          onValueChange = {
+            daysValue = it
+            isError = it.text.toIntOrNull() == null
+          },
+          leadingIcon = null,
+          isError = isError,
+          modifier = Modifier
+            .fillMaxWidth()
+            .focusRequester(focusRequester)
+        )
+        LaunchedEffect("Focus") {
+          focusRequester.requestFocus()
+        }
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+          Checkbox(
+            checked = isTestMode,
+            onCheckedChange = { isTestMode = it })
+          Text(
+            modifier = Modifier.padding(start = 2.dp),
+            text = stringResource(R.string.test_mode)
+          )
+        }
+
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
+          Button(
+            enabled = !isError,
+            onClick = {
+              onDoneClick(daysValue.text.toInt(), isTestMode)
+              onDismissRequest()
+            },
+            shape = RoundedCornerShape(50.dp),
+            modifier = Modifier
+              .fillMaxWidth()
+              .height(50.dp)
+          ) {
+            Text(text = stringResource(R.string.run))
+          }
+        }
+      }
     }
+  }
 }
 
 @Preview(
-    showBackground = true,
-    showSystemUi = true,
+  showBackground = true,
+  showSystemUi = true,
 )
 @Composable
 fun AutoDeleteDialogPreview() {
-    ApplicationTheme {
-        AutoDeleteDialog(days = 7, onDismissRequest = { }, onDoneClick = { _, _ -> })
-    }
+  ApplicationTheme {
+    AutoDeleteDialog(days = 7, onDismissRequest = { }, onDoneClick = { _, _ -> })
+  }
 }

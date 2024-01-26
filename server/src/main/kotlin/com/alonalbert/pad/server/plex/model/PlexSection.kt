@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PlexSection(
-    val key: String = "",
-    val type: String = "",
-    val title: String = "",
+  val key: String = "",
+  val type: String = "",
+  val title: String = "",
 )

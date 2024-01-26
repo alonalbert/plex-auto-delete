@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PlexMedia(
-    @SerialName("Part")
-    val parts: List<PlexPart> = emptyList(),
+  @SerialName("Part")
+  val parts: List<PlexPart> = emptyList(),
 )

@@ -14,14 +14,14 @@ import kotlin.time.Duration.Companion.days
 @RestController
 @RequestMapping("/api/action")
 class ActionController(
-    @Autowired private val plexAutoDeleter: PlexAutoDeleter,
+  @Autowired private val plexAutoDeleter: PlexAutoDeleter,
 ) {
-    @GetMapping("/auto-watch")
-    fun autoWatch(): AutoWatchResult = runBlocking { plexAutoDeleter.runAutoWatch() }
+  @GetMapping("/auto-watch")
+  fun autoWatch(): AutoWatchResult = runBlocking { plexAutoDeleter.runAutoWatch() }
 
-    @GetMapping("/auto-delete")
-    fun autoDelete(
-        @RequestParam(name = "days") days: Int,
-        @RequestParam(name = "isTestMode") isTestMode: Boolean,
-    ): AutoDeleteResult = runBlocking { plexAutoDeleter.runAutoDelete(days.days, isTestMode) }
+  @GetMapping("/auto-delete")
+  fun autoDelete(
+    @RequestParam(name = "days") days: Int,
+    @RequestParam(name = "isTestMode") isTestMode: Boolean,
+  ): AutoDeleteResult = runBlocking { plexAutoDeleter.runAutoDelete(days.days, isTestMode) }
 }

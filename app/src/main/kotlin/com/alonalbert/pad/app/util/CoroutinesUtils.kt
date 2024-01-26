@@ -20,8 +20,8 @@ private const val StopTimeoutMillis: Long = 5000
 private val WhileUiSubscribed: SharingStarted = SharingStarted.WhileSubscribed(StopTimeoutMillis)
 
 fun <T> Flow<T>.stateIn(
-    scope: CoroutineScope,
-    initialValue: T
+  scope: CoroutineScope,
+  initialValue: T
 ): StateFlow<T> {
-    return stateIn(scope, WhileUiSubscribed, initialValue)
+  return stateIn(scope, WhileUiSubscribed, initialValue)
 }

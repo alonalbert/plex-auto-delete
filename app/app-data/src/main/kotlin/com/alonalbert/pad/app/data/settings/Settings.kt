@@ -23,11 +23,11 @@ val LOGGED_IN = booleanPreferencesKey("loggedIn")
 
 context(CoroutineScope)
 fun Application.updateSettings(block: suspend MutablePreferences.() -> Unit) {
-    launch {
-        dataStore.updateData {
-            it.toMutablePreferences().apply {
-                block()
-            }
-        }
+  launch {
+    dataStore.updateData {
+      it.toMutablePreferences().apply {
+        block()
+      }
     }
+  }
 }

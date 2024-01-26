@@ -24,91 +24,91 @@ import java.net.URI
 
 @Component
 class PlexClient(environment: Environment) {
-    private val plexUrl = environment.getPlexUrl()
+  private val plexUrl = environment.getPlexUrl()
 
-    suspend fun getTvSections(userToken: String = "") =
-        getItems<PlexSection>("/library/sections", userToken).filter { it.type == "show" }
+  suspend fun getTvSections(userToken: String = "") =
+    getItems<PlexSection>("/library/sections", userToken).filter { it.type == "show" }
 
-    suspend fun getUnwatchedShows(sectionKey: String, userToken: String = "") =
-        getItems<PlexShow>("/library/sections/$sectionKey/unwatched", userToken)
+  suspend fun getUnwatchedShows(sectionKey: String, userToken: String = "") =
+    getItems<PlexShow>("/library/sections/$sectionKey/unwatched", userToken)
 
-    suspend fun getAllShows(sectionKey: String, userToken: String = "") =
-        getItems<PlexShow>("/library/sections/$sectionKey/all", userToken)
+  suspend fun getAllShows(sectionKey: String, userToken: String = "") =
+    getItems<PlexShow>("/library/sections/$sectionKey/all", userToken)
 
-    suspend fun getEpisodes(showKey: String, userToken: String = ""): List<PlexEpisode> =
-        getItems<PlexEpisode>("library/metadata/$showKey/allLeaves", userToken)
+  suspend fun getEpisodes(showKey: String, userToken: String = ""): List<PlexEpisode> =
+    getItems<PlexEpisode>("library/metadata/$showKey/allLeaves", userToken)
 
-    suspend fun getUnwatchedEpisodes(showKey: String, userToken: String): List<PlexEpisode> =
-        getItems<PlexEpisode>("library/metadata/$showKey/allLeaves?unwatched=1", userToken)
+  suspend fun getUnwatchedEpisodes(showKey: String, userToken: String): List<PlexEpisode> =
+    getItems<PlexEpisode>("library/metadata/$showKey/allLeaves?unwatched=1", userToken)
 
-    suspend fun markShowWatched(plexShow: PlexShow, userToken: String = "") {
-        val url = createUriBuilder(plexUrl, userToken)
-            .pathSegment(":", "scrobble")
-            .queryParam("key", plexShow.ratingKey)
-            .queryParam("identifier", "com.plexapp.plugins.library")
-            .build()
-            .toURL()
-        httpClient().use {
-            it.get(url) {
-                header("Accept", "application/json")
-            }
-        }
+  suspend fun markShowWatched(plexShow: PlexShow, userToken: String = "") {
+    val url = createUriBuilder(plexUrl, userToken)
+      .pathSegment(":", "scrobble")
+      .queryParam("key", plexShow.ratingKey)
+      .queryParam("identifier", "com.plexapp.plugins.library")
+      .build()
+      .toURL()
+    httpClient().use {
+      it.get(url) {
+        header("Accept", "application/json")
+      }
     }
+  }
 
-    suspend fun markShowUnwatched(plexShow: PlexShow, userToken: String = "") {
-        val url = createUriBuilder(plexUrl, userToken)
-            .pathSegment(":", "unscrobble")
-            .queryParam("key", plexShow.ratingKey)
-            .queryParam("identifier", "com.plexapp.plugins.library")
-            .build()
-            .toURL()
-        httpClient().use {
-            it.get(url) {
-                header("Accept", "application/json")
-            }
-        }
+  suspend fun markShowUnwatched(plexShow: PlexShow, userToken: String = "") {
+    val url = createUriBuilder(plexUrl, userToken)
+      .pathSegment(":", "unscrobble")
+      .queryParam("key", plexShow.ratingKey)
+      .queryParam("identifier", "com.plexapp.plugins.library")
+      .build()
+      .toURL()
+    httpClient().use {
+      it.get(url) {
+        header("Accept", "application/json")
+      }
     }
+  }
 
-    private fun httpClient() = HttpClient(Apache) {
-        install(ContentNegotiation) {
-            json(Json {
-                ignoreUnknownKeys = true
-            })
-        }
-        install(HttpTimeout) {
-            requestTimeoutMillis = 10_000
-        }
+  private fun httpClient() = HttpClient(Apache) {
+    install(ContentNegotiation) {
+      json(Json {
+        ignoreUnknownKeys = true
+      })
     }
+    install(HttpTimeout) {
+      requestTimeoutMillis = 10_000
+    }
+  }
 
-    private suspend inline fun <reified T> getItems(request: String, userToken: String): List<T> {
-        val path = request.substringBefore('?')
-        val params = request.substring(path.length).substringAfter('?')
-        val url = createUriBuilder(plexUrl, userToken)
-            .pathSegment(*path.split("/").toTypedArray())
-            .query(params)
-            .build()
-            .toURL()
-        return runBlocking {
-            httpClient().use {
-                val response = it.get(url) {
-                    header("Accept", "application/json")
-                }
-                val mediaContainer = response.body<PlexData<T>>().mediaContainer
-                mediaContainer.directories ?: mediaContainer.metadataItems ?: emptyList()
-            }
+  private suspend inline fun <reified T> getItems(request: String, userToken: String): List<T> {
+    val path = request.substringBefore('?')
+    val params = request.substring(path.length).substringAfter('?')
+    val url = createUriBuilder(plexUrl, userToken)
+      .pathSegment(*path.split("/").toTypedArray())
+      .query(params)
+      .build()
+      .toURL()
+    return runBlocking {
+      httpClient().use {
+        val response = it.get(url) {
+          header("Accept", "application/json")
         }
+        val mediaContainer = response.body<PlexData<T>>().mediaContainer
+        mediaContainer.directories ?: mediaContainer.metadataItems ?: emptyList()
+      }
     }
+  }
 
-    private fun createUriBuilder(plexUrl: String, userToken: String): UriBuilder {
-        val baseUri = URI.create(plexUrl)
-        val builder = DefaultUriBuilderFactory().builder()
-            .scheme(baseUri.scheme)
-            .host(baseUri.host)
-            .port(baseUri.port)
-            .path(baseUri.path)
-        if (userToken.isNotBlank()) {
-            builder.queryParam("X-Plex-Token", userToken)
-        }
-        return builder
+  private fun createUriBuilder(plexUrl: String, userToken: String): UriBuilder {
+    val baseUri = URI.create(plexUrl)
+    val builder = DefaultUriBuilderFactory().builder()
+      .scheme(baseUri.scheme)
+      .host(baseUri.host)
+      .port(baseUri.port)
+      .path(baseUri.path)
+    if (userToken.isNotBlank()) {
+      builder.queryParam("X-Plex-Token", userToken)
     }
+    return builder
+  }
 }

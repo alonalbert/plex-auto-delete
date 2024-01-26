@@ -44,184 +44,184 @@ import com.alonalbert.pad.app.R
 
 @Composable
 fun NormalTextComponent(value: String) {
-    Text(
-        text = value,
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(min = 40.dp),
-        style = TextStyle(
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Normal,
-            fontStyle = FontStyle.Normal
-        ),
-        color = MaterialTheme.colorScheme.onBackground,
-        textAlign = TextAlign.Center
-    )
+  Text(
+    text = value,
+    modifier = Modifier
+      .fillMaxWidth()
+      .heightIn(min = 40.dp),
+    style = TextStyle(
+      fontSize = 24.sp,
+      fontWeight = FontWeight.Normal,
+      fontStyle = FontStyle.Normal
+    ),
+    color = MaterialTheme.colorScheme.onBackground,
+    textAlign = TextAlign.Center
+  )
 }
 
 @Composable
 fun HeadingTextComponent(value: String) {
-    Text(
-        text = value,
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(),
-        style = TextStyle(
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Bold,
-            fontStyle = FontStyle.Normal
-        ),
-        color = MaterialTheme.colorScheme.onBackground,
-        textAlign = TextAlign.Center
-    )
+  Text(
+    text = value,
+    modifier = Modifier
+      .fillMaxWidth()
+      .heightIn(),
+    style = TextStyle(
+      fontSize = 30.sp,
+      fontWeight = FontWeight.Bold,
+      fontStyle = FontStyle.Normal
+    ),
+    color = MaterialTheme.colorScheme.onBackground,
+    textAlign = TextAlign.Center
+  )
 }
 
 @Composable
 fun TextFieldComponent(
-    text: String,
-    labelValue: String,
-    painterResource: Painter? = null,
-    onTextChanged: (String) -> Unit,
-    isError: Boolean = false
+  text: String,
+  labelValue: String,
+  painterResource: Painter? = null,
+  onTextChanged: (String) -> Unit,
+  isError: Boolean = false
 ) {
 
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth(),
-        label = { Text(text = labelValue) },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            focusedLabelColor = MaterialTheme.colorScheme.primary,
-            cursorColor = MaterialTheme.colorScheme.primary,
-        ),
-        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-        singleLine = true,
-        maxLines = 1,
-        value = text,
-        onValueChange = onTextChanged,
-        leadingIcon = when (painterResource) {
-            null -> null
-            else -> {
-                { Icon(painter = painterResource, contentDescription = "") }
-            }
-        },
-        isError = isError
-    )
+  OutlinedTextField(
+    modifier = Modifier
+      .fillMaxWidth(),
+    label = { Text(text = labelValue) },
+    colors = OutlinedTextFieldDefaults.colors(
+      focusedBorderColor = MaterialTheme.colorScheme.primary,
+      focusedLabelColor = MaterialTheme.colorScheme.primary,
+      cursorColor = MaterialTheme.colorScheme.primary,
+    ),
+    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+    singleLine = true,
+    maxLines = 1,
+    value = text,
+    onValueChange = onTextChanged,
+    leadingIcon = when (painterResource) {
+      null -> null
+      else -> {
+        { Icon(painter = painterResource, contentDescription = "") }
+      }
+    },
+    isError = isError
+  )
 }
 
 
 @Composable
 fun PasswordTextFieldComponent(
-    text: String,
-    labelValue: String,
-    painterResource: Painter? = null,
-    onTextChanged: (String) -> Unit,
-    isError: Boolean = false
+  text: String,
+  labelValue: String,
+  painterResource: Painter? = null,
+  onTextChanged: (String) -> Unit,
+  isError: Boolean = false
 ) {
 
-    val localFocusManager = LocalFocusManager.current
+  val localFocusManager = LocalFocusManager.current
 
-    val passwordVisible = remember { mutableStateOf(false) }
+  val passwordVisible = remember { mutableStateOf(false) }
 
-    OutlinedTextField(
-        modifier = Modifier
-            .fillMaxWidth(),
-        label = { Text(text = labelValue) },
-        colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor = MaterialTheme.colorScheme.primary,
-            focusedLabelColor = MaterialTheme.colorScheme.primary,
-            cursorColor = MaterialTheme.colorScheme.primary,
-        ),
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            imeAction = ImeAction.Done
-        ),
-        singleLine = true,
-        keyboardActions = KeyboardActions {
-            localFocusManager.clearFocus()
-        },
-        maxLines = 1,
-        value = text,
-        onValueChange = onTextChanged,
-        leadingIcon = when (painterResource) {
-            null -> null
-            else -> {
-                { Icon(painter = painterResource, contentDescription = "") }
-            }
-        },
-        trailingIcon = {
+  OutlinedTextField(
+    modifier = Modifier
+      .fillMaxWidth(),
+    label = { Text(text = labelValue) },
+    colors = OutlinedTextFieldDefaults.colors(
+      focusedBorderColor = MaterialTheme.colorScheme.primary,
+      focusedLabelColor = MaterialTheme.colorScheme.primary,
+      cursorColor = MaterialTheme.colorScheme.primary,
+    ),
+    keyboardOptions = KeyboardOptions(
+      keyboardType = KeyboardType.Password,
+      imeAction = ImeAction.Done
+    ),
+    singleLine = true,
+    keyboardActions = KeyboardActions {
+      localFocusManager.clearFocus()
+    },
+    maxLines = 1,
+    value = text,
+    onValueChange = onTextChanged,
+    leadingIcon = when (painterResource) {
+      null -> null
+      else -> {
+        { Icon(painter = painterResource, contentDescription = "") }
+      }
+    },
+    trailingIcon = {
 
-            val iconImage = if (passwordVisible.value) {
-                Icons.Filled.Visibility
-            } else {
-                Icons.Filled.VisibilityOff
-            }
+      val iconImage = if (passwordVisible.value) {
+        Icons.Filled.Visibility
+      } else {
+        Icons.Filled.VisibilityOff
+      }
 
-            val description = if (passwordVisible.value) {
-                stringResource(id = R.string.hide_password)
-            } else {
-                stringResource(id = R.string.show_password)
-            }
+      val description = if (passwordVisible.value) {
+        stringResource(id = R.string.hide_password)
+      } else {
+        stringResource(id = R.string.show_password)
+      }
 
-            IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
-                Icon(imageVector = iconImage, contentDescription = description)
-            }
+      IconButton(onClick = { passwordVisible.value = !passwordVisible.value }) {
+        Icon(imageVector = iconImage, contentDescription = description)
+      }
 
-        },
-        visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
-        isError = isError
-    )
+    },
+    visualTransformation = if (passwordVisible.value) VisualTransformation.None else PasswordVisualTransformation(),
+    isError = isError
+  )
 }
 
 @Composable
 fun ButtonComponent(value: String, onButtonClicked: () -> Unit, isEnabled: Boolean = false) {
-    Button(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(48.dp),
-        onClick = {
-            onButtonClicked.invoke()
-        },
-        contentPadding = PaddingValues(),
-        colors = ButtonDefaults.buttonColors(Color.Transparent),
-        shape = RoundedCornerShape(50.dp),
-        enabled = isEnabled
+  Button(
+    modifier = Modifier
+      .fillMaxWidth()
+      .heightIn(48.dp),
+    onClick = {
+      onButtonClicked.invoke()
+    },
+    contentPadding = PaddingValues(),
+    colors = ButtonDefaults.buttonColors(Color.Transparent),
+    shape = RoundedCornerShape(50.dp),
+    enabled = isEnabled
+  ) {
+    Box(
+      modifier = Modifier
+        .fillMaxWidth()
+        .heightIn(48.dp)
+        .background(
+          color = MaterialTheme.colorScheme.primary,
+          shape = RoundedCornerShape(50.dp)
+        ),
+      contentAlignment = Alignment.Center
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .heightIn(48.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(50.dp)
-                ),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                text = value,
-                fontSize = 18.sp,
-                color = Color.White,
-                fontWeight = FontWeight.Bold
-            )
-
-        }
+      Text(
+        text = value,
+        fontSize = 18.sp,
+        color = Color.White,
+        fontWeight = FontWeight.Bold
+      )
 
     }
+
+  }
 }
 
 
 @Preview(
-    showBackground = true,
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
+  showBackground = true,
+  uiMode = Configuration.UI_MODE_NIGHT_YES,
 )
 @Composable
 fun TextFieldComponentPreview() {
-    TextFieldComponent(
-        text = "",
-        labelValue = "Label",
-        painterResource = null,
-        onTextChanged = {}
-    )
+  TextFieldComponent(
+    text = "",
+    labelValue = "Label",
+    painterResource = null,
+    onTextChanged = {}
+  )
 }
 
 

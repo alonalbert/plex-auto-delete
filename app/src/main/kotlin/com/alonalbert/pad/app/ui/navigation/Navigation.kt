@@ -32,97 +32,97 @@ import com.alonalbert.pad.app.ui.userdetail.UserDetailScreen
 import com.alonalbert.pad.app.ui.userlist.UserListScreen
 
 object DestinationsArgs {
-    const val USER_ID_ARG = "userId"
+  const val USER_ID_ARG = "userId"
 }
 
 @Composable
 fun MainNavigation() {
-    val viewModel: NavigationViewModel = hiltViewModel()
+  val viewModel: NavigationViewModel = hiltViewModel()
 
-    val navController = rememberNavController()
+  val navController = rememberNavController()
 
-    val onLoggedIn = {
-        viewModel.setLoggedIn(true)
-        navController.navigateToMainScreen()
+  val onLoggedIn = {
+    viewModel.setLoggedIn(true)
+    navController.navigateToMainScreen()
+  }
+
+  val onLogout = {
+    viewModel.setLoggedIn(false)
+    navController.navigateToLogin()
+  }
+
+  val loginState by viewModel.loginState.collectAsStateWithLifecycle()
+
+  val startDestination = when (loginState) {
+    Loading -> "loading"
+    LoggedIn -> "users"
+    LoggedOut -> "login"
+  }
+
+  NavHost(navController = navController, startDestination = startDestination) {
+    composable("login") {
+      LoginScreen(onLoggedIn = onLoggedIn)
     }
-
-    val onLogout = {
-        viewModel.setLoggedIn(false)
-        navController.navigateToLogin()
+    composable("loading") {
+      LoadingScreen()
     }
-
-    val loginState by viewModel.loginState.collectAsStateWithLifecycle()
-
-    val startDestination = when (loginState) {
-        Loading -> "loading"
-        LoggedIn -> "users"
-        LoggedOut -> "login"
+    composable("users") {
+      UserListScreen(
+        onLogout = onLogout,
+        onUserClick = { navController.navigateToUserDetail(it) },
+      )
     }
-
-    NavHost(navController = navController, startDestination = startDestination) {
-        composable("login") {
-            LoginScreen(onLoggedIn = onLoggedIn)
-        }
-        composable("loading") {
-            LoadingScreen()
-        }
-        composable("users") {
-            UserListScreen(
-                onLogout = onLogout,
-                onUserClick = { navController.navigateToUserDetail(it) },
-            )
-        }
-        composable(
-            "user/{$USER_ID_ARG}",
-            arguments = listOf(navArgument(USER_ID_ARG) { type = NavType.LongType }),
-        ) {
-            UserDetailScreen(
-                onLogout = onLogout,
-                onEditShowsClick = { navController.navigateToEditShows(it) },
-            )
-        }
-        composable(
-            "editShows/{$USER_ID_ARG}",
-            arguments = listOf(navArgument(USER_ID_ARG) { type = NavType.LongType }),
-        ) {
-            EditShowsScreen(
-                onLogout = onLogout,
-                navController = navController,
-            )
-        }
+    composable(
+      "user/{$USER_ID_ARG}",
+      arguments = listOf(navArgument(USER_ID_ARG) { type = NavType.LongType }),
+    ) {
+      UserDetailScreen(
+        onLogout = onLogout,
+        onEditShowsClick = { navController.navigateToEditShows(it) },
+      )
     }
+    composable(
+      "editShows/{$USER_ID_ARG}",
+      arguments = listOf(navArgument(USER_ID_ARG) { type = NavType.LongType }),
+    ) {
+      EditShowsScreen(
+        onLogout = onLogout,
+        navController = navController,
+      )
+    }
+  }
 }
 
 @Preview
 @Composable
 private fun LoadingScreen() {
-    Scaffold {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(it)
-        ) {
-            Text(
-                text = stringResource(R.string.loading),
-                style = MaterialTheme.typography.headlineLarge
-            )
-        }
+  Scaffold {
+    Box(
+      contentAlignment = Alignment.Center,
+      modifier = Modifier
+        .fillMaxSize()
+        .padding(it)
+    ) {
+      Text(
+        text = stringResource(R.string.loading),
+        style = MaterialTheme.typography.headlineLarge
+      )
     }
+  }
 }
 
 private fun NavHostController.navigateToLogin() {
-    navigate("login")
+  navigate("login")
 }
 
 private fun NavHostController.navigateToUserDetail(user: User) {
-    navigate("user/${user.id}")
+  navigate("user/${user.id}")
 }
 
 private fun NavHostController.navigateToEditShows(user: User) {
-    navigate("editShows/${user.id}")
+  navigate("editShows/${user.id}")
 }
 
 private fun NavHostController.navigateToMainScreen() {
-    navigate("users")
+  navigate("users")
 }

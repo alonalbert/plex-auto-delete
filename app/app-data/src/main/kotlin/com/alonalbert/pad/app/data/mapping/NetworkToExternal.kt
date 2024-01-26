@@ -13,27 +13,27 @@ import com.alonalbert.pad.model.UserShow as NetworkUserShow
 
 @Suppress("unused")
 internal object NetworkToExternal {
-    fun NetworkUser.toExternal() = User(id, name, plexToken, type.toExternal(), shows.toExternal())
+  fun NetworkUser.toExternal() = User(id, name, plexToken, type.toExternal(), shows.toExternal())
 
-    fun NetworkShow.toExternal() = Show(id, name)
+  fun NetworkShow.toExternal() = Show(id, name)
 
-    fun NetworkUserShow.toExternal() = UserShow(userId, showId)
+  fun NetworkUserShow.toExternal() = UserShow(userId, showId)
 
-    @JvmName("localToExternalUser")
-    fun List<NetworkUser>.toExternal() = map { it.toExternal() }
+  @JvmName("localToExternalUser")
+  fun List<NetworkUser>.toExternal() = map { it.toExternal() }
 
-    @JvmName("localToExternalShow")
-    fun List<NetworkShow>.toExternal() = map { it.toExternal() }
+  @JvmName("localToExternalShow")
+  fun List<NetworkShow>.toExternal() = map { it.toExternal() }
 
-    @JvmName("localToExternalUserShow")
-    fun List<NetworkUserShow>.toExternal() = map { it.toExternal() }
+  @JvmName("localToExternalUserShow")
+  fun List<NetworkUserShow>.toExternal() = map { it.toExternal() }
 
-    fun NetworkUser.UserType.toExternal() = when (this) {
-        NetworkUser.UserType.EXCLUDE -> User.UserType.EXCLUDE
-        NetworkUser.UserType.INCLUDE -> User.UserType.INCLUDE
-    }
+  fun NetworkUser.UserType.toExternal() = when (this) {
+    NetworkUser.UserType.EXCLUDE -> User.UserType.EXCLUDE
+    NetworkUser.UserType.INCLUDE -> User.UserType.INCLUDE
+  }
 
-    fun NetworkAutoWatchResult.toExternal() = AutoWatchResult(users)
+  fun NetworkAutoWatchResult.toExternal() = AutoWatchResult(users)
 
-    fun NetworkAutoDeleteResult.toExternal() = AutoDeleteResult(numFiles, numBytes, shows)
+  fun NetworkAutoDeleteResult.toExternal() = AutoDeleteResult(numFiles, numBytes, shows)
 }

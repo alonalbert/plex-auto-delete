@@ -16,27 +16,27 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NavigationViewModel @Inject constructor(
-    private val application: Application,
+  private val application: Application,
 ) : ViewModel() {
 
-    val loginState = application.dataStore.data.map {
-        when (it[LOGGED_IN]) {
-            true -> LoggedIn
-            else -> LoggedOut
-        }
-    }.stateIn(viewModelScope, Loading)
-
-    fun setLoggedIn(value: Boolean) {
-        with(viewModelScope) {
-            application.updateSettings {
-                set(LOGGED_IN, value)
-            }
-        }
+  val loginState = application.dataStore.data.map {
+    when (it[LOGGED_IN]) {
+      true -> LoggedIn
+      else -> LoggedOut
     }
+  }.stateIn(viewModelScope, Loading)
 
-    sealed class LoginState {
-        object LoggedIn : LoginState()
-        object LoggedOut : LoginState()
-        object Loading : LoginState()
+  fun setLoggedIn(value: Boolean) {
+    with(viewModelScope) {
+      application.updateSettings {
+        set(LOGGED_IN, value)
+      }
     }
+  }
+
+  sealed class LoginState {
+    object LoggedIn : LoginState()
+    object LoggedOut : LoginState()
+    object Loading : LoginState()
+  }
 }
