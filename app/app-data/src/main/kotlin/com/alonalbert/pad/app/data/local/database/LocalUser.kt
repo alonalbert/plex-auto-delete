@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Relation
 
 @Entity(tableName = "user")
-internal data class LocalUser(
+internal data class LocalUser @Ignore constructor(
   @PrimaryKey val id: Long = 0,
 
   val name: String = "",
