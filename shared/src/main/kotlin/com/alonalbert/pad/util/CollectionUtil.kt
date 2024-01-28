@@ -1,17 +1,10 @@
 package com.alonalbert.pad.util
 
 fun <T> Collection<Set<T>>.intersect(): Set<T> {
-  return when (size) {
-    0 -> emptySet<T>()
-    1 -> first()
-    else -> {
-      return map { it.toMutableSet() }.reduce { acc, it ->
-        acc.apply {
-          retainAll(it)
-        }
-      }
-    }
-  }
+  return map { it.toMutableSet() }.reduceOrNull() { accumulator, element ->
+    accumulator.retainAll(element)
+    accumulator
+  } ?: emptySet()
 }
 
 private val data = listOf(
@@ -130,4 +123,6 @@ private val data = listOf(
 
 fun main() {
   println(data.intersect())
+  println(emptyList<Set<String>>().intersect())
+  println(listOf(setOf("A", "B"), setOf("B", "C")).intersect())
 }
