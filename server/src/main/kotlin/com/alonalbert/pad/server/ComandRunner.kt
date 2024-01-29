@@ -83,7 +83,9 @@ fun main(args: Array<String>) {
   application.setDefaultProperties(
     mapOf(
       "spring.main.web-application-type" to "NONE",
-      "logging.level.com.alonalbert.pad.server." to "DEBUG",
+      "logging.level.org.springframework" to "WARN",
+      "logging.level.root" to "WARN",
+      "spring.main.banner-mode" to "off",
     )
   )
   application.run(*args).close()
