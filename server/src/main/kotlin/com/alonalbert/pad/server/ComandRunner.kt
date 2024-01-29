@@ -21,18 +21,24 @@ class CommandRunner(
   private val plexAutoDeleterCommand: PlexAutoDeleter,
   private val importConfigCommand: ImportConfig,
 ) : CommandLineRunner {
+  private val commands = mapOf<String, suspend (Array<String>) -> Unit>(
+    "import-config" to { importConfigCommand.import() },
+    "auto-watch" to { plexAutoDeleterCommand.runAutoWatch() },
+    "auto-delete" to { runAutoDelete(it) },
+    "get-unwatched" to { getUnwatched() },
+    "get-all-shows" to { getAllShows() },
+    "get-unwatched-by" to { getUnwatchedBy() },
+  )
+
   override fun run(vararg args: String) {
-    val argsArray = args.drop(1).toList().toTypedArray()
+    val command = commands[args.firstOrNull() ?: "absent"]
+    if (command == null) {
+      println("Please specify a commend to run (${commands.keys.sorted().joinToString { it }})")
+      return
+    }
+    val commandArgs = args.drop(1).toList().toTypedArray()
     runBlocking {
-      when (args.firstOrNull()) {
-        "import-config" -> importConfigCommand.import()
-        "auto-watch" -> plexAutoDeleterCommand.runAutoWatch()
-        "auto-delete" -> runAutoDelete(argsArray)
-        "get-unwatched" -> getUnwatched()
-        "get-all-shows" -> getAllShows()
-        "get-unwatched-by" -> getUnwatchedBy()
-        else -> println("Please specify a commend to run")
-      }
+      command(commandArgs)
     }
   }
 
