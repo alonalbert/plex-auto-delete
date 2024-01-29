@@ -72,7 +72,8 @@ class CommandRunner(
 
   private suspend fun getUnwatchedBy() {
     println("Shows:")
-    plexAutoDeleterCommand.getUnwatchedBy().forEach { (name, users) ->
+
+    plexAutoDeleterCommand.getUnwatchedBy().entries.sortedWith(compareBy({ it.value.size }, { it.key })).forEach { (name, users) ->
       println("$name: $users")
     }
   }

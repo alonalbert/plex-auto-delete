@@ -128,11 +128,17 @@ class PlexAutoDeleter(
   }
 
   suspend fun getUnwatchedBy(): Map<String, List<String>> {
-    val result = getAllShows().keys.associateWithTo(sortedMapOf()) { arrayListOf<String>() }
-    val unwatchedForUsers = getUnwatchedForUsers()
+    val sections = plexClient.getMonitoredSections()
+    val result = sections
+      .flatMap { plexClient.getAllShows(it.key)}
+      .map { it.title }
+      .associateWith { arrayListOf<String>() }
+    val unwatchedForUsers = getActiveUsers().associateTo(sortedMapOf<String, List<String>>()) { user ->
+      user.name to sections.flatMap { plexClient.getUnwatchedShows(it.key,user.plexToken) }.map { it.title }
+    }
 
     unwatchedForUsers.forEach { (user, shows) ->
-      shows.keys.forEach {
+      shows.forEach {
         result.getValue(it).add(user)
       }
     }
