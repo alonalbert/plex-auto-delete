@@ -30,10 +30,8 @@ class Server(
 
     @Scheduled(timeUnit = TimeUnit.MINUTES, fixedRate = 10)
     fun autoWatch() {
-        if (!environment.isTestMode()) {
-            runBlocking(Dispatchers.Default) {
-                plexAutoDeleter.runAutoWatch()
-            }
+        runBlocking(Dispatchers.Default) {
+            plexAutoDeleter.runAutoWatch()
         }
     }
 
