@@ -24,4 +24,7 @@ class ActionController(
     @RequestParam(name = "days") days: Int,
     @RequestParam(name = "isTestMode") isTestMode: Boolean,
   ): AutoDeleteResult = runBlocking { plexAutoDeleter.runAutoDelete(days.days, isTestMode) }
+
+  @GetMapping("/get-unwatched-by")
+  fun getUnwatchedBy() = runBlocking { plexAutoDeleter.getUnwatchedBy() }
 }
