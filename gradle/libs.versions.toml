@@ -1,25 +1,24 @@
 [versions]
-agp = "8.2.2"
+agp = "8.10.1"
 androidx-activity-compose = "1.8.2"
 androidx-appcompat = "1.6.1"
 androidx-compose-bom = "2024.01.00"
-androidx-compose-compiler = "1.5.3"
 androidx-core-ktx = "1.12.0"
 androidx-hilt = "1.1.0"
 androidx-lifecycle = "2.7.0"
 androidx-navigation = "2.7.6"
-androidx-room = "2.6.1"
+androidx-room = "2.7.1"
 core-splashscreen = "1.0.1"
 datastore = "1.0.0"
-hilt = "2.48"
-jakarta-persistence = "3.1.0"
+hilt = "2.56.2"
+jakarta-persistence = "3.2.0"
 javax-inject = "1"
 junit4 = "4.13.2"
-kotlin = "1.9.10"
+kotlin = "2.1.21"
 kotlinx-cli = "0.3.5"
 kotlinx-datetime = "0.3.2"
 kotlinx-serialization = "1.5.1"
-ksp = "1.9.10-1.0.13"
+ksp = "2.1.21-2.0.1"
 ktor = "2.3.1"
 spring-boot = "3.1.0"
 spring-dependency-management = "1.1.0"
@@ -79,6 +78,7 @@ truth = { module = "com.google.truth:truth", version.ref = "truth" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 androidx-room = { id = "androidx.room", version.ref = "androidx-room" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jpa = { id = "org.jetbrains.kotlin.plugin.jpa", version.ref = "kotlin" }

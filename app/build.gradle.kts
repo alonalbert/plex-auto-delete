@@ -1,6 +1,7 @@
 @Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
 plugins {
   alias(libs.plugins.android.application)
+  alias(libs.plugins.compose.compiler)
   alias(libs.plugins.hilt)
   alias(libs.plugins.kotlin.android)
   alias(libs.plugins.kotlin.kapt)
@@ -35,12 +36,12 @@ android {
   }
 
   compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
   }
 
   kotlinOptions {
-    jvmTarget = "17"
+    jvmTarget = "21"
     freeCompilerArgs = listOf("-Xcontext-receivers")
   }
 
@@ -52,12 +53,9 @@ android {
     shaders = false
   }
 
-  composeOptions {
-    kotlinCompilerExtensionVersion = libs.versions.androidx.compose.compiler.get()
-  }
-
   packaging {
     resources {
+      excludes += "/META-INF/NOTICE.md"
       excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
   }
