@@ -13,7 +13,7 @@ room {
 
 android {
   namespace = "com.alonalbert.pad.app.data"
-  compileSdk = 34
+  compileSdk = 36
 
   defaultConfig {
     minSdk = 33
@@ -36,7 +36,6 @@ android {
     freeCompilerArgs = listOf("-Xcontext-receivers")
   }
 
-  @Suppress("UnstableApiUsage")
   testOptions {
     unitTests {
       isIncludeAndroidResources = true
