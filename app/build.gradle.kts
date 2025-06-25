@@ -12,7 +12,7 @@ plugins {
 
 android {
   namespace = "com.alonalbert.pad.app"
-  compileSdk = 34
+  compileSdk = 36
 
   defaultConfig {
     applicationId = "com.alonalbert.pad.app"
