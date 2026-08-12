@@ -36,6 +36,7 @@ import kotlinx.serialization.json.doubleOrNull
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.longOrNull
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
@@ -43,6 +44,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory
 import java.net.URI
 import java.util.Properties
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.time.Duration.Companion.seconds
 
 private val IsAuthRequestKey = AttributeKey<Boolean>("DelugeIsAuthRequest")
 
@@ -148,6 +150,8 @@ class DelugeClient(url: String, private val password: String) : AutoCloseable {
       add("save_path")
       add("state")
       add("progress")
+      add("active_time")
+      add("seeding_time")
     }
     val filterDict = if (label.isNotBlank()) {
       buildJsonArray {
@@ -208,6 +212,8 @@ class DelugeClient(url: String, private val password: String) : AutoCloseable {
       val savePath = torrentData["save_path"]?.jsonPrimitive?.content ?: ""
       val state = torrentData["state"]?.jsonPrimitive?.content ?: ""
       val progress = torrentData["progress"]?.jsonPrimitive?.doubleOrNull ?: 0.0
+      val activeTimeSeconds = torrentData["active_time"]?.jsonPrimitive?.longOrNull ?: 0L
+      val seedingTimeSeconds = torrentData["seeding_time"]?.jsonPrimitive?.longOrNull ?: 0L
 
       Torrent(
         id = id,
@@ -216,6 +222,8 @@ class DelugeClient(url: String, private val password: String) : AutoCloseable {
         savePath = savePath,
         state = state,
         progress = progress,
+        activeTime = activeTimeSeconds.seconds,
+        seedingTime = seedingTimeSeconds.seconds,
       )
     }
   }
