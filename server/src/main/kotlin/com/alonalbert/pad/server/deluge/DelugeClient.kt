@@ -5,18 +5,23 @@ import com.alonalbert.pad.server.config.getDelugeUrl
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.engine.apache.Apache
+import io.ktor.client.plugins.api.Send
+import io.ktor.client.plugins.api.createClientPlugin
 import io.ktor.client.plugins.auth.Auth
 import io.ktor.client.plugins.auth.providers.BasicAuthCredentials
 import io.ktor.client.plugins.auth.providers.basic
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.plugins.cookies.AcceptAllCookiesStorage
 import io.ktor.client.plugins.cookies.HttpCookies
-import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import io.ktor.util.AttributeKey
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
@@ -37,105 +42,160 @@ import org.springframework.stereotype.Component
 import org.springframework.web.util.DefaultUriBuilderFactory
 import java.net.URI
 import java.util.Properties
+import java.util.concurrent.atomic.AtomicInteger
 
-@Component
-class DelugeClient(url: String, private val password: String) {
+private val IsAuthRequestKey = AttributeKey<Boolean>("DelugeIsAuthRequest")
 
-  @Autowired
-  constructor(environment: Environment) : this(environment.getDelugeUrl(), environment.getDelugePassword())
+class DelugeAuthConfig {
+  var passwordSupplier: () -> String = { "" }
+  var jsonUrlSupplier: () -> String = { "" }
+}
 
-  private val parsedUri = URI.create(url)
-  private val basicAuthCredentials = parsedUri.userInfo?.let { userInfo ->
-    val parts = userInfo.split(":", limit = 2)
-    if (parts.size == 2) BasicAuthCredentials(parts[0], parts[1]) else null
-  }
+val DelugeAuthPlugin = createClientPlugin("DelugeAuth", ::DelugeAuthConfig) {
+  val passwordSupplier = pluginConfig.passwordSupplier
+  val jsonUrlSupplier = pluginConfig.jsonUrlSupplier
+  val authMutex = Mutex()
+  val requestId = AtomicInteger(1000)
+  var isAuthenticated = false
 
-  suspend fun getTorrents(label: String): List<Torrent> {
-    val client = httpClient()
-    return client.use { httpClient ->
-      val jsonUrl = uri("/json").toASCIIString()
+  on(Send) { request ->
+    val isAuthRequest = request.attributes.computeIfAbsent(IsAuthRequestKey) { false }
+    val jsonUrl = jsonUrlSupplier()
+
+    suspend fun performLogin() {
+      val password = passwordSupplier()
 
       // 1. Authenticate with auth.login
-      val loginBody = buildJsonRpcRequest(
+      val loginBody = JsonRpcRequest(
         method = "auth.login",
-        params = buildJsonArray {
-          add(password)
-        },
-        id = 1
+        params = buildJsonArray { add(password) },
+        id = requestId.getAndIncrement()
       )
-      val loginResponse = httpClient.post(jsonUrl) {
+      val loginCall = client.post(jsonUrl) {
+        attributes.put(IsAuthRequestKey, true)
         contentType(ContentType.Application.Json)
         setBody(loginBody)
-      }.body<JsonRpcResponse>()
-
+      }
+      val loginResponse = loginCall.body<JsonRpcResponse>()
       if (loginResponse.error != null || loginResponse.result?.jsonPrimitive?.booleanOrNull != true) {
         throw IllegalStateException("Failed to authenticate with Deluge Web UI: ${loginResponse.error}")
       }
 
       // 2. Ensure connected to Deluge daemon
-      val connectedBody = buildJsonRpcRequest("web.connected", buildJsonArray {}, id = 2)
-      val connectedResponse = httpClient.post(jsonUrl) {
+      val connectedBody = JsonRpcRequest("web.connected", buildJsonArray {}, requestId.getAndIncrement())
+      val connectedCall = client.post(jsonUrl) {
+        attributes.put(IsAuthRequestKey, true)
         contentType(ContentType.Application.Json)
         setBody(connectedBody)
-      }.body<JsonRpcResponse>()
+      }
+      val connectedResponse = connectedCall.body<JsonRpcResponse>()
 
       val isConnected = connectedResponse.result?.jsonPrimitive?.booleanOrNull == true
       if (!isConnected) {
-        val getHostsBody = buildJsonRpcRequest("web.get_hosts", buildJsonArray {}, id = 3)
-        val hostsResponse = httpClient.post(jsonUrl) {
+        val getHostsBody = JsonRpcRequest("web.get_hosts", buildJsonArray {}, requestId.getAndIncrement())
+        val hostsCall = client.post(jsonUrl) {
+          attributes.put(IsAuthRequestKey, true)
           contentType(ContentType.Application.Json)
           setBody(getHostsBody)
-        }.body<JsonRpcResponse>()
+        }
+        val hostsResponse = hostsCall.body<JsonRpcResponse>()
 
         val hosts = hostsResponse.result as? JsonArray
         val hostId = hosts?.firstOrNull()?.jsonArray?.getOrNull(0)?.jsonPrimitive?.content
         if (hostId != null) {
-          val connectBody = buildJsonRpcRequest("web.connect", buildJsonArray { add(hostId) }, id = 4)
-          httpClient.post(jsonUrl) {
+          val connectBody = JsonRpcRequest("web.connect", buildJsonArray { add(hostId) }, requestId.getAndIncrement())
+          client.post(jsonUrl) {
+            attributes.put(IsAuthRequestKey, true)
             contentType(ContentType.Application.Json)
             setBody(connectBody)
           }
         }
       }
+      isAuthenticated = true
+    }
 
-      // 3. Query torrents with core.get_torrents_status
-      val keys = buildJsonArray {
-        add("name")
-        add("label")
-        add("save_path")
-        add("state")
-        add("progress")
-      }
-      val filterDict = if (label.isNotBlank()) {
-        buildJsonArray {
-          addJsonObject {
-            put("label", JsonPrimitive(label))
-          }
-          add(keys)
-        }
-      } else {
-        buildJsonArray {
-          addJsonObject {}
-          add(keys)
+    if (!isAuthRequest && !isAuthenticated) {
+      authMutex.withLock {
+        if (!isAuthenticated) {
+          performLogin()
         }
       }
+    }
 
-      val torrentsRpcBody = buildJsonRpcRequest(
-        method = "core.get_torrents_status",
-        params = filterDict,
-        id = 5
-      )
+    proceed(request)
+  }
+}
 
-      val torrentsResponse = httpClient.post(jsonUrl) {
-        contentType(ContentType.Application.Json)
-        setBody(torrentsRpcBody)
-      }.body<JsonRpcResponse>()
+@Component
+class DelugeClient(url: String, private val password: String) : AutoCloseable {
 
-      if (torrentsResponse.error != null) {
-        throw IllegalStateException("Failed to fetch torrents from Deluge: ${torrentsResponse.error}")
+  @Autowired
+  constructor(environment: Environment) : this(environment.getDelugeUrl(), environment.getDelugePassword())
+
+  private val parsedUri = URI.create(url)
+  private val jsonUrl = uri("/json").toASCIIString()
+  private val basicAuthCredentials = parsedUri.userInfo?.let { userInfo ->
+    val parts = userInfo.split(":", limit = 2)
+    if (parts.size == 2) BasicAuthCredentials(parts[0], parts[1]) else null
+  }
+
+  private val requestId = AtomicInteger(1)
+
+  suspend fun getTorrents(label: String): List<Torrent> {
+    val keys = buildJsonArray {
+      add("name")
+      add("label")
+      add("save_path")
+      add("state")
+      add("progress")
+    }
+    val filterDict = if (label.isNotBlank()) {
+      buildJsonArray {
+        addJsonObject {
+          put("label", JsonPrimitive(label))
+        }
+        add(keys)
       }
+    } else {
+      buildJsonArray {
+        addJsonObject {}
+        add(keys)
+      }
+    }
 
-      parseTorrents(torrentsResponse.result)
+    val rpcBody = JsonRpcRequest("core.get_torrents_status", filterDict, requestId.getAndIncrement())
+    val response = httpClient.post(jsonUrl) {
+      contentType(ContentType.Application.Json)
+      setBody(rpcBody)
+    }.body<JsonRpcResponse>()
+
+    if (response.error != null) {
+      throw IllegalStateException("RPC call 'core.get_torrents_status' failed: ${response.error}")
+    }
+
+    return parseTorrents(response.result)
+  }
+
+  private val httpClient = HttpClient(Apache) {
+    install(ContentNegotiation) {
+      json(Json {
+        ignoreUnknownKeys = true
+      })
+    }
+    install(HttpCookies) {
+      storage = AcceptAllCookiesStorage()
+    }
+    basicAuthCredentials?.let { credentials ->
+      install(Auth) {
+        basic {
+          sendWithoutRequest { true }
+          credentials { credentials }
+        }
+      }
+    }
+    install(DelugeAuthPlugin) {
+      passwordSupplier = { this@DelugeClient.password }
+      jsonUrlSupplier = { this@DelugeClient.jsonUrl }
     }
   }
 
@@ -160,14 +220,6 @@ class DelugeClient(url: String, private val password: String) {
     }
   }
 
-  private fun buildJsonRpcRequest(method: String, params: JsonArray, id: Int): JsonRpcRequest {
-    return JsonRpcRequest(
-      method = method,
-      params = params,
-      id = id
-    )
-  }
-
   private fun uri(path: String): URI {
     val builder = DefaultUriBuilderFactory().builder()
       .scheme(parsedUri.scheme)
@@ -179,43 +231,24 @@ class DelugeClient(url: String, private val password: String) {
     return builder.build()
   }
 
-  private fun httpClient() = HttpClient(Apache) {
-    install(ContentNegotiation) {
-      json(Json {
-        ignoreUnknownKeys = true
-      })
-    }
-    install(HttpCookies) {
-      storage = AcceptAllCookiesStorage()
-    }
-    basicAuthCredentials?.let { credentials ->
-      install(Auth) {
-        basic {
-          sendWithoutRequest {
-            true
-          }
-          credentials {
-            credentials
-          }
-        }
-      }
-    }
+  override fun close() {
+    httpClient.close()
   }
-
-  @Serializable
-  private data class JsonRpcRequest(
-    val method: String,
-    val params: JsonArray,
-    val id: Int
-  )
-
-  @Serializable
-  private data class JsonRpcResponse(
-    val result: JsonElement? = null,
-    val error: JsonElement? = null,
-    val id: Int? = null
-  )
 }
+
+@Serializable
+private data class JsonRpcRequest(
+  val method: String,
+  val params: JsonArray,
+  val id: Int
+)
+
+@Serializable
+private data class JsonRpcResponse(
+  val result: JsonElement? = null,
+  val error: JsonElement? = null,
+  val id: Int? = null
+)
 
 fun main(): Unit = runBlocking {
   val properties = Properties().apply {
@@ -223,8 +256,9 @@ fun main(): Unit = runBlocking {
       load(it)
     } ?: error("Could not find local.properties in classpath")
   }
-  val client = DelugeClient(properties.getProperty("deluge.url"), properties.getProperty("deluge.password"))
-  client.getTorrents("tv-sonarr").forEach {
-    println(it)
+  DelugeClient(properties.getProperty("deluge.url"), properties.getProperty("deluge.password")).use { client ->
+    client.getTorrents("tv-sonarr").forEach {
+      println(it)
+    }
   }
 }
