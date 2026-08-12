@@ -1,6 +1,7 @@
 package com.alonalbert.pad.server
 
 import com.alonalbert.pad.model.AutoDeleteResult
+import com.alonalbert.pad.server.deluge.DelugeClient
 import com.alonalbert.pad.server.importconfig.ImportConfig
 import com.alonalbert.pad.server.plex.PlexAutoDeleter
 import kotlinx.cli.ArgParser
@@ -28,6 +29,7 @@ class CommandRunner(
     "get-unwatched" to { getUnwatched() },
     "get-all-shows" to { getAllShows() },
     "get-unwatched-by" to { getUnwatchedBy() },
+    "remove-seeded-torrents" to { removeSeededTorrents() },
   )
 
   override fun run(vararg args: String) {
@@ -76,6 +78,9 @@ class CommandRunner(
     plexAutoDeleterCommand.getUnwatchedBy().entries.sortedWith(compareBy({ it.value.size }, { it.key })).forEach { (name, users) ->
       println("$name: $users")
     }
+  }
+
+  private suspend fun removeSeededTorrents() {
   }
 }
 

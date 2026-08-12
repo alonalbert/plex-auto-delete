@@ -24,6 +24,7 @@ dependencies {
   implementation(libs.spring.boot.starter.web)
   implementation(libs.sqlite)
   implementation(libs.sqlite.dialect)
+  testImplementation(libs.junit4)
 }
 
 java {
