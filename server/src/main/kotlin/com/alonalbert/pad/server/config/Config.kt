@@ -1,7 +1,6 @@
 package com.alonalbert.pad.server.config
 
 import org.springframework.core.env.Environment
-import java.net.URI
 import kotlin.time.Duration.Companion.days
 
 private const val PLEX_URL = "plex.url"
@@ -16,7 +15,9 @@ private const val SONARR_PASSWORD = "sonarr.password"
 private const val SONARR_API_KEY = "sonarr.api.key"
 private const val TEST_MODE = "test.mode"
 private const val DELUGE_URL = "deluge.url"
+private const val DELUGE_USERNAME = "deluge.username"
 private const val DELUGE_PASSWORD = "deluge.password"
+private const val DELUGE_WEB_PASSWORD = "deluge.web.password"
 
 fun Environment.getPlexDatabasePath() = getConfigProperty(PLEX_DATABASE_PATH)
 fun Environment.getPlexUrl() = getConfigProperty(PLEX_URL)
@@ -33,6 +34,8 @@ fun Environment.getSonarrApiKey() = getConfigProperty(SONARR_API_KEY)
 
 fun Environment.getDelugeUrl() = getConfigProperty(DELUGE_URL)
 fun Environment.getDelugePassword() = getConfigProperty(DELUGE_PASSWORD)
+fun Environment.getDelugeUsername() = getConfigProperty(DELUGE_USERNAME)
+fun Environment.getDelugeWebPassword() = getConfigProperty(DELUGE_WEB_PASSWORD)
 
 fun Environment.isTestMode() = getConfigProperty(TEST_MODE, "false").toBoolean()
 
