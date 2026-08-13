@@ -6,6 +6,7 @@ import com.alonalbert.pad.server.config.getDelugeUsername
 import com.alonalbert.pad.server.config.getDelugeWebPassword
 import com.alonalbert.pad.server.deluge.model.request.AuthLogin
 import com.alonalbert.pad.server.deluge.model.request.GetTorrentsStatus
+import com.alonalbert.pad.server.deluge.model.request.RemoveTorrent
 import com.alonalbert.pad.server.deluge.model.request.Request
 import com.alonalbert.pad.server.deluge.model.request.WebConnect
 import com.alonalbert.pad.server.deluge.model.request.WebConnected
@@ -39,6 +40,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
 import java.util.Properties
+import kotlin.time.Duration.Companion.days
 
 private val IsAuthRequestKey = AttributeKey<Boolean>("DelugeIsAuthRequest")
 
@@ -63,6 +65,9 @@ class DelugeClient(
 
   suspend fun getTorrents(label: String): Map<String, Torrent> =
     call(GetTorrentsStatus(mapOf("label" to label), listOf("name", "seeding_time")))
+
+  suspend fun removeTorrent(id: String, removeData: Boolean = false): Boolean =
+    call(RemoveTorrent(id, removeData))
 
   override fun close() {
     client.close()
@@ -146,8 +151,9 @@ fun main(): Unit = runBlocking {
     properties.getProperty("deluge.password"),
     properties.getProperty("deluge.web.password"),
   ).use { client ->
-    client.getTorrents("tv-sonarr").forEach {
-      println(it)
+    client.getTorrents("radarr").filterValues { it.seedingTime > 3.days }.forEach { (id, torrent) ->
+      println("Removing torrent ${torrent.name}: Seeding for ${torrent.seedingTime}")
+      client.removeTorrent(id, removeData = true)
     }
   }
 }

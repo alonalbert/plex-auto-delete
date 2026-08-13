@@ -7,6 +7,9 @@ import com.alonalbert.pad.server.plex.PlexAutoDeleter
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.default
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.SpringApplication
@@ -20,6 +23,7 @@ import kotlin.time.Duration.Companion.days
 @ComponentScan("com.alonalbert.pad.*")
 class CommandRunner(
   private val plexAutoDeleterCommand: PlexAutoDeleter,
+  private val delugeClient: DelugeClient,
   private val importConfigCommand: ImportConfig,
 ) : CommandLineRunner {
   private val commands = mapOf<String, suspend (Array<String>) -> Unit>(
@@ -80,7 +84,18 @@ class CommandRunner(
     }
   }
 
-  private suspend fun removeSeededTorrents() {
+  private suspend fun removeSeededTorrents() = coroutineScope {
+    listOf("radarr", "tv-sonarr")
+      .map { label -> async { delugeClient.getTorrents(label) } }
+      .awaitAll()
+      .forEach { torrents ->
+        torrents
+          .filterValues { it.seedingTime >= 3.days }
+          .forEach { (id, torrent) ->
+            println("Removing torrent ${torrent.name}: Seeding for ${torrent.seedingTime}")
+            delugeClient.removeTorrent(id, removeData = true)
+          }
+      }
   }
 }
 
