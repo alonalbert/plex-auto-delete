@@ -62,17 +62,17 @@ class DelugeClient(
   private var isAuthenticated = false
 
   suspend fun getTorrents(label: String): Map<String, Torrent> =
-    client.call(GetTorrentsStatus(mapOf("label" to label), listOf("name", "seeding_time")))
+    call(GetTorrentsStatus(mapOf("label" to label), listOf("name", "seeding_time")))
 
   override fun close() {
     client.close()
   }
 
-  private suspend inline fun <reified A : Request<A, T>, reified T> HttpClient.call(
+  private suspend inline fun <reified A : Request<A, T>, reified T> call(
     request: Request<A, T>,
     block: HttpRequestBuilder.() -> Unit = {}
   ): T {
-    val response = post("$url/json") {
+    val response = client.post("$url/json") {
       contentType(Application.Json)
       setBody(request.toJson())
       block()
@@ -122,13 +122,13 @@ class DelugeClient(
   private suspend fun login() {
     val markAsAuth: HttpRequestBuilder.() -> Unit = { attributes.put(IsAuthRequestKey, true) }
 
-    if (!client.call<AuthLogin, Boolean>(AuthLogin(webPassword), markAsAuth)) {
+    if (!call<AuthLogin, Boolean>(AuthLogin(webPassword), markAsAuth)) {
       throw IllegalStateException("Failed to authenticate with Deluge Web UI")
     }
-    if (!client.call<WebConnected, Boolean>(WebConnected(), markAsAuth)) {
-      val hosts = client.call(WebGetHosts(), markAsAuth)
+    if (!call<WebConnected, Boolean>(WebConnected(), markAsAuth)) {
+      val hosts = call(WebGetHosts(), markAsAuth)
       val hostId = hosts.firstOrNull()?.id ?: throw IllegalStateException("No hosts found")
-      client.call(WebConnect(hostId), markAsAuth)
+      call(WebConnect(hostId), markAsAuth)
     }
     isAuthenticated = true
   }
