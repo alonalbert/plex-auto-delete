@@ -109,5 +109,5 @@ fun main(args: Array<String>) {
       "spring.main.banner-mode" to "off",
     )
   )
-  application.run(*args).close()
+  application.run(*args).use {}
 }
