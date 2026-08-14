@@ -1,4 +1,6 @@
-@Suppress("DSL_SCOPE_VIOLATION") // Remove when fixed https://youtrack.jetbrains.com/issue/KTIJ-19369
+import com.android.build.api.dsl.ApplicationExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.compose.compiler)
@@ -10,9 +12,9 @@ plugins {
   alias(libs.plugins.ksp)
 }
 
-android {
+configure<ApplicationExtension> {
   namespace = "com.alonalbert.pad.app"
-  compileSdk = 36
+  compileSdk = 37
 
   defaultConfig {
     applicationId = "com.alonalbert.pad.app"
@@ -40,16 +42,10 @@ android {
     targetCompatibility = JavaVersion.VERSION_21
   }
 
-  kotlinOptions {
-    jvmTarget = "21"
-    freeCompilerArgs = listOf("-Xcontext-receivers")
-  }
-
   buildFeatures {
     compose = true
     aidl = false
     buildConfig = false
-    renderScript = false
     shaders = false
   }
 
@@ -61,6 +57,13 @@ android {
       excludes += "/META-INF/NOTICE.txt"
       excludes += "/META-INF/{AL2.0,LGPL2.1}"
     }
+  }
+}
+
+kotlin {
+  compilerOptions {
+    jvmTarget.set(JvmTarget.JVM_21)
+    freeCompilerArgs.add("-Xcontext-parameters")
   }
 }
 

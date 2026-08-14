@@ -21,9 +21,9 @@ val USERNAME = stringPreferencesKey("username")
 val PASSWORD = stringPreferencesKey("password")
 val LOGGED_IN = booleanPreferencesKey("loggedIn")
 
-context(CoroutineScope)
+context(scope: CoroutineScope)
 fun Application.updateSettings(block: suspend MutablePreferences.() -> Unit) {
-  launch {
+  scope.launch {
     dataStore.updateData {
       it.toMutablePreferences().apply {
         block()

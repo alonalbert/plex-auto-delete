@@ -1,3 +1,6 @@
+import com.android.build.api.dsl.LibraryExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.androidx.room)
@@ -11,9 +14,9 @@ room {
   schemaDirectory("$projectDir/schemas")
 }
 
-android {
+configure<LibraryExtension> {
   namespace = "com.alonalbert.pad.app.data"
-  compileSdk = 36
+  compileSdk = 37
 
   defaultConfig {
     minSdk = 33
@@ -30,10 +33,6 @@ android {
   compileOptions {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
-  }
-  kotlinOptions {
-    jvmTarget = "21"
-    freeCompilerArgs = listOf("-Xcontext-receivers")
   }
 
   testOptions {
@@ -53,6 +52,13 @@ android {
   }
 }
 
+kotlin {
+  compilerOptions {
+    jvmTarget.set(JvmTarget.JVM_21)
+    freeCompilerArgs.add("-Xcontext-parameters")
+  }
+}
+
 dependencies {
   implementation(project(":app:app-annotations"))
   implementation(project(":shared"))
@@ -60,14 +66,10 @@ dependencies {
   // Core
   implementation(libs.androidx.core.ktx)
   implementation(libs.javax.inject)
-//    testImplementation(libs.androidx.test.core.ktx)
-//    testImplementation(libs.androidx.test.ext)
-//    testImplementation(libs.androidx.test.rules)
 
   // Room
   implementation(libs.androidx.room.ktx)
   ksp(libs.androidx.room.compiler)
-//    testImplementation(libs.androidx.room.testing)
 
   // Ktor
   implementation(libs.ktor.client.android)
