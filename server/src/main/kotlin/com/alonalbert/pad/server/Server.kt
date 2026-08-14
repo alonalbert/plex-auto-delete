@@ -5,6 +5,7 @@ import com.alonalbert.pad.server.plex.PlexAutoDeleter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import org.springframework.boot.autoconfigure.SpringBootApplication
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.runApplication
 import org.springframework.context.annotation.PropertySource
@@ -18,6 +19,7 @@ import java.util.logging.Logger
 @PropertySource("classpath:local.properties")
 @EntityScan("com.alonalbert.pad.*")
 @EnableScheduling
+@ConditionalOnWebApplication
 class Server(
     private val environment: Environment,
     private val plexAutoDeleter: PlexAutoDeleter,
