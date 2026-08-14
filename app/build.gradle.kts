@@ -5,8 +5,6 @@ plugins {
   alias(libs.plugins.android.application)
   alias(libs.plugins.compose.compiler)
   alias(libs.plugins.hilt)
-  alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.kotlin.kapt)
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.kotlin.serialization)
   alias(libs.plugins.ksp)
@@ -84,7 +82,7 @@ dependencies {
 
   // Hilt Dependency Injection
   implementation(libs.hilt.android)
-  kapt(libs.hilt.compiler)
+  ksp(libs.hilt.compiler)
 
   // Arch Components
   implementation(libs.androidx.lifecycle.runtime.compose)

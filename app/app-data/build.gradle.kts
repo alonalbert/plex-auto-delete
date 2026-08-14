@@ -5,8 +5,6 @@ plugins {
   alias(libs.plugins.android.library)
   alias(libs.plugins.androidx.room)
   alias(libs.plugins.hilt)
-  alias(libs.plugins.kotlin.android)
-  alias(libs.plugins.kotlin.kapt)
   alias(libs.plugins.ksp)
 }
 
@@ -84,7 +82,7 @@ dependencies {
 
   // Hilt Dependency Injection
   implementation(libs.hilt.android)
-  kapt(libs.hilt.compiler)
+  ksp(libs.hilt.compiler)
 
   implementation(libs.androidx.datastore.preferences)
 
