@@ -1,11 +1,11 @@
 deluge:
   labels:
     - name: tv-sonarr
-      javaAge: 3d
+      age: 3d
       removeData: true
     - name: radarr
-      javaAge: 3d
+      age: 3d
       removeData: true
     - name: audiobooks
-      javaAge: 30d
+      age: 30d
       removeData: false
