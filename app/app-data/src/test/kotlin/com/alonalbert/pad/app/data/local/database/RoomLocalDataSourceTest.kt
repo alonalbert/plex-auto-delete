@@ -29,7 +29,7 @@ class RoomLocalDataSourceTest {
     val users = db.userDao().observeAll().take(1).toList().flatten()
 
     assertThat(users).containsExactly(
-      LocalUser(id = 0, name = "Alon", plexToken = null, type = LocalUser.UserType.INCLUDE, shows = listOf(LocalShow(id = 0, name = "Show"))),
+      LocalUser(id = 0, name = "Alon", plexToken = "", type = LocalUser.UserType.INCLUDE, shows = listOf(LocalShow(id = 0, name = "Show"))),
     )
   }
 }
