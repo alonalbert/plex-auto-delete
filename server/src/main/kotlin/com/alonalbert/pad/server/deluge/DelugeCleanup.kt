@@ -20,18 +20,24 @@ class DelugeCleanup(
   suspend fun cleanup() = coroutineScope {
     logger.info("Removing old torrents")
     DelugeClient(environment).use { client ->
-      val labelMap = delugeProperties.labels.associate { it.name to it.age.toKotlinDuration() }
+      val labelMap = delugeProperties.labels.associateBy { it.name }
       val torrents = client.getTorrents(labelMap.keys)
-      val oldTorrents = torrents.filterValues { it.seedingTime > labelMap.getValue(it.label) }
+      val oldTorrents = torrents.filterValues { it.seedingTime > labelMap.getValue(it.label).age }
       oldTorrents.values.forEach {
         logger.info("Removing torrent ${it.name}: Seeding for ${it.seedingTime}")
       }
-      client.removeTorrents(oldTorrents.keys, removeData = true)
+      val (withData, withoutData) = oldTorrents.entries
+        .partition { (_, torrent) -> labelMap.getValue(torrent.label).removeData }
+
+      client.removeTorrents(withData.map { it.key }, removeData = true)
+      client.removeTorrents(withoutData.map { it.key }, removeData = false)
     }
   }
 }
 
-data class LabelConfig(val name: String, val age: Duration)
+data class LabelConfig(val name: String, val javaAge: Duration, val removeData: Boolean) {
+  val age = javaAge.toKotlinDuration()
+}
 
 @ConfigurationProperties(prefix = "deluge")
 data class DelugeProperties(val labels: List<LabelConfig> = emptyList())

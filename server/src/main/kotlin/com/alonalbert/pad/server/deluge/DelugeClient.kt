@@ -66,8 +66,9 @@ class DelugeClient(
   suspend fun getTorrents(labels: Set<String>): Map<String, Torrent> =
     call(GetTorrentsStatus(labels))
 
-  suspend fun removeTorrents(ids: Collection<String>, removeData: Boolean = false): Boolean =
-    call(RemoveTorrents(ids, removeData))
+  suspend fun removeTorrents(ids: Collection<String>, removeData: Boolean = false): Boolean {
+    return !ids.isEmpty() && call(RemoveTorrents(ids, removeData))
+  }
 
   override fun close() {
     client.close()
