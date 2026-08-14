@@ -1,15 +1,13 @@
 package com.alonalbert.pad.server.deluge
 
+import com.alonalbert.pad.server.deluge.model.config.DelugeProperties
 import com.alonalbert.pad.server.deluge.model.response.RemoveTorrentError
 import com.alonalbert.pad.server.deluge.model.response.Torrent
 import kotlinx.coroutines.coroutineScope
 import org.slf4j.LoggerFactory
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
-import java.time.Duration
-import kotlin.time.toKotlinDuration
 
 private val logger = LoggerFactory.getLogger(DelugeCleanup::class.java)
 
@@ -42,11 +40,3 @@ class DelugeCleanup(
 private fun List<RemoveTorrentError>.warn(torrents: Map<String, Torrent>) = forEach {
   logger.warn("Error removing ${torrents[it.id]}: ${it.message}")
 }
-
-data class LabelConfig(val name: String, val javaAge: Duration, val removeData: Boolean) {
-  val age = javaAge.toKotlinDuration()
-}
-
-@ConfigurationProperties(prefix = "deluge")
-data class DelugeProperties(val labels: List<LabelConfig> = emptyList())
-
