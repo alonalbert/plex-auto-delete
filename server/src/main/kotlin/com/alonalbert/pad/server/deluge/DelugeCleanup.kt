@@ -23,9 +23,10 @@ class DelugeCleanup(
       val labelMap = delugeProperties.labels.associate { it.name to it.age.toKotlinDuration() }
       val torrents = client.getTorrents(labelMap.keys)
       val oldTorrents = torrents.filterValues { it.seedingTime > labelMap.getValue(it.label) }
-      oldTorrents.forEach { (id, torrent) ->
-        logger.info("Removing torrent ${torrent.name}: Seeding for ${torrent.seedingTime}")
+      oldTorrents.values.forEach {
+        logger.info("Removing torrent ${it.name}: Seeding for ${it.seedingTime}")
       }
+      client.removeTorrents(oldTorrents.keys, removeData = true)
     }
   }
 }

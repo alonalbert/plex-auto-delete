@@ -6,7 +6,7 @@ import com.alonalbert.pad.server.config.getDelugeUsername
 import com.alonalbert.pad.server.config.getDelugeWebPassword
 import com.alonalbert.pad.server.deluge.model.request.AuthLogin
 import com.alonalbert.pad.server.deluge.model.request.GetTorrentsStatus
-import com.alonalbert.pad.server.deluge.model.request.RemoveTorrent
+import com.alonalbert.pad.server.deluge.model.request.RemoveTorrents
 import com.alonalbert.pad.server.deluge.model.request.Request
 import com.alonalbert.pad.server.deluge.model.request.WebConnect
 import com.alonalbert.pad.server.deluge.model.request.WebConnected
@@ -66,8 +66,8 @@ class DelugeClient(
   suspend fun getTorrents(labels: Set<String>): Map<String, Torrent> =
     call(GetTorrentsStatus(labels))
 
-  suspend fun removeTorrent(id: String, removeData: Boolean = false): Boolean =
-    call(RemoveTorrent(id, removeData))
+  suspend fun removeTorrents(ids: Collection<String>, removeData: Boolean = false): Boolean =
+    call(RemoveTorrents(ids, removeData))
 
   override fun close() {
     client.close()
@@ -151,9 +151,10 @@ fun main(): Unit = runBlocking {
     properties.getProperty("deluge.password"),
     properties.getProperty("deluge.web.password"),
   ).use { client ->
-    client.getTorrents(setOf("tv-sonarr")).filterValues { it.seedingTime > 3.days }.forEach { (id, torrent) ->
+    val torrentsToRemove = client.getTorrents(setOf("tv-sonarr")).filterValues { it.seedingTime > 3.days }
+    torrentsToRemove.forEach { (id, torrent) ->
       println("Removing torrent ${torrent.name} (${id}): Seeding for ${torrent.seedingTime}")
-//      client.removeTorrent(id, removeData = true)
     }
+//    client.removeTorrent(torrentsToRemove.keys.toList(), removeData = true)
   }
 }
