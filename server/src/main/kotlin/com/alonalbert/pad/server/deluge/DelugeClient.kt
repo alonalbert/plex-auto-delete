@@ -64,7 +64,7 @@ class DelugeClient(
   private val authMutex = Mutex()
   private var isAuthenticated = false
 
-  suspend fun getTorrents(labels: Set<String>): List<Torrent> =
+  suspend fun getTorrents(labels: Collection<String>): List<Torrent> =
     call(GetTorrentsStatus(labels))
 
   suspend fun removeTorrents(
