@@ -30,8 +30,8 @@ class DelugeCleanup(
       val (withData, withoutData) = oldTorrents.entries
         .partition { (_, torrent) -> labelMap.getValue(torrent.label).removeData }
 
-      client.removeTorrents(withData.map { it.key }, removeData = true).warn(oldTorrents)
-      client.removeTorrents(withoutData.map { it.key }, removeData = false).warn(oldTorrents)
+//      client.removeTorrents(withData.map { it.key }, removeData = true).warn(oldTorrents)
+//      client.removeTorrents(withoutData.map { it.key }, removeData = false).warn(oldTorrents)
     }
   }
 

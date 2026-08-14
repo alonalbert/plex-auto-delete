@@ -9,3 +9,7 @@ deluge:
     - name: audiobooks
       age: 30d
       removeData: false
+    - name: cycling
+      age: 30d
+      removeData: true
+      maxTorrents: 10
