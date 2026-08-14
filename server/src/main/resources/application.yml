@@ -1,0 +1,6 @@
+deluge:
+  labels:
+    - name: tv-sonarr
+      age: 3d
+    - name: radarr
+      age: 3d

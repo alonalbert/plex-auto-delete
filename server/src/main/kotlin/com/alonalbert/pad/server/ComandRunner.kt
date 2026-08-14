@@ -1,14 +1,12 @@
 package com.alonalbert.pad.server
 
 import com.alonalbert.pad.model.AutoDeleteResult
-import com.alonalbert.pad.server.deluge.DelugeClient
+import com.alonalbert.pad.server.deluge.DelugeCleanup
 import com.alonalbert.pad.server.importconfig.ImportConfig
 import com.alonalbert.pad.server.plex.PlexAutoDeleter
 import kotlinx.cli.ArgParser
 import kotlinx.cli.ArgType
 import kotlinx.cli.default
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.runBlocking
 import org.springframework.boot.CommandLineRunner
@@ -23,7 +21,7 @@ import kotlin.time.Duration.Companion.days
 @ComponentScan("com.alonalbert.pad.*")
 class CommandRunner(
   private val plexAutoDeleterCommand: PlexAutoDeleter,
-  private val delugeClient: DelugeClient,
+  private val delugeCleanup: DelugeCleanup,
   private val importConfigCommand: ImportConfig,
 ) : CommandLineRunner {
   private val commands = mapOf<String, suspend (Array<String>) -> Unit>(
@@ -33,7 +31,7 @@ class CommandRunner(
     "get-unwatched" to { getUnwatched() },
     "get-all-shows" to { getAllShows() },
     "get-unwatched-by" to { getUnwatchedBy() },
-    "remove-seeded-torrents" to { removeSeededTorrents() },
+    "cleanup-torrents" to { cleanupTorrents() },
   )
 
   override fun run(vararg args: String) {
@@ -84,18 +82,8 @@ class CommandRunner(
     }
   }
 
-  private suspend fun removeSeededTorrents() = coroutineScope {
-    listOf("radarr", "tv-sonarr")
-      .map { label -> async { delugeClient.getTorrents(label) } }
-      .awaitAll()
-      .forEach { torrents ->
-        torrents
-          .filterValues { it.seedingTime >= 3.days }
-          .forEach { (id, torrent) ->
-            println("Removing torrent ${torrent.name}: Seeding for ${torrent.seedingTime}")
-            delugeClient.removeTorrent(id, removeData = true)
-          }
-      }
+  private suspend fun cleanupTorrents() = coroutineScope {
+    delugeCleanup.cleanup()
   }
 }
 
@@ -106,6 +94,7 @@ fun main(args: Array<String>) {
       "spring.main.web-application-type" to "NONE",
       "logging.level.org.springframework" to "WARN",
       "logging.level.root" to "WARN",
+      "logging.level.com.alonalbert.pad" to "INFO",
       "spring.main.banner-mode" to "off",
     )
   )

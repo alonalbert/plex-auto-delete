@@ -8,6 +8,7 @@ import kotlin.time.Duration
 @Serializable
 data class Torrent(
   val name: String,
+  val label: String,
   @SerialName("seeding_time")
   @Serializable(with = DurationFromSecondsSerializer::class)
   val seedingTime: Duration,
