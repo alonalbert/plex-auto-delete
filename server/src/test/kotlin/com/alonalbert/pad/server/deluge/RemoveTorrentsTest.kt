@@ -1,6 +1,9 @@
 package com.alonalbert.pad.server.deluge
 
 import com.alonalbert.pad.server.deluge.model.request.RemoveTorrents
+import com.alonalbert.pad.server.deluge.model.response.RemoveTorrentError
+import com.alonalbert.pad.server.deluge.model.response.Response
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.boolean
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonPrimitive
@@ -30,5 +33,27 @@ class RemoveTorrentsTest {
 
     val params = json["params"]?.jsonArray
     assertEquals(false, params?.get(1)?.jsonPrimitive?.boolean)
+  }
+
+  @Test
+  fun `deserializes RemoveTorrentError from json array`() {
+    val jsonString = """{"result": [["torrent_1", "Failed to remove"], ["torrent_2", "Permission denied"]], "error": null, "id": 1}"""
+    val response = Json.decodeFromString<Response<List<RemoveTorrentError>>>(jsonString)
+
+    val errors = response.result
+    assertEquals(2, errors?.size)
+    assertEquals("torrent_1", errors?.get(0)?.id)
+    assertEquals("Failed to remove", errors?.get(0)?.message)
+    assertEquals("torrent_2", errors?.get(1)?.id)
+    assertEquals("Permission denied", errors?.get(1)?.message)
+  }
+
+  @Test
+  fun `deserializes empty result on success`() {
+    val jsonString = """{"result": [], "error": null, "id": 1}"""
+    val response = Json.decodeFromString<Response<List<RemoveTorrentError>>>(jsonString)
+
+    val errors = response.result
+    assertEquals(0, errors?.size)
   }
 }

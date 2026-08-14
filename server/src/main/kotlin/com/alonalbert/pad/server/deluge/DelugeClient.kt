@@ -11,6 +11,7 @@ import com.alonalbert.pad.server.deluge.model.request.Request
 import com.alonalbert.pad.server.deluge.model.request.WebConnect
 import com.alonalbert.pad.server.deluge.model.request.WebConnected
 import com.alonalbert.pad.server.deluge.model.request.WebGetHosts
+import com.alonalbert.pad.server.deluge.model.response.RemoveTorrentError
 import com.alonalbert.pad.server.deluge.model.response.Response
 import com.alonalbert.pad.server.deluge.model.response.Torrent
 import io.ktor.client.HttpClient
@@ -66,8 +67,12 @@ class DelugeClient(
   suspend fun getTorrents(labels: Set<String>): Map<String, Torrent> =
     call(GetTorrentsStatus(labels))
 
-  suspend fun removeTorrents(ids: Collection<String>, removeData: Boolean = false): Boolean {
-    return !ids.isEmpty() && call(RemoveTorrents(ids, removeData))
+  suspend fun removeTorrents(
+    ids: Collection<String>,
+    removeData: Boolean = false,
+  ): List<RemoveTorrentError> {
+    if (ids.isEmpty()) return emptyList()
+    return call(RemoveTorrents(ids, removeData))
   }
 
   override fun close() {
