@@ -64,7 +64,7 @@ class DelugeClient(
   private val authMutex = Mutex()
   private var isAuthenticated = false
 
-  suspend fun getTorrents(labels: Set<String>): Map<String, Torrent> =
+  suspend fun getTorrents(labels: Set<String>): List<Torrent> =
     call(GetTorrentsStatus(labels))
 
   suspend fun removeTorrents(
@@ -157,10 +157,10 @@ fun main(): Unit = runBlocking {
     properties.getProperty("deluge.password"),
     properties.getProperty("deluge.web.password"),
   ).use { client ->
-    val torrentsToRemove = client.getTorrents(setOf("tv-sonarr")).filterValues { it.seedingTime > 3.days }
-    torrentsToRemove.forEach { (id, torrent) ->
-      println("Removing torrent ${torrent.name} (${id}): Seeding for ${torrent.seedingTime}")
+    val torrentsToRemove = client.getTorrents(setOf("tv-sonarr")).filter { it.seedingTime > 3.days }
+    torrentsToRemove.forEach { torrent ->
+      println("Removing torrent ${torrent.name} (${torrent.id}): Seeding for ${torrent.seedingTime}")
     }
-//    client.removeTorrent(torrentsToRemove.keys.toList(), removeData = true)
+//    client.removeTorrents(torrentsToRemove.map { it.id }, removeData = true)
   }
 }

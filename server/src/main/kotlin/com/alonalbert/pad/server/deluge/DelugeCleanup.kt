@@ -23,20 +23,23 @@ class DelugeCleanup(
     DelugeClient(environment).use { client ->
       val labelMap = delugeProperties.labels.associateBy { it.name }
       val torrents = client.getTorrents(labelMap.keys)
-      val oldTorrents = torrents.filterValues { it.seedingTime > labelMap.getValue(it.label).age }
-      oldTorrents.values.forEach {
+      val oldTorrents = torrents.filter { it.seedingTime > labelMap.getValue(it.label).age }
+      oldTorrents.forEach {
         logger.info("Removing torrent ${it.name}: Seeding for ${it.seedingTime}")
       }
-      val (withData, withoutData) = oldTorrents.entries
-        .partition { (_, torrent) -> labelMap.getValue(torrent.label).removeData }
+      val (withData, withoutData) = oldTorrents
+        .partition { labelMap.getValue(it.label).removeData }
 
-//      client.removeTorrents(withData.map { it.key }, removeData = true).warn(oldTorrents)
-//      client.removeTorrents(withoutData.map { it.key }, removeData = false).warn(oldTorrents)
+      client.removeTorrents(withData.map { it.id }, removeData = true).warn(oldTorrents)
+      client.removeTorrents(withoutData.map { it.id }, removeData = false).warn(oldTorrents)
     }
   }
 
 }
 
-private fun List<RemoveTorrentError>.warn(torrents: Map<String, Torrent>) = forEach {
-  logger.warn("Error removing ${torrents[it.id]}: ${it.message}")
+private fun List<RemoveTorrentError>.warn(torrents: List<Torrent>) {
+  val torrentMap = torrents.associateBy { it.id }
+  forEach {
+    logger.warn("Error removing ${torrentMap[it.id]}: ${it.message}")
+  }
 }
