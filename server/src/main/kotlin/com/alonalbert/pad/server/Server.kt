@@ -1,6 +1,7 @@
 package com.alonalbert.pad.server
 
 import com.alonalbert.pad.server.config.isTestMode
+import com.alonalbert.pad.server.deluge.DelugeCleanup
 import com.alonalbert.pad.server.plex.PlexAutoDeleter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
@@ -23,6 +24,7 @@ import java.util.logging.Logger
 class Server(
     private val environment: Environment,
     private val plexAutoDeleter: PlexAutoDeleter,
+    private val delugeCleanup: DelugeCleanup,
 ) {
     init {
         if (environment.isTestMode()) {
@@ -42,6 +44,7 @@ class Server(
         if (!environment.isTestMode()) {
             runBlocking(Dispatchers.Default) {
                 plexAutoDeleter.runAutoDelete()
+                delugeCleanup.cleanup()
             }
         }
     }
