@@ -4,7 +4,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplicat
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.env.Environment
-import org.springframework.core.env.get
 import org.springframework.security.config.Customizer
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -35,8 +34,8 @@ class SpringSecurityConfig(private val environment: Environment) {
     @Bean
     fun userDetailsService(): UserDetailsService {
         val al: UserDetails = User.builder()
-            .username(environment["server.username"])
-            .password(passwordEncoder().encode(environment["server.password"]))
+            .username(environment.getRequiredProperty("server.username"))
+            .password(passwordEncoder().encode(environment.getRequiredProperty("server.password")))
             .roles("USER")
             .build()
         return InMemoryUserDetailsManager(al)
