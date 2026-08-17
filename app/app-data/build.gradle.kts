@@ -36,6 +36,9 @@ configure<LibraryExtension> {
   testOptions {
     unitTests {
       isIncludeAndroidResources = true
+      all {
+        it.systemProperty("robolectric.defaultSdk", "36")
+      }
     }
   }
 
