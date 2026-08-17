@@ -1,9 +1,9 @@
 package com.alonalbert.pad.server.plex.model
 
 import com.alonalbert.pad.util.InstantSerializer
-import kotlinx.datetime.Instant
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlin.time.Instant
 
 @Serializable
 data class PlexEpisode(

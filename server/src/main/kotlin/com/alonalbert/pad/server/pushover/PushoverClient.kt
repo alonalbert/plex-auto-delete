@@ -8,9 +8,11 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.request.header
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.springframework.core.env.Environment
 import org.springframework.stereotype.Component
-import java.net.URL
+import java.net.URI
 import java.net.URLEncoder
 
 @Component
@@ -19,8 +21,9 @@ class PushoverClient(environment: Environment) {
   private val userToken = environment.getPushoverUserToken()
 
   suspend fun send(message: String) {
-    val url = URL("https://api.pushover.net/1/messages.json")
-    val postData = "token=$token&user=$userToken&message=${URLEncoder.encode(message, "UTF-8")}"
+    val url = URI("https://api.pushover.net/1/messages.json").toURL()
+    val text = withContext(Dispatchers.IO) { URLEncoder.encode(message, "UTF-8") }
+    val postData = "token=$token&user=$userToken&message=$text"
 
     httpClient().use {
       it.post(url) {
