@@ -1,8 +1,8 @@
 version: "3.3"
 services:
-  pad:
+  plex-auto-delete:
     image: alonalbert/padserver
-    container_name: pad
+    container_name: plex-auto-delete 
     user: "1000"
     network_mode: host
     volumes:
